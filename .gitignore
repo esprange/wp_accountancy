@@ -1,0 +1,43 @@
+# Subversion
+.svn
+
+# Visual Studio
+.editorconfig
+
+# Ignore folders
+node_modules/
+vendor/
+tmp/
+.vscode/
+.idea/
+bin/
+lib/
+zip/
+refactor/
+
+# Build files
+*.min.js
+*.min.css
+
+# Composer lock file
+*.lock
+
+# NPM lock file
+*-lock.json
+
+.DS_Store
+Thumbs.db
+wp-cli.local.yml
+
+# pdf's
+*.pdf
+
+# ftp
+*.ftp
+
+# phpunit
+*.cache
+
+cookie.txt
+mollie.db
+
