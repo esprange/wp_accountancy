@@ -39,5 +39,4 @@ wp-cli.local.yml
 *.cache
 
 cookie.txt
-mollie.db
 

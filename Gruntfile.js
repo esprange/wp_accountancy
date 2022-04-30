@@ -2,9 +2,9 @@
 // noinspection JSUnresolvedFunction,JSUnusedGlobalSymbols
 
 /**
- * Grunt build file voor Kleistad.
+ * Grunt build file voor Accountancy.
  *
- * @package kleistad
+ * @package wp-accountancy
  */
 
 /* global module */
@@ -57,10 +57,10 @@ module.exports = function( grunt ) {
 			zip: {
 				'using-router': {
 					router: function( filepath ) {
-						return 'kleistad/' + filepath;
+						return 'wpacc/' + filepath;
 					},
 					src: [
-						'kleistad.php',
+						'wp-accountancy.php',
 						'README.txt',
 						'LICENSE.txt',
 						'public/**/*',
@@ -68,7 +68,7 @@ module.exports = function( grunt ) {
 						'includes/**/*',
 						'vendor/**/*'
 					],
-					dest: 'zip/kleistad.zip'
+					dest: 'zip/wp-accountancy.zip'
 				}
 			},
 
@@ -93,7 +93,7 @@ module.exports = function( grunt ) {
 			let readme = grunt.file.read( 'readme.txt' );
 			let plugin = grunt.file.read( pkg.name + '.php' );
 			grunt.file.write( 'README.txt', readme.replace( /Stable tag:.*\s/gm, 'Stable tag: ' + pkg.version + "\n" ) );
-			grunt.file.write( 'kleistad.php', plugin.replace( /Version:.*\s/gm, 'Version:           ' + pkg.version + "\n" ) );
+			grunt.file.write( 'wp-accountancy.php', plugin.replace( /Version:.*\s/gm, 'Version:           ' + pkg.version + "\n" ) );
 		}
 	);
 	grunt.registerTask(

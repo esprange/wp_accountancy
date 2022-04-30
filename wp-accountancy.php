@@ -2,19 +2,23 @@
 /**
  * Plugin Name:       WP-Accountancy
  * Plugin URI:        http://github.com/esprnge/wp-accountancy
- * Description:       Accountancy plugin for Wordpress.
+ * Description:       Accountancy plugin for WordPress.
  * Version:           1.0
  * Author:            Eric Sprangers
  * Author URI:        http://URI_Of_The_Plugin_Author
  * License:           GPL-3.0+
  * License URI:       http://www.gnu.org/licenses/gpl-3.0.html
- * Text Domain:       wp-accountancy
+ * Text Domain:       wpacc
  * Requires at least: 4.8.0
  * Requires PHP:      8.0
  * GitHub Plugin URI: https://github.com/esprange/wp-accountancy
-*/
+ *
+ * @package WP-Accountancy
+ */
 
-namespace WP_Accountancy;
+use WP_Accountancy\Includes\Activator;
+use WP_Accountancy\Includes\Deactivator;
+use WP_Accountancy\Includes\Accountancy;
 
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -24,13 +28,11 @@ const WP_ACCOUNTANCY_API = 'wpacc_api';
 
 /**
  * De autoloader toevoegen.
- *
- * @noinspection PhpIncludeInspection
  */
-require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+require_once realpath( 'vendor/autoload.php' );
 
 /**
- * Plugin activering.
+ * Plugin activation.
  */
 register_activation_hook(
 	__FILE__,
@@ -40,7 +42,7 @@ register_activation_hook(
 );
 
 /**
- * Plugin deactivering.
+ * Plugin deactivation.
  */
 register_deactivation_hook(
 	__FILE__,
@@ -50,7 +52,7 @@ register_deactivation_hook(
 );
 
 /**
- * Start uitvoering van de plugin.
+ * Plugin execution.
  */
-$wpacc_plugin = new WPAcc();
+$wpacc_plugin = new Accountancy();
 $wpacc_plugin->run();
