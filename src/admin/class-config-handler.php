@@ -13,7 +13,7 @@ namespace WP_Accountancy\Admin;
 /**
  * Configuration handler class
  */
-class Configuration_Handler {
+class config_Handler {
 
 	/**
 	 * Show the configuration.
@@ -21,7 +21,7 @@ class Configuration_Handler {
 	 * @since    1.0.0
 	 */
 	public function display_settings_page() {
-		$display    = new Configuration_Display();
+		$display    = new config_Display();
 		$active_tab = filter_input( INPUT_GET, 'tab' ) ?: 'instellingen';
 		?>
 		<div class="wrap">

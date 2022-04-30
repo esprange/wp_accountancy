@@ -22,9 +22,9 @@ class Actions {
 	 *
 	 * @since     1.0.0
 	 * @access    private
-	 * @var       object    $configuration_handler  Handler to manage the configuration.
+	 * @var       object    $config_handler  Handler to manage the configuration.
 	 */
-	private object $configuration_handler;
+	private object $config_handler;
 
 	/**
 	 * Background object
@@ -41,7 +41,7 @@ class Actions {
 	 * @since    1.0.0
 	 */
 	public function __construct() {
-		$this->configuration_handler = new Configuration_Handler();
+		$this->config_handler = new config_Handler();
 	}
 
 	/**
@@ -63,7 +63,7 @@ class Actions {
 	 * @internal Action for admin_menu.
 	 */
 	public function add_plugin_admin_menu() {
-		add_menu_page( __( 'Configuration', 'wpacc' ), 'WP-Accountancy', 'manage_options', 'wpacc', [ $this->configuration_handler, 'display_settings_page' ], plugins_url( '/images/wpacc_icon.png', __FILE__ ), 30 );
+		add_menu_page( __( 'Configuration', 'wpacc' ), 'WP-Accountancy', 'manage_options', 'wpacc', [ $this->config_handler, 'display_settings_page' ], plugins_url( '/images/wpacc_icon.png', __FILE__ ), 30 );
 		add_submenu_page( 'wpacc', __( 'Configuration', 'wpacc' ), __( 'Configuration', 'wpacc' ), 'manage_options', 'wpacc', null );
 	}
 
@@ -119,8 +119,8 @@ class Actions {
 		if ( ! wp_next_scheduled( 'wpacc_daily_gdpr' ) ) {
 			wp_schedule_event( strtotime( '01:00' ), 'daily', 'wpacc_daily_gdpr' );
 		}
-		register_setting( 'wpacc-options', 'wpacc-options', [ 'sanitize_callback' => [ $this->configuration_handler, 'validate_settings' ] ] );
-		register_setting( 'wpacc-setup', 'wpacc-setup', [ 'sanitize_callback' => [ $this->configuration_handler, 'validate_settings' ] ] );
+		register_setting( 'wpacc-options', 'wpacc-options', [ 'sanitize_callback' => [ $this->config_handler, 'validate_settings' ] ] );
+		register_setting( 'wpacc-setup', 'wpacc-setup', [ 'sanitize_callback' => [ $this->config_handler, 'validate_settings' ] ] );
 	}
 
 }

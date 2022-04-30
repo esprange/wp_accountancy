@@ -7,8 +7,6 @@
  * @package wp-accountancy
  */
 
-/* global module */
-
 module.exports = function( grunt ) {
 	'use strict';
 
@@ -22,7 +20,6 @@ module.exports = function( grunt ) {
 					}
 				}
 			},
-
 			uglify: {
 				dev: {
 					options: {
@@ -41,7 +38,6 @@ module.exports = function( grunt ) {
 					}]
 				}
 			},
-
 			cssmin: {
 				target: {
 					files: [{
@@ -53,7 +49,6 @@ module.exports = function( grunt ) {
 					}]
 				}
 			},
-
 			zip: {
 				'using-router': {
 					router: function( filepath ) {
@@ -71,7 +66,6 @@ module.exports = function( grunt ) {
 					dest: 'zip/wp-accountancy.zip'
 				}
 			},
-
 			shell: {
 				command: 'ftp -i -s:plugin_upload.ftp'
 			}

@@ -13,7 +13,7 @@ use WP_Accountancy\Includes;
 /**
  * Admin display class
  */
-class Configuration_Display {
+class config_Display {
 
 	/**
 	 * Show the options
