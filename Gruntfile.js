@@ -30,8 +30,8 @@ module.exports = function( grunt ) {
 					files: [{
 						expand: true,
 						src: [ '*.js', '!*.min.js' ],
-						dest: 'public/js',
-						cwd: 'public/js',
+						dest: 'Public/js',
+						cwd: 'Public/js',
 						rename: function( dst, src ) {
 							return dst + '/' + src.replace( '.js', '.min.js' );
 						}
@@ -42,9 +42,9 @@ module.exports = function( grunt ) {
 				target: {
 					files: [{
 						expand: true,
-						cwd: 'public/css',
+						cwd: 'Public/css',
 						src: [ '*.css', '!*.min.css' ],
-						dest: 'public/css',
+						dest: 'Public/css',
 						ext: '.min.css'
 					}]
 				}
@@ -55,12 +55,12 @@ module.exports = function( grunt ) {
 						return 'wpacc/' + filepath;
 					},
 					src: [
-						'wp-accountancy.php',
+						'wp-Accountancy.php',
 						'README.txt',
 						'LICENSE.txt',
-						'public/**/*',
-						'admin/**/*',
-						'includes/**/*',
+						'Public/**/*',
+						'Admin/**/*',
+						'Includes/**/*',
 						'vendor/**/*'
 					],
 					dest: 'zip/wp-accountancy.zip'
@@ -87,7 +87,7 @@ module.exports = function( grunt ) {
 			let readme = grunt.file.read( 'readme.txt' );
 			let plugin = grunt.file.read( pkg.name + '.php' );
 			grunt.file.write( 'README.txt', readme.replace( /Stable tag:.*\s/gm, 'Stable tag: ' + pkg.version + "\n" ) );
-			grunt.file.write( 'wp-accountancy.php', plugin.replace( /Version:.*\s/gm, 'Version:           ' + pkg.version + "\n" ) );
+			grunt.file.write( 'wp-Accountancy.php', plugin.replace( /Version:.*\s/gm, 'Version:           ' + pkg.version + "\n" ) );
 		}
 	);
 	grunt.registerTask(

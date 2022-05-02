@@ -1,11 +1,11 @@
 <?php
 /**
- * The admin actions of the plugin.
+ * The Admin actions of the plugin.
  *
  * @since      1.0.0
  *
  * @package    WP-Accountancy
- * @subpackage WP-Accountancy/admin
+ * @subpackage WP-Accountancy/Admin
  */
 
 namespace WP_Accountancy\Admin;
@@ -18,7 +18,7 @@ class Upgrade {
 	/**
 	 * Plugin-database-version
 	 */
-	const DBVERSION = 1;
+	const DBVERSION = 8;
 
 	/**
 	 * Execute upgrade actions if needed.
@@ -26,7 +26,7 @@ class Upgrade {
 	 * @since 1.0.0
 	 */
 	public function run() {
-		$data = get_plugin_data( plugin_dir_path( dirname( __FILE__ ) ) . 'wp-accountancy.php', false, false );
+		$data = get_plugin_data( WPACC_PLUGIN_PATH . 'wp-accountancy.php', false, false );
 		update_option( 'wpacc-plugin-version', $data['Version'] );
 		$database_version = intval( get_option( 'wpacc-database-version', 0 ) );
 		if ( $database_version < self::DBVERSION ) {
@@ -91,14 +91,14 @@ class Upgrade {
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_taxcode (
 			id           INT (10) NOT NULL AUTO_INCREMENT,
-			business_id  INT (10),
-			name         VARCHAR (50),
+			business_id  INT (10) NOT NULL,
+			name         VARCHAR (50) NOT NULL,
 			rate         FLOAT,
-			active       BOOLEAN DEFAULT TRUE,
-			FOREIGN KEY (business_id) REFERENCES {$wpdb}wpacc_business(id),
+			active       TINYINT(1) DEFAULT 1,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
+		$this->foreign_key( 'taxcode', 'business' );
 
 		/**
 		 * The accounts of the general ledger. The COA exists for each business. A record can be a group, a group total or a regular account
@@ -106,18 +106,19 @@ class Upgrade {
 		 */
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_account (
-			id          INT (10) NOT NULL AUTO_INCREMENT,
-			business_id INT (10),
-			taxcode_id  INT (10),
-			name        VARCHAR (50),
-			group_id    INT (10),
-			type        TINYTEXT,
-			active      BOOLEAN DEFAULT TRUE,
-			FOREIGN KEY (business_id) REFERENCES {$wpdb}wpacc_business(id),
-			FOREIGN KEY (taxcode_id) REFERENCES {$wpdb}wpacc_taxcode(id),
+			id           INT (10) NOT NULL AUTO_INCREMENT,
+			business_id  INT (10) NOT NULL,
+			taxcode_id   INT (10),
+			name         VARCHAR (50),
+			group_id     INT (10),
+			type         TINYTEXT,
+			order_number INT,
+			active       TINYINT(1) DEFAULT 1,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
+		$this->foreign_key( 'account', 'business' );
+		$this->foreign_key( 'account', 'taxcode' );
 
 		/**
 		 * The creditors
@@ -125,14 +126,15 @@ class Upgrade {
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_creditor (
 			id            INT (10) NOT NULL AUTO_INCREMENT,
-			business_id   INT (10),
+			business_id   INT (10) NOT NULL,
 			name          VARCHAR (50),
 			address       TEXT,
 			email_address TINYTEXT,
-			FOREIGN KEY (business_id) REFERENCES {$wpdb}wpacc_business(id),
+			active        TINYINT(1) DEFAULT 1,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
+		$this->foreign_key( 'creditor', 'business' );
 
 		/**
 		 * The debtors
@@ -140,15 +142,16 @@ class Upgrade {
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_debtor (
 			id              INT (10) NOT NULL AUTO_INCREMENT,
-			business_id     INT (10),
+			business_id     INT (10) NOT NULL,
 			name            VARCHAR (50),
 			address         TEXT,
 			billing_address TEXT,
 			email_address   TINYTEXT,
-			FOREIGN KEY (business_id) REFERENCES {$wpdb}wpacc_business(id),
-			PRIMARY KEY  (id),
+			active          TINYINT(1) DEFAULT 1,
+			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
+		$this->foreign_key( 'debtor', 'business' );
 
 		/**
 		 * The transactions themselves. This record is used for all types, so including sales, purchases, banking,
@@ -156,29 +159,29 @@ class Upgrade {
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_transaction (
 			id          INT (10) NOT NULL AUTO_INCREMENT,
-			business_id INT (10),
+			business_id INT (10) NOT NULL,
 			debtor_id   INT (10),
 			creditor_id INT (10),
 			reference   TINYTEXT,
-			invoice     INT (10),
+			invoice_id  INT (10),
 			address     TEXT,
 			date        DATE,
 			type        TINYTEXT,
 			description TINYTEXT,
-			FOREIGN KEY (debtor_id) REFERENCES {$wpdb}wpacc_debtor(id),
-			FOREIGN KEY (creditor_id) REFERENCES {$wpdb}wpacc_creditor(id),
-			FOREIGN KEY (business_id) REFERENCES {$wpdb}wpacc_business(id),
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
+		$this->foreign_key( 'transaction', 'business' );
+		$this->foreign_key( 'transaction', 'debtor' );
+		$this->foreign_key( 'transaction', 'creditor' );
 
 		/**
-		 * The transaction lines.
+		 * The transaction details.
 		 */
 		dbDelta(
-			"CREATE TABLE {$wpdb->prefix}wpacc_line (
+			"CREATE TABLE {$wpdb->prefix}wpacc_detail (
 			id             INT (10) NOT NULL AUTO_INCREMENT,
-			transaction_id INT (10),
+			transaction_id INT (10) NOT NULL,
 			account_id     INT (10),
 			taxcode_id     INT (10),
 			debtor_id      INT (10),
@@ -186,14 +189,42 @@ class Upgrade {
 			amount         FLOAT,
 			unitprice      DECIMAL (13,4),
 			description    TINYTEXT,
-			FOREIGN KEY (account_id) REFERENCES {$wpdb}wpacc_account(id),
-			FOREIGN KEY (taxcode_id) REFERENCES {$wpdb}wpacc_taxcode(id),
+			order_number   INT,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
-
+		$this->foreign_key( 'detail', 'transaction' );
+		$this->foreign_key( 'detail', 'account' );
+		$this->foreign_key( 'detail', 'taxcode' );
+		$this->foreign_key( 'detail', 'debtor' );
+		$this->foreign_key( 'detail', 'creditor' );
 	}
 
+	/**
+	 * Create the foreignkey if is does not exist yet.
+	 *
+	 * @param string $table  The table for which the constraint is required.
+	 * @param string $parent The parent table to which the foreign key refers.
+	 *
+	 * @return void
+	 */
+	private function foreign_key( string $table, string $parent ) {
+		global $wpdb;
+		// phpcs:disable -- next line cannot be used with prepare.
+		if ( ! $wpdb->get_var(
+			"SELECT COUNT(*)
+			    FROM information_schema.TABLE_CONSTRAINTS
+			    WHERE
+			        CONSTRAINT_SCHEMA = DATABASE() AND
+			        CONSTRAINT_NAME   = 'fk_{$parent}_$table' AND
+			        CONSTRAINT_TYPE   = 'FOREIGN KEY'"
+			) ) {
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}wpacc_$table
+				ADD CONSTRAINT fk_{$parent}_$table FOREIGN KEY ({$parent}_id) REFERENCES {$wpdb->prefix}wpacc_$parent(id)"
+			);
+		}
+		// phpcs:enable
+	}
 
 	/**
 	 * Converteer data

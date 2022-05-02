@@ -5,7 +5,7 @@
  * @since      1.0.0
  *
  * @package    WP-Accountancy
- * @subpackage WP-Accountancy/admin
+ * @subpackage WP-Accountancy/Admin
  */
 
 namespace WP_Accountancy\Admin;
@@ -13,7 +13,7 @@ namespace WP_Accountancy\Admin;
 /**
  * Configuration handler class
  */
-class config_Handler {
+class ConfigHandler {
 
 	/**
 	 * Show the configuration.
@@ -21,8 +21,8 @@ class config_Handler {
 	 * @since    1.0.0
 	 */
 	public function display_settings_page() {
-		$display    = new config_Display();
-		$active_tab = filter_input( INPUT_GET, 'tab' ) ?: 'instellingen';
+		$display    = new ConfigDisplay();
+		$active_tab = filter_input( INPUT_GET, 'tab' ) ?: __( 'options', 'wpacc' );
 		?>
 		<div class="wrap">
 			<h2 class="nav-tab-wrapper">

@@ -1,17 +1,17 @@
 <?php
 /**
- * The public actions of the plugin.
+ * The Public actions of the plugin.
  *
  * @since      1.0.0
  *
  * @package    WP-Accountancy
- * @subpackage WP-Accountancy/public
+ * @subpackage WP-Accountancy/Public
  */
 
 namespace WP_Accountancy\Public;
 
 /**
- * The public actions.
+ * The Public actions.
  */
 class Actions {
 

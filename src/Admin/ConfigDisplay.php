@@ -3,17 +3,18 @@
  * Class for rendering the configuration functions.
  *
  * @package WP-Accountancy
- * @subpackage WP-Accountancy/admin
+ * @subpackage WP-Accountancy/Admin
  */
 
 namespace WP_Accountancy\Admin;
 
-use WP_Accountancy\Includes;
+use function WP_Accountancy\Includes\setup;
+use function WP_Accountancy\Includes\options;
 
 /**
  * Admin display class
  */
-class config_Display {
+class ConfigDisplay {
 
 	/**
 	 * Show the options
@@ -76,7 +77,7 @@ class config_Display {
 				<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $naam ); ?></label></th>
 				<td>
 					<input type="text" name="wpacc-setup[<?php echo esc_attr( $id ); ?>]" id="<?php echo esc_attr( $id ); ?>" class="regular-text"
-						value="<?php echo esc_attr( \WP_Accountancy\Includes\setup()[ $id ] ); ?>" />
+						value="<?php echo esc_attr( setup()[ $id ] ); ?>" />
 				</td>
 			</tr>
 			<?php

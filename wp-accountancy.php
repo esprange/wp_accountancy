@@ -27,9 +27,9 @@ if ( ! defined( 'WPINC' ) ) {
 const WP_ACCOUNTANCY_API = 'wpacc_api';
 
 /**
- * De autoloader toevoegen.
+ * Add the autoloader.
  */
-require_once realpath( 'vendor/autoload.php' );
+require_once __DIR__ . '/vendor/autoload.php';
 
 /**
  * Plugin activation.
@@ -54,5 +54,5 @@ register_deactivation_hook(
 /**
  * Plugin execution.
  */
-$wpacc_plugin = new Accountancy();
-$wpacc_plugin->run();
+define( 'WPACC_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+( new Accountancy() );

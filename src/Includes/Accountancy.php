@@ -5,7 +5,7 @@
  * @since      1.0.0
  *
  * @package    WP-Accountancy
- * @subpackage WP-Accountacy/includes
+ * @subpackage WP-Accountacy/Includes
  */
 
 namespace WP_Accountancy\Includes;
@@ -113,6 +113,7 @@ class Accountancy {
 		$this->load_dependencies();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->loader->run();
 	}
 
 	/**
@@ -126,7 +127,7 @@ class Accountancy {
 	}
 
 	/**
-	 * Register all admin hooks.
+	 * Register all Admin hooks.
 	 *
 	 * @since    1.0.0
 	 * @access   private
@@ -139,13 +140,10 @@ class Accountancy {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_actions, 'enqueue_scripts_and_styles' );
 		$this->loader->add_action( 'admin_menu', $plugin_actions, 'add_plugin_admin_menu' );
 		$this->loader->add_action( 'admin_init', $plugin_actions, 'initialize' );
-		$this->loader->add_action( 'plugins_loaded', $plugin_actions, 'instantiate_background' );
-		$this->loader->add_filter( 'wp_privacy_personal_data_exporters', $plugin_filters, 'register_exporter' );
-		$this->loader->add_filter( 'wp_privacy_personal_data_erasers', $plugin_filters, 'register_eraser' );
 	}
 
 	/**
-	 * Register all public hooks.
+	 * Register all Public hooks.
 	 *
 	 * @since    1.0.0
 	 * @access   private
@@ -155,22 +153,7 @@ class Accountancy {
 		$plugin_filters = new \WP_Accountancy\Public\Filters();
 		$plugin_actions = new \WP_Accountancy\Public\Actions();
 
-		$this->loader->add_action( 'rest_api_init', $plugin_actions, 'register_endpoints' );
 		$this->loader->add_action( 'init', $plugin_actions, 'load_translations' );
-		$this->loader->add_action( 'init', $plugin_actions, 'register_shortcodes' );
-		$this->loader->add_action( 'init', $plugin_actions, 'register_post_types' );
-		$this->loader->add_action( 'init', $plugin_actions, 'register_styles_and_scripts' );
-		$this->loader->add_action( 'init', $plugin_actions, 'inline_style', 100 );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_actions, 'enqueue_styles_and_scripts', 99 );
-	}
-
-	/**
-	 * Run the loader.
-	 *
-	 * @since    1.0.0
-	 */
-	public function run() {
-		$this->loader->run();
 	}
 
 	/**
