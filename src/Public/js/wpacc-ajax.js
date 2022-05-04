@@ -4,7 +4,6 @@
  * @author Eric Sprangers.
  * @since  1.0.0
  * @package WP_Accounting
- * noinspection EqualityComparisonWithCoercionJS
  */
 
 /* global wpaccData */
@@ -30,6 +29,11 @@
 					formData.append( 'wpacc_action', $( this ).val() );
 					formData.append( '_ajax_nonce', $( this ).data( 'nonce' ) );
 					formData.append( 'display', $( this ).data( 'display' ) );
+					/**
+					 * Execute the Ajax request.
+					 *
+					 * @param {{ajaxurl:string}} ajaxurl
+					 */
 					$.ajax(
 						{
 							data:        formData,
@@ -44,7 +48,7 @@
 						}
 					).fail(
 						function( jqXHR ) {
-							alert( jqXHR.responseJSON.message );
+							$( '#wpacc' ).html( jqXHR.responseJSON.message );
 						}
 					);
 				}

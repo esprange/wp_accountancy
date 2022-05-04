@@ -61,7 +61,7 @@ class BusinessDisplay extends Display {
 				<input name="country" id="wpacc_country" value="<?php echo esc_attr( $this->business->country ); ?>" >
 			</label>
 			<label for="wpacc_address"><?php esc_html_e( 'Address', 'wpacc' ); ?>
-				<textarea name="address" id="wpacc_address" ><?php echo esc_attr( $this->business->country ); ?></textarea>
+				<textarea name="address" id="wpacc_address" ><?php echo esc_attr( $this->business->address ); ?></textarea>
 			</label>
 			<label for="wpacc_logo"><?php esc_html_e( 'Logo', 'wpacc' ); ?>
 				<input name="logo" id="wpacc_logo" value="<?php echo esc_attr( $this->business->logo ); ?>" >
