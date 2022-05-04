@@ -30,8 +30,20 @@ class Actions {
 	 * @internal Action for init.
 	 */
 	public function add_shortcode() {
-		$handler = new Handler();
-		add_shortcode( WPACC_SLUG, [ $handler, 'run' ] );
+		add_shortcode(
+			WPACC_SLUG,
+			function( array $atts ) : string {
+				$atts = shortcode_atts( [ 'action' => '' ], $atts );
+				if ( $atts['action'] ) {
+					$class = '\\' . __NAMESPACE__ . '\\' . ucfirst( $atts['action'] . 'Display' );
+					if ( class_exists( $class ) ) {
+						$display = new $class();
+						return $display->controller();
+					}
+				}
+				return '';
+			}
+		);
 	}
 
 	/**
