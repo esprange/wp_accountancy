@@ -19,7 +19,7 @@ namespace WP_Accountancy\Includes;
  * @property int    debtor_id
  * @property int    creditor_id
  * @property int    taxcode_id
- * @property float  amount
+ * @property float  quantity
  * @property float  unitprice
  * @property string description
  * @property int    order_number
@@ -40,7 +40,7 @@ class Detail {
 			'debtor_id'      => 0,
 			'creditor_id'    => 0,
 			'taxcode_id'     => 0,
-			'amount'         => 1,
+			'quantity'       => 1,
 			'unitprice'      => 0,
 			'description'    => '',
 			'order_number'   => 0,
@@ -77,7 +77,7 @@ class Detail {
 				'debtor_id'      => $this->debtor_id,
 				'creditor_id'    => $this->creditor_id,
 				'taxcode_id'     => $this->taxcode_id,
-				'amount'         => $this->amount,
+				'quantity'       => $this->quantity,
 				'unitprice'      => $this->unitprice,
 				'description'    => $this->description,
 				'order_number'   => $this->order_number,

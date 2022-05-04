@@ -23,12 +23,12 @@ namespace WP_Accountancy\Includes;
  * @property int    order_number
  */
 class Account {
-	const ACTIVA_ITEM  = 'activa';
-	const PASSIVA_ITEM = 'passiva';
-	const EQUITY_ITEM  = 'equity';
-	const PROFIT_ITEM  = 'profit';
-	const LOSS_ITEM    = 'loss';
-	const TOTAL_ITEM   = 'total';
+	const ASSETS_ITEM    = 'assets';
+	const LIABILITY_ITEM = 'liability';
+	const EQUITY_ITEM    = 'equity';
+	const INCOME_ITEM    = 'income';
+	const EXPENSE_ITEM   = 'expense';
+	const TOTAL_ITEM     = 'total';
 
 	/**
 	 * Constructor

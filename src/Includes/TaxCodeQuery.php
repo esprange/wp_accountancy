@@ -30,7 +30,7 @@ class TaxCodeQuery {
 	 *
 	 * @return void
 	 */
-	public function __construct( int $business_id, array $args ) {
+	public function __construct( int $business_id, array $args = [] ) {
 		global $wpdb;
 		$defaults          = [
 			'business_id' => $business_id,

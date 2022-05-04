@@ -154,6 +154,9 @@ class Accountancy {
 		$plugin_actions = new \WP_Accountancy\Public\Actions();
 
 		$this->loader->add_action( 'init', $plugin_actions, 'load_translations' );
+		$this->loader->add_action( 'init', $plugin_actions, 'add_shortcode' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_actions, 'load_script' );
+		$this->loader->add_action( 'wp_ajax_wpacc_formhandler', $plugin_actions, 'formhandler' );
 	}
 
 	/**

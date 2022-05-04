@@ -29,12 +29,11 @@ class Business {
 	 */
 	public function __construct( int $business_id = 0 ) {
 		$data = [
-			'id'           => $business_id,
-			'group_id'     => 0,
-			'name'         => '',
-			'active'       => true,
-			'order_number' => 0,
-			'type'         => '',
+			'id'      => $business_id,
+			'name'    => '',
+			'address' => '',
+			'country' => '',
+			'logo'    => '',
 		];
 		if ( $business_id ) {
 			global $wpdb;
@@ -66,11 +65,19 @@ class Business {
 			'address' => $this->address,
 			'country' => $this->country,
 			'logo'    => $this->logo,
-			'active'  => $this->active,
 		];
 		$wpdb->replace( "{$wpdb->prefix}wpacc_business", $data );
 		$this->id = $wpdb->insert_id;
 		return $this->id;
 	}
 
+	/**
+	 * Delete the business entry.
+	 *
+	 * @return bool
+	 */
+	public function delete() : bool {
+		global $wpdb;
+		return (bool) $wpdb->delete( "{$wpdb->prefix}wpacc_business", [ 'id' => $this->id ] );
+	}
 }

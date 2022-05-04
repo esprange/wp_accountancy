@@ -18,7 +18,7 @@ class Upgrade {
 	/**
 	 * Plugin-database-version
 	 */
-	const DBVERSION = 8;
+	const DBVERSION = 9;
 
 	/**
 	 * Execute upgrade actions if needed.
@@ -64,7 +64,9 @@ class Upgrade {
 	}
 
 	/**
-	 * Convert database.
+	 * Convert database. A long method but no reason to split it up into smaller segments.
+	 *
+	 * @suppressWarnings(PHPMD.ExcessiveMethodLength)
 	 */
 	public function convert_database() {
 		global $wpdb;
@@ -78,7 +80,7 @@ class Upgrade {
 			"CREATE TABLE {$wpdb->prefix}wpacc_business (
 			id      INT (10) NOT NULL AUTO_INCREMENT,
 			name    TINYTEXT,
-			adress  TEXT,
+			address TEXT,
 			country TINYTEXT,
 			logo    TINYTEXT,
 			PRIMARY KEY  (id)
@@ -186,7 +188,7 @@ class Upgrade {
 			taxcode_id     INT (10),
 			debtor_id      INT (10),
 			creditor_id    INT (10),
-			amount         FLOAT,
+			quantity       FLOAT,
 			unitprice      DECIMAL (13,4),
 			description    TINYTEXT,
 			order_number   INT,

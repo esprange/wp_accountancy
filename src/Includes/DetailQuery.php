@@ -29,7 +29,7 @@ class DetailQuery {
 	 *
 	 * @return void
 	 */
-	public function __construct( array $args ) {
+	public function __construct( array $args = [] ) {
 		global $wpdb;
 		$defaults          = [
 			'transaction_id' => 0,

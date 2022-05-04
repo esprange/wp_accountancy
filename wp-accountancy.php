@@ -55,4 +55,5 @@ register_deactivation_hook(
  * Plugin execution.
  */
 define( 'WPACC_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+const WPACC_SLUG = 'wpacc';
 ( new Accountancy() );

@@ -29,7 +29,7 @@ class BusinessQuery {
 	 *
 	 * @return void
 	 */
-	public function __construct( array $args ) {
+	public function __construct( array $args = [] ) {
 		global $wpdb;
 		$defaults          = [
 			'active' => 0,
@@ -54,12 +54,7 @@ class BusinessQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}business %s ORDER BY name",
-				$this->query_where
-			)
-		);
+		return $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wpacc_business $this->query_where ORDER BY name" ); // phpcs:ignore
 	}
 
 }
