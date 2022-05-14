@@ -29,9 +29,10 @@ class Debtor {
 	 * @param int $debtor_id  The debtor id, if specified, the debtor is retrieved from the db.
 	 */
 	public function __construct( int $debtor_id = 0 ) {
+		global $wpacc_business;
 		$data = [
 			'id'              => $debtor_id,
-			'business_id'     => 1,
+			'business_id'     => $wpacc_business->id,
 			'name'            => '',
 			'address'         => '',
 			'billing_address' => '',
@@ -60,9 +61,10 @@ class Debtor {
 	 */
 	public function update() : int {
 		global $wpdb;
+		global $wpacc_business;
 		$data = [
 			'id'              => $this->id,
-			'business_id'     => $this->business_id,
+			'business_id'     => $wpacc_business->id,
 			'name'            => $this->name,
 			'address'         => $this->address,
 			'billing_address' => $this->billing_address,

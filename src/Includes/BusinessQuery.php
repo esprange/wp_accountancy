@@ -45,7 +45,10 @@ class BusinessQuery {
 			$this->query_where .= $wpdb->prepare( ' AND id = %d', $query_vars['id'] );
 		}
 		if ( $query_vars['name'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND lower(name) = lower(%d)', $query_vars['name'] );
+			$this->query_where .= $wpdb->prepare( ' AND lower(name) = lower(%s)', $query_vars['name'] );
+		}
+		if ( $query_vars['slug'] ) {
+			$this->query_where .= $wpdb->prepare( ' AND lower(slug) = lower(%s)', $query_vars['name'] );
 		}
 	}
 

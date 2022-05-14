@@ -40,9 +40,10 @@ class Transaction {
 	 * @param int $transaction_id The transaction_id, if specified, the transaction is retrieved from the db.
 	 */
 	public function __construct( int $transaction_id = 0 ) {
+		global $wpacc_business;
 		$data = [
 			'id'          => 0,
-			'business_id' => 1,
+			'business_id' => $wpacc_business->id,
 			'debtor_id'   => 0,
 			'creditor_id' => 0,
 			'reference'   => '',
@@ -76,9 +77,10 @@ class Transaction {
 	 */
 	public function update() : int {
 		global $wpdb;
+		global $wpacc_business;
 		$data = [
 			'id'          => $this->id,
-			'business_id' => $this->business_id,
+			'business_id' => $wpacc_business->id,
 			'debtor_id'   => $this->debtor_id,
 			'creditor_id' => $this->creditor_id,
 			'reference'   => $this->reference,

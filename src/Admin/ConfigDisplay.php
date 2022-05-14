@@ -18,17 +18,12 @@ use function WP_Accountancy\Includes\options as current_options;
  */
 class ConfigDisplay {
 
-	private array $current_options = [];
-
-	private array $current_setup = [];
-
 	/**
 	 * Show the options
 	 *
 	 * @return void
 	 */
 	public function options() : void {
-		$this->current_options = current_options();
 		?>
 		<!--suppress HtmlUnknownTarget -->
 		<form method="POST" action="options.php" >
@@ -84,7 +79,6 @@ class ConfigDisplay {
 	 * @return void
 	 */
 	public function setup() : void {
-		$this->current_setup = current_setup();
 		?>
 		<div style="float:left;width:50%;">
 		<form method="POST" action="options.php" >

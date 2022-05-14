@@ -18,6 +18,7 @@ namespace WP_Accountancy\Includes;
  * @property string address
  * @property string country
  * @property string logo
+ * @property string slug
  * @property bool   active,
  */
 class Business {
@@ -31,6 +32,7 @@ class Business {
 		$data = [
 			'id'      => $business_id,
 			'name'    => '',
+			'slug'    => '',
 			'address' => '',
 			'country' => '',
 			'logo'    => '',
@@ -65,6 +67,7 @@ class Business {
 			'address' => $this->address,
 			'country' => $this->country,
 			'logo'    => $this->logo,
+			'slug'    => $this->slug,
 		];
 		$wpdb->replace( "{$wpdb->prefix}wpacc_business", $data );
 		$this->id = $wpdb->insert_id;

@@ -154,8 +154,8 @@ class Accountancy {
 		$plugin_actions = new \WP_Accountancy\Admin\Actions();
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_actions, 'enqueue_scripts_and_styles' );
-		$this->loader->add_action( 'admin_menu', $plugin_actions, 'add_plugin_admin_menu' );
 		$this->loader->add_action( 'admin_init', $plugin_actions, 'initialize' );
+		$this->loader->add_action( 'admin_menu', $plugin_actions, 'add_plugin_admin_menu' );
 	}
 
 	/**
@@ -170,11 +170,12 @@ class Accountancy {
 		$plugin_actions = new \WP_Accountancy\Public\Actions();
 
 		$this->loader->add_action( 'init', $plugin_actions, 'add_shortcode' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_actions, 'load_script' );
+		$this->loader->add_action( 'init', $plugin_actions, 'select_business' );
+		$this->loader->add_filter( 'load_textdomain_mofile', $plugin_filters, 'load_translations', 10, 2 );
 		$this->loader->add_action( 'wp_ajax_wpacc_formhandler', $plugin_actions, 'formhandler' );
 		$this->loader->add_action( 'wp_ajax_wpacc_menuhandler', $plugin_actions, 'menuhandler' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_actions, 'load_script' );
 		$this->loader->add_action( 'wpacc_business_select', $plugin_actions, 'business_select' );
-		$this->loader->add_filter( 'load_textdomain_mofile', $plugin_filters, 'load_translations', 10, 2 );
 	}
 
 	/**

@@ -65,7 +65,7 @@ class Actions {
 				if ( $business_id ) {
 					do_action( 'wpacc_business_select', $business_id );
 				}
-				$display = $business_id ? new SummaryDisplay( business() ) : new BusinessDisplay(business() );
+				$display = $business_id ? new SummaryDisplay( business() ) : new BusinessDisplay( business() );
 				return $display->container( $display->controller() );
 			}
 		);
@@ -117,5 +117,31 @@ class Actions {
 		set_transient( WPACC_BUSINESS . get_current_user_id(), $business_id );
 		global $wpacc_business;
 		$wpacc_business = new Business( $business_id );
+	}
+
+	/**
+	 * Init de business transient
+	 *
+	 * @return void
+	 */
+	public function init_business() {
+		global $wpacc_business;
+		$business_id = get_transient( WPACC_BUSINESS, get_current_user_id() );
+		if ( $business_id ) {
+			$wpacc_business = new Business( $business_id );
+			if ( $wpacc_business->id ) {
+				return;
+			}
+		}
+		$businesses = ( new BusinessQuery() )->get_results();
+		if ( count( $businesses ) ) {
+			do_action( 'wpacc_business_select', $businesses[0]->id );
+			return;
+		}
+		$business       = new Business();
+		$business->name = __( 'Default', 'wpacc' );
+		$business->slug = 'default';
+		$business->update();
+		do_action( 'wpacc_business_select', $business->id );
 	}
 }

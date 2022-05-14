@@ -25,21 +25,21 @@ class AccountQuery {
 	/**
 	 * The constructor
 	 *
-	 * @param int   $business_id Always required.
 	 * @param array $args The query arguments.
 	 *
 	 * @return void
 	 */
-	public function __construct( int $business_id, array $args = [] ) {
+	public function __construct( array $args = [] ) {
 		global $wpdb;
+		global $wpacc_business;
 		$defaults          = [
-			'business_id' => $business_id,
+			'business_id' => $wpacc_business->id,
 			'type'        => '',
 			'active'      => 0,
 			'id'          => 0,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
-		$this->query_where = 'WHERE 1 = 1';
+		$this->query_where = $wpdb->prepare( 'WHERE business_id = %d', $wpacc_business->id );
 		if ( $query_vars['active'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND active = %d', (int) $query_vars['active'] );
 		}

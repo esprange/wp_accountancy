@@ -19,27 +19,11 @@ use function WP_Accountancy\Includes\business;
 abstract class Display {
 
 	/**
-	 * The business.
-	 *
-	 * @var Business $business The business object.
-	 */
-	protected Business $business;
-
-	/**
 	 * Overview function, to be rewritten in child class
 	 *
 	 * @return string
 	 */
 	abstract public function overview() : string;
-
-	/**
-	 * The constructor
-	 *
-	 * @param Business $business The business.
-	 */
-	final public function __construct( Business $business ) {
-		$this->business = $business;
-	}
 
 	/**
 	 * The controller.
@@ -71,6 +55,7 @@ abstract class Display {
 	 * @return string
 	 */
 	final public function container( string $contents ) : string {
+		global $business;
 		$left_menu = [
 			SummaryDisplay::Class      => __( 'Summary', 'wpacc' ),
 			BankcashDisplay::Class     => __( 'Bank and Cash Accounts', 'wpacc' ),
@@ -103,7 +88,7 @@ abstract class Display {
 		$html .= <<<EOT
 				</ul>
 				</nav>
-				<span style="text-align: center">{$this->business->name}</span>
+				<span style="text-align: center">{$business->name}</span>
 			</div>
 			<div style="float: left; width: 20%;">
 			<nav class="wpacc-menu">

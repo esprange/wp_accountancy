@@ -28,9 +28,10 @@ class Creditor {
 	 * @param int $creditor_id  The creditor id, if specified, the creditor is retrieved from the db.
 	 */
 	public function __construct( int $creditor_id = 0 ) {
+		global $wpacc_business;
 		$data = [
 			'id'            => 0,
-			'business_id'   => 1,
+			'business_id'   => $wpacc_business->id,
 			'name'          => '',
 			'address'       => '',
 			'email_address' => '',
@@ -58,9 +59,10 @@ class Creditor {
 	 */
 	public function update() : int {
 		global $wpdb;
+		global $wpacc_business;
 		$data = [
 			'id'            => $this->id,
-			'business_id'   => $this->business_id,
+			'business_id'   => $wpacc_business->id,
 			'name'          => $this->name,
 			'address'       => $this->address,
 			'email_address' => $this->email_address,

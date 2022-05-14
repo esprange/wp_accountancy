@@ -81,6 +81,7 @@ class Upgrade {
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_business (
 			id      INT (10) NOT NULL AUTO_INCREMENT,
+			slug	TINYTEXT NOT NULL,
 			name    TINYTEXT,
 			address TEXT,
 			country TINYTEXT,

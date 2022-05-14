@@ -31,14 +31,15 @@ class CreditorQuery {
 	 */
 	public function __construct( array $args = [] ) {
 		global $wpdb;
+		global $wpacc_business;
 		$defaults          = [
-			'business_id' => 1,
+			'business_id' => $wpacc_business->id,
 			'name'        => '',
 			'active'      => 0,
 			'id'          => 0,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
-		$this->query_where = 'WHERE 1 = 1';
+		$this->query_where = $wpdb->prepare( 'WHERE business_id = %d', $wpacc_business->id );
 		if ( $query_vars['active'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND active_id = %d', (int) $query_vars['active'] );
 		}

@@ -60,14 +60,14 @@ class BusinessDisplay extends Display {
 	public function read() : string {
 		$business_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
 		if ( $business_id ) {
-			$this->business = new Business( $business_id );
+			$business = new Business( $business_id );
 		}
 		$country_names = array_keys( self::COUNTRIES );
 		sort( $country_names );
 		ob_start();
 		?>
 			<label for="wpacc_name"><?php esc_html_e( 'Name', 'wpacc' ); ?>
-				<input name="name" id="wpacc_name" value="<?php echo esc_attr( $this->business->name ); ?>" >
+				<input name="name" id="wpacc_name" value="<?php echo esc_attr( $business->name ); ?>" >
 			</label>
 			<label for="wpacc_country"><?php esc_html_e( 'Country', 'wpacc' ); ?>
 				<select name="country" id="wpacc_country">
@@ -77,12 +77,12 @@ class BusinessDisplay extends Display {
 				</select>
 			</label>
 			<label for="wpacc_address"><?php esc_html_e( 'Address', 'wpacc' ); ?>
-				<textarea name="address" id="wpacc_address" ><?php echo esc_attr( $this->business->address ); ?></textarea>
+				<textarea name="address" id="wpacc_address" ><?php echo esc_attr( $business->address ); ?></textarea>
 			</label>
 			<label for="wpacc_logo"><?php esc_html_e( 'Logo', 'wpacc' ); ?>
-				<input name="logo" id="wpacc_logo" value="<?php echo esc_attr( $this->business->logo ); ?>" >
+				<input name="logo" id="wpacc_logo" value="<?php echo esc_attr( $business->logo ); ?>" >
 			</label>
-			<input type="hidden" name="id" value="<?php echo esc_attr( $this->business->id ); ?>" />
+			<input type="hidden" name="id" value="<?php echo esc_attr( $business->id ); ?>" />
 		<?php
 		return $this->form( ob_get_clean() . $this->action_button( $this->business->id ? 'update' : 'create', __( 'Save', 'wpacc' ) ) );
 	}

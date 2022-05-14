@@ -34,13 +34,13 @@ class Account {
 	/**
 	 * Constructor
 	 *
-	 * @param int $business_id The business_id, required.
 	 * @param int $account_id  The account id, if specified, the account is retrieved from the db.
 	 */
-	public function __construct( int $business_id, int $account_id = 0 ) {
+	public function __construct( int $account_id = 0 ) {
+		global $wpacc_business;
 		$data = [
 			'id'           => $account_id,
-			'business_id'  => $business_id,
+			'business_id'  => $wpacc_business->id,
 			'taxcode_id'   => null,
 			'group_id'     => null,
 			'name'         => '',
@@ -48,17 +48,15 @@ class Account {
 			'order_number' => 0,
 			'type'         => '',
 		];
-		if ( $business_id ) {
-			global $wpdb;
-			$result = $wpdb->get_row(
-				$wpdb->prepare(
-					"SELECT * FROM {$wpdb->prefix}wpacc_account where id = %d",
-					$account_id
-				)
-			);
-			if ( $result ) {
-				$data = $result;
-			}
+		global $wpdb;
+		$result = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT * FROM {$wpdb->prefix}wpacc_account where id = %d",
+				$account_id
+			)
+		);
+		if ( $result ) {
+			$data = $result;
 		}
 		foreach ( $data as $property => $value ) {
 			$this->$property = $value;
@@ -71,23 +69,21 @@ class Account {
 	 * @return int The account id.
 	 */
 	public function update() : int {
-		if ( $this->business_id ) {
-			global $wpdb;
-			$data = [
-				'id'           => $this->id,
-				'business_id'  => $this->business_id,
-				'name'         => $this->name,
-				'taxcode_id'   => $this->taxcode_id,
-				'group_id'     => $this->group_id,
-				'order_number' => $this->order_number,
-				'active'       => $this->active,
-				'type'         => $this->type,
-			];
-			$wpdb->replace( "{$wpdb->prefix}wpacc_account", $data );
-			$this->id = $wpdb->insert_id;
-			return $this->id;
-		}
-		return 0;
+		global $wpdb;
+		global $wpacc_business;
+		$data = [
+			'id'           => $this->id,
+			'business_id'  => $wpacc_business->id,
+			'name'         => $this->name,
+			'taxcode_id'   => $this->taxcode_id,
+			'group_id'     => $this->group_id,
+			'order_number' => $this->order_number,
+			'active'       => $this->active,
+			'type'         => $this->type,
+		];
+		$wpdb->replace( "{$wpdb->prefix}wpacc_account", $data );
+		$this->id = $wpdb->insert_id;
+		return $this->id;
 	}
 
 }

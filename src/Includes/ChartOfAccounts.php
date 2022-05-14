@@ -25,21 +25,10 @@ class ChartOfAccounts {
 	private array $accounts;
 
 	/**
-	 * The business for which the COA is needed.
-	 *
-	 * @var int $business_id The business id.
-	 */
-	private int $business_id;
-
-	/**
 	 * The constructor
-	 *
-	 * @param int $business_id The business id is required.
 	 */
-	public function __construct( int $business_id ) {
-		$this->business_id = $business_id;
-		$query             = new AccountQuery( $business_id, [ 'active' => 1 ] );
-		$this->accounts    = $query->get_results();
+	public function __construct() {
+		$this->accounts = ( new AccountQuery( [ 'active' => 1 ] ) )->get_results();
 	}
 
 	/**
@@ -81,7 +70,7 @@ class ChartOfAccounts {
 		$coa  = json_decode( $json, true )['coa'] ?? [];
 		foreach ( $coa as $account_item ) {
 			if ( isset( $account_item['name'] ) && isset( $account_item['type'] ) && in_array( $account_item['type'], Account::VALID_ITEMS, true ) ) {
-				$account       = new Account( $this->business_id );
+				$account       = new Account();
 				$account->name = $account_item['name'];
 				$account->type = $account_item['type'];
 				$account->update();

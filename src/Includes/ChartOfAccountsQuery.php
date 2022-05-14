@@ -25,15 +25,15 @@ class ChartOfAccountsQuery {
 	/**
 	 * The constructor
 	 *
-	 * @param int   $business_id Always required.
 	 * @param array $args The query arguments.
 	 *
 	 * @return void
 	 */
-	public function __construct( int $business_id, array $args = [] ) {
+	public function __construct( array $args = [] ) {
 		global $wpdb;
+		global $wpacc_business;
 		$defaults          = [
-			'business_id' => $business_id,
+			'business_id' => $wpacc_business->id,
 			'type'        => '',
 			'active'      => 0,
 			'id'          => 0,

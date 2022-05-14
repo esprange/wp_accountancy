@@ -28,9 +28,8 @@ class TransactionAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function list( WP_REST_Request $request ) : WP_REST_Response {
-		$query  = new TransactionQuery();
-		$result = $query->get_results();
-		return new WP_REST_Response( array_walk( $result, 'get_object_vars' ) );
+		$transactions = ( new TransactionQuery() )->get_results();
+		return new WP_REST_Response( array_walk( $transactions, 'get_object_vars' ) );
 	}
 
 	/**
