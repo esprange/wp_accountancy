@@ -89,24 +89,4 @@ class Detail {
 		return 0;
 	}
 
-	/**
-	 * Get the lines of the transaction
-	 *
-	 * @param int $transaction_id The transaction id.
-	 *
-	 * @return array
-	 */
-	public function get_lines( int $transaction_id ) : array {
-		global $wpdb;
-		$query_from  = "FROM {$wpdb->prefix}wpacc_lines";
-		$query_where = $wpdb->prepare( 'WHERE transaction_id = %d', $transaction_id );
-		return $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT lines.* %s %s',
-				$query_from,
-				$query_where
-			)
-		);
-	}
-
 }

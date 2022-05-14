@@ -25,7 +25,8 @@
         "setasign/fpdf": "^1",
         "deliciousbrains/wp-background-processing": "^1",
         "ext-gd": "*",
-        "ext-xml": "*"
+        "ext-xml": "*",
+        "ext-dom": "*"
     },
     "config": {
         "allow-plugins": {

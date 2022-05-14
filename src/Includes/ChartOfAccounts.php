@@ -25,13 +25,21 @@ class ChartOfAccounts {
 	private array $accounts;
 
 	/**
+	 * The business for which the COA is needed.
+	 *
+	 * @var int $business_id The business id.
+	 */
+	private int $business_id;
+
+	/**
 	 * The constructor
 	 *
 	 * @param int $business_id The business id is required.
 	 */
 	public function __construct( int $business_id ) {
-		$query          = new AccountQuery( $business_id, [ 'active' => 1 ] );
-		$this->accounts = $query->get_results();
+		$this->business_id = $business_id;
+		$query             = new AccountQuery( $business_id, [ 'active' => 1 ] );
+		$this->accounts    = $query->get_results();
 	}
 
 	/**
@@ -64,17 +72,31 @@ class ChartOfAccounts {
 	/**
 	 * Import a chart of accounts.
 	 *
-	 * @param string $xmlfile An XML file defining the COA.
+	 * @param string $jsonfile An json file defining the COA.
 	 *
 	 * @return void
 	 */
-	public function import( string $xmlfile ) {
-		$xml = file_get_contents( $xmlfile ); // phpcs:ignore
-		if ( false !== $xml ) {
-			$parser = xml_parser_create();
-			xml_parse_into_struct( $parser, $xml, $coa );
-			xml_parser_free( $parser );
+	public function import( string $jsonfile ) {
+		$json = file_get_contents( $jsonfile, true ); // phpcs:ignore
+		$coa  = json_decode( $json, true )['coa'] ?? [];
+		foreach ( $coa as $account_item ) {
+			if ( isset( $account_item['name'] ) && isset( $account_item['type'] ) && in_array( $account_item['type'], Account::VALID_ITEMS, true ) ) {
+				$account       = new Account( $this->business_id );
+				$account->name = $account_item['name'];
+				$account->type = $account_item['type'];
+				$account->update();
+				$this->add( $account );
+			}
 		}
+	}
+
+	/**
+	 * Give the accounts.
+	 *
+	 * @return array
+	 */
+	public function get_results() :array {
+		return $this->accounts;
 	}
 
 	/**

@@ -26,30 +26,27 @@ class Debtor {
 	/**
 	 * Constructor
 	 *
-	 * @param int $business_id The business_id, required.
 	 * @param int $debtor_id  The debtor id, if specified, the debtor is retrieved from the db.
 	 */
-	public function __construct( int $business_id, int $debtor_id = 0 ) {
+	public function __construct( int $debtor_id = 0 ) {
 		$data = [
 			'id'              => $debtor_id,
-			'business_id'     => $business_id,
+			'business_id'     => 1,
 			'name'            => '',
 			'address'         => '',
 			'billing_address' => '',
 			'email_address'   => '',
 			'active'          => true,
 		];
-		if ( $business_id ) {
-			global $wpdb;
-			$result = $wpdb->get_row(
-				$wpdb->prepare(
-					"SELECT * FROM {$wpdb->prefix}wpacc_debtor where id = %d",
-					$debtor_id
-				)
-			);
-			if ( $result ) {
-				$data = $result;
-			}
+		global $wpdb;
+		$result = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT * FROM {$wpdb->prefix}wpacc_debtor where id = %d",
+				$debtor_id
+			)
+		);
+		if ( $result ) {
+			$data = $result;
 		}
 		foreach ( $data as $property => $value ) {
 			$this->$property = $value;
@@ -62,22 +59,29 @@ class Debtor {
 	 * @return int The debtor id.
 	 */
 	public function update() : int {
-		if ( $this->business_id ) {
-			global $wpdb;
-			$data = [
-				'id'              => $this->id,
-				'business_id'     => $this->business_id,
-				'name'            => $this->name,
-				'address'         => $this->address,
-				'billing_address' => $this->billing_address,
-				'email_address'   => $this->email_address,
-				'active'          => (int) $this->active,
-			];
-			$wpdb->replace( "{$wpdb->prefix}wpacc_debtor", $data );
-			$this->id = $wpdb->insert_id;
-			return $this->id;
-		}
-		return 0;
+		global $wpdb;
+		$data = [
+			'id'              => $this->id,
+			'business_id'     => $this->business_id,
+			'name'            => $this->name,
+			'address'         => $this->address,
+			'billing_address' => $this->billing_address,
+			'email_address'   => $this->email_address,
+			'active'          => (int) $this->active,
+		];
+		$wpdb->replace( "{$wpdb->prefix}wpacc_debtor", $data );
+		$this->id = $wpdb->insert_id;
+		return $this->id;
+	}
+
+	/**
+	 * Delete the debtor entry.
+	 *
+	 * @return bool
+	 */
+	public function delete() : bool {
+		global $wpdb;
+		return (bool) $wpdb->delete( "{$wpdb->prefix}wpacc_debtor", [ 'id' => $this->id ] );
 	}
 
 }

@@ -12,26 +12,33 @@ namespace WP_Accountancy\Public;
 
 use WP_Accountancy\Includes\Business;
 use WP_Accountancy\Includes\BusinessQuery;
+use WP_Accountancy\Includes\ChartOfAccounts;
 use function WP_Accountancy\Includes\notify;
+use function WP_Accountancy\Includes\business;
 
 /**
  * The Public filters.
  */
 class BusinessDisplay extends Display {
 
-	/**
-	 * The business shown in the form.
-	 *
-	 * @var Business The business.
-	 */
-	private Business $business;
-
-	/**
-	 * The constructor
-	 */
-	public function __construct() {
-		$this->business = new Business();
-	}
+	const COUNTRIES = [
+		'United Kingdom' => [
+			'language' => 'English',
+			'template' => 'english.json',
+		],
+		'United States'  => [
+			'language' => 'English',
+			'template' => 'english.json',
+		],
+		'Nederland'      => [
+			'language' => 'Nederlands',
+			'template' => 'dutch.json',
+		],
+		'Belgium'        => [
+			'language' => 'Nederlands',
+			'template' => 'dutch.json',
+		],
+	];
 
 	/**
 	 * Create the business.
@@ -39,7 +46,10 @@ class BusinessDisplay extends Display {
 	 * @return string
 	 */
 	public function create() : string {
-		return $this->update();
+		$result = $this->update();
+		$coa    = new ChartOfAccounts( $this->business->id );
+		$coa->import( WPACC_PLUGIN_PATH . 'templates\\' . self::COUNTRIES[ $this->business->country ]['template'] );
+		return $result;
 	}
 
 	/**
@@ -52,13 +62,19 @@ class BusinessDisplay extends Display {
 		if ( $business_id ) {
 			$this->business = new Business( $business_id );
 		}
+		$country_names = array_keys( self::COUNTRIES );
+		sort( $country_names );
 		ob_start();
 		?>
 			<label for="wpacc_name"><?php esc_html_e( 'Name', 'wpacc' ); ?>
 				<input name="name" id="wpacc_name" value="<?php echo esc_attr( $this->business->name ); ?>" >
 			</label>
 			<label for="wpacc_country"><?php esc_html_e( 'Country', 'wpacc' ); ?>
-				<input name="country" id="wpacc_country" value="<?php echo esc_attr( $this->business->country ); ?>" >
+				<select name="country" id="wpacc_country">
+					<?php foreach ( $country_names as $country_name ) : ?>
+					<option value="<?php echo esc_attr( $country_name ); ?>" ><?php echo esc_html( $country_name ); // phpcs:ignore ?></option>
+					<?php endforeach; ?>
+				</select>
 			</label>
 			<label for="wpacc_address"><?php esc_html_e( 'Address', 'wpacc' ); ?>
 				<textarea name="address" id="wpacc_address" ><?php echo esc_attr( $this->business->address ); ?></textarea>
@@ -68,7 +84,7 @@ class BusinessDisplay extends Display {
 			</label>
 			<input type="hidden" name="id" value="<?php echo esc_attr( $this->business->id ); ?>" />
 		<?php
-		return $this->container( $this->form( ob_get_clean() . $this->action_button( $this->business->id ? 'update' : 'create', __( 'Save', 'wpacc' ) ) ) );
+		return $this->form( ob_get_clean() . $this->action_button( $this->business->id ? 'update' : 'create', __( 'Save', 'wpacc' ) ) );
 	}
 
 	/**
@@ -80,22 +96,26 @@ class BusinessDisplay extends Display {
 		$businesses = new BusinessQuery();
 		ob_start();
 		?>
-		<table>
+		<table class="wpacc-select display" data-selected="<?php echo esc_attr( business()->id ); ?>">
 			<thead>
 			<tr>
+				<th></th>
+				<th></th>
 				<th><?php esc_html_e( 'Name', 'wpacc' ); ?></th>
 			</tr>
 			</thead>
 			<tbody>
 			<?php foreach ( $businesses->get_results() as $business ) : ?>
 				<tr>
+					<td></td>
+					<td><?php echo esc_html( $business->id ); ?></td>
 					<td><a href="<?php echo esc_url( sprintf( '?wpacc_action=read&id=%d', $business->id ) ); ?>"><?php echo esc_html( $business->name ); ?></a></td>
 				</tr>
 			<?php endforeach; ?>
 			</tbody>
 		</table>
 		<?php
-		return $this->container( ob_get_clean() . $this->form( $this->action_button( 'read', __( 'Create', 'wpacc' ) ) ) );
+		return $this->form( ob_get_clean() . $this->action_button( 'read', __( 'Create', 'wpacc' ) ) );
 	}
 
 	/**
@@ -122,6 +142,7 @@ class BusinessDisplay extends Display {
 		$this->business->country = $input['country'];
 		$this->business->logo    = $input['logo'];
 		$this->business->update();
+		do_action( 'wpacc_business_select', $this->business->id );
 		return notify( -1, __( 'Business saved', 'wpacc' ) );
 	}
 
@@ -139,6 +160,21 @@ class BusinessDisplay extends Display {
 			}
 			return notify( 1, __( 'Remove not allowed', 'wpacc' ) );
 		}
+		if ( business()->id === $business_id ) {
+			do_action( 'wpacc_business_select', 0 );
+		}
 		return notify( 1, __( 'Internal error' ) );
 	}
+
+	/**
+	 * Select the business
+	 *
+	 * @return string
+	 */
+	public function select() : string {
+		$business_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
+		do_action( 'wpacc_business_select', $business_id );
+		return '';
+	}
+
 }

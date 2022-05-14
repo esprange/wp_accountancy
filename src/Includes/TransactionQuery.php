@@ -32,16 +32,15 @@ class TransactionQuery {
 	/**
 	 * The constructor
 	 *
-	 * @param int   $business_id Always required.
 	 * @param array $args        The query arguments.
 	 *
 	 * @return void
 	 */
-	public function __construct( int $business_id, array $args = [] ) {
+	public function __construct( array $args = [] ) {
 		global $wpdb;
 		$defaults          = [
-			'from'        => 0,
-			'until'       => 0,
+			'from'        => '',
+			'until'       => '',
 			'debtor_id'   => 0,
 			'creditor_id' => 0,
 			'id'          => 0,
@@ -49,12 +48,12 @@ class TransactionQuery {
 			'order_by'    => '',
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
-		$this->query_where = $wpdb->prepare( 'WHERE business_id = %d', $business_id );
+		$this->query_where = 'WHERE 1 = 1';
 		if ( $query_vars['from'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND date >= %s', date( 'Y-m-d', $query_vars['from'] ) );
+			$this->query_where .= $wpdb->prepare( ' AND date >= %s', $query_vars['from'] );
 		}
 		if ( $query_vars['until'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND date <= %s', date( 'Y-m-d', $query_vars['until'] ) );
+			$this->query_where .= $wpdb->prepare( ' AND date <= %s', $query_vars['until'] );
 		}
 		if ( $query_vars['debtor_id'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND debtor_id = %d', $query_vars['debtor_id'] );

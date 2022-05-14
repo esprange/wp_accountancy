@@ -41,7 +41,9 @@ class Upgrade {
 	 * Converteer opties.
 	 */
 	private function convert_options() {
-		$default_options = [];
+		$default_options = [
+			'multibusiness' => false,
+		];
 		$default_setup   = [];
 		$current_options = get_option( 'wpacc-options', [] );
 		$current_setup   = get_option( 'wpacc-setup', [] );

@@ -33,6 +33,7 @@ class BusinessQuery {
 		global $wpdb;
 		$defaults          = [
 			'active' => 0,
+			'name'   => 0,
 			'id'     => 0,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
@@ -42,6 +43,9 @@ class BusinessQuery {
 		}
 		if ( $query_vars['id'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND id = %d', $query_vars['id'] );
+		}
+		if ( $query_vars['name'] ) {
+			$this->query_where .= $wpdb->prepare( ' AND lower(name) = lower(%d)', $query_vars['name'] );
 		}
 	}
 

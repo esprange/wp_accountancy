@@ -39,7 +39,23 @@ function setup() : array {
 }
 
 /**
- * Plugin version
+ * Returns the active business object
+ *
+ * @return Business
+ */
+function business() : Business {
+	/**
+	 * The active business object.
+	 */
+	global $wpacc_business;
+	if ( ! is_object( $wpacc_business ) ) {
+		$wpacc_business = new Business( intval( get_transient( WPACC_BUSINESS . get_current_user_id() ) ) ?: 0 );
+	}
+	return $wpacc_business;
+}
+
+/**
+ * Returns the plugin version
  *
  * @return string The version.
  */
@@ -153,10 +169,12 @@ class Accountancy {
 		$plugin_filters = new \WP_Accountancy\Public\Filters();
 		$plugin_actions = new \WP_Accountancy\Public\Actions();
 
-		$this->loader->add_action( 'init', $plugin_actions, 'load_translations' );
 		$this->loader->add_action( 'init', $plugin_actions, 'add_shortcode' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_actions, 'load_script' );
 		$this->loader->add_action( 'wp_ajax_wpacc_formhandler', $plugin_actions, 'formhandler' );
+		$this->loader->add_action( 'wp_ajax_wpacc_menuhandler', $plugin_actions, 'menuhandler' );
+		$this->loader->add_action( 'wpacc_business_select', $plugin_actions, 'business_select' );
+		$this->loader->add_filter( 'load_textdomain_mofile', $plugin_filters, 'load_translations', 10, 2 );
 	}
 
 	/**

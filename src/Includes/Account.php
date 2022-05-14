@@ -23,12 +23,13 @@ namespace WP_Accountancy\Includes;
  * @property int    order_number
  */
 class Account {
-	const ASSETS_ITEM    = 'assets';
-	const LIABILITY_ITEM = 'liability';
-	const EQUITY_ITEM    = 'equity';
-	const INCOME_ITEM    = 'income';
-	const EXPENSE_ITEM   = 'expense';
-	const TOTAL_ITEM     = 'total';
+	public const ASSETS_ITEM    = 'assets';
+	public const LIABILITY_ITEM = 'liability';
+	public const EQUITY_ITEM    = 'equity';
+	public const INCOME_ITEM    = 'income';
+	public const EXPENSE_ITEM   = 'expense';
+	public const TOTAL_ITEM     = 'total';
+	public const VALID_ITEMS    = [ self::ASSETS_ITEM, self::LIABILITY_ITEM, self::EQUITY_ITEM, self::INCOME_ITEM, self::EXPENSE_ITEM, self::TOTAL_ITEM ];
 
 	/**
 	 * Constructor
@@ -40,8 +41,8 @@ class Account {
 		$data = [
 			'id'           => $account_id,
 			'business_id'  => $business_id,
-			'taxcode'      => 0,
-			'group_id'     => 0,
+			'taxcode_id'   => null,
+			'group_id'     => null,
 			'name'         => '',
 			'active'       => true,
 			'order_number' => 0,
@@ -73,14 +74,14 @@ class Account {
 		if ( $this->business_id ) {
 			global $wpdb;
 			$data = [
-				'id'            => $this->id,
-				'business_id'   => $this->business_id,
-				'name'          => $this->name,
-				'taxcode_id'    => $this->taxcode_id,
-				'group_id'      => $this->group_id,
-				'order_numnber' => $this->order_number,
-				'active'        => $this->active,
-				'type'          => $this->type,
+				'id'           => $this->id,
+				'business_id'  => $this->business_id,
+				'name'         => $this->name,
+				'taxcode_id'   => $this->taxcode_id,
+				'group_id'     => $this->group_id,
+				'order_number' => $this->order_number,
+				'active'       => $this->active,
+				'type'         => $this->type,
 			];
 			$wpdb->replace( "{$wpdb->prefix}wpacc_account", $data );
 			$this->id = $wpdb->insert_id;

@@ -9,6 +9,7 @@
  * License:           GPL-3.0+
  * License URI:       http://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain:       wpacc
+ * Domain path:       /languages
  * Requires at least: 4.8.0
  * Requires PHP:      8.0
  * GitHub Plugin URI: https://github.com/esprange/wp-accountancy
@@ -52,8 +53,13 @@ register_deactivation_hook(
 );
 
 /**
- * Plugin execution.
+ * Define some constants.
  */
 define( 'WPACC_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
-const WPACC_SLUG = 'wpacc';
+const WPACC_SLUG     = 'wpacc';
+const WPACC_BUSINESS = 'wpacc_business_';
+
+/**
+ * Plugin execution.
+ */
 ( new Accountancy() );

@@ -25,15 +25,14 @@ class DebtorQuery {
 	/**
 	 * The constructor
 	 *
-	 * @param int   $business_id Always required.
 	 * @param array $args The query arguments.
 	 *
 	 * @return void
 	 */
-	public function __construct( int $business_id, array $args = [] ) {
+	public function __construct( array $args = [] ) {
 		global $wpdb;
 		$defaults          = [
-			'business_id' => $business_id,
+			'business_id' => 1,
 			'name'        => '',
 			'active'      => 0,
 			'id'          => 0,

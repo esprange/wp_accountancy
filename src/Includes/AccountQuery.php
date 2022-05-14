@@ -41,7 +41,7 @@ class AccountQuery {
 		$query_vars        = wp_parse_args( $args, $defaults );
 		$this->query_where = 'WHERE 1 = 1';
 		if ( $query_vars['active'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND active_id = %d', (int) $query_vars['active'] );
+			$this->query_where .= $wpdb->prepare( ' AND active = %d', (int) $query_vars['active'] );
 		}
 		if ( $query_vars['id'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND id = %d', $query_vars['id'] );
@@ -61,10 +61,7 @@ class AccountQuery {
 	public function get_results() : array {
 		global $wpdb;
 		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}wpacc_account %s ORDER BY order_number",
-				$this->query_where
-			)
+			"SELECT * FROM {$wpdb->prefix}wpacc_account $this->query_where ORDER BY order_number" // phpcs:ignore
 		);
 	}
 

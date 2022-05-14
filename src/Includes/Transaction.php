@@ -37,13 +37,12 @@ class Transaction {
 	/**
 	 * Constructor
 	 *
-	 * @param int $business_id    The business id, required.
 	 * @param int $transaction_id The transaction_id, if specified, the transaction is retrieved from the db.
 	 */
-	public function __construct( int $business_id, int $transaction_id = 0 ) {
+	public function __construct( int $transaction_id = 0 ) {
 		$data = [
 			'id'          => 0,
-			'business_id' => $business_id,
+			'business_id' => 1,
 			'debtor_id'   => 0,
 			'creditor_id' => 0,
 			'reference'   => '',
@@ -76,25 +75,32 @@ class Transaction {
 	 * @return int The transaction id.
 	 */
 	public function update() : int {
-		if ( $this->business_id ) {
-			global $wpdb;
-			$data = [
-				'id'          => $this->id,
-				'business_id' => $this->business_id,
-				'debtor_id'   => $this->debtor_id,
-				'creditor_id' => $this->creditor_id,
-				'reference'   => $this->reference,
-				'invoice_id'  => $this->invoice_id,
-				'address'     => $this->address,
-				'date'        => $this->date,
-				'type'        => $this->type,
-				'description' => $this->description,
-			];
-			$wpdb->replace( "{$wpdb->prefix}wpacc_transaction", $data );
-			$this->id = $wpdb->insert_id;
-			return $this->id;
-		}
-		return 0;
+		global $wpdb;
+		$data = [
+			'id'          => $this->id,
+			'business_id' => $this->business_id,
+			'debtor_id'   => $this->debtor_id,
+			'creditor_id' => $this->creditor_id,
+			'reference'   => $this->reference,
+			'invoice_id'  => $this->invoice_id,
+			'address'     => $this->address,
+			'date'        => $this->date,
+			'type'        => $this->type,
+			'description' => $this->description,
+		];
+		$wpdb->replace( "{$wpdb->prefix}wpacc_transaction", $data );
+		$this->id = $wpdb->insert_id;
+		return $this->id;
+	}
+
+	/**
+	 * Delete the transaction entry.
+	 *
+	 * @return bool
+	 */
+	public function delete() : bool {
+		global $wpdb;
+		return (bool) $wpdb->delete( "{$wpdb->prefix}wpacc_transaction", [ 'id' => $this->id ] );
 	}
 
 	/**

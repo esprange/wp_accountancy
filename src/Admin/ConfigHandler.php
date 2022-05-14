@@ -22,7 +22,7 @@ class ConfigHandler {
 	 */
 	public function display_settings_page() {
 		$display    = new ConfigDisplay();
-		$active_tab = filter_input( INPUT_GET, 'tab' ) ?: __( 'options', 'wpacc' );
+		$active_tab = filter_input( INPUT_GET, 'tab' ) ?: __( 'Options', 'wpacc' );
 		?>
 		<div class="wrap">
 			<h2 class="nav-tab-wrapper">
