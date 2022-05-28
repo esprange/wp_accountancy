@@ -30,8 +30,8 @@ module.exports = function( grunt ) {
 					files: [{
 						expand: true,
 						src: [ '*.js', '!*.min.js' ],
-						dest: 'Public/js',
-						cwd: 'Public/js',
+						dest: 'src/Public/js',
+						cwd: 'src/Public/js',
 						rename: function( dst, src ) {
 							return dst + '/' + src.replace( '.js', '.min.js' );
 						}
@@ -42,9 +42,9 @@ module.exports = function( grunt ) {
 				target: {
 					files: [{
 						expand: true,
-						cwd: 'Public/css',
+						cwd: 'src/Public/css',
 						src: [ '*.css', '!*.min.css' ],
-						dest: 'Public/css',
+						dest: 'src/Public/css',
 						ext: '.min.css'
 					}]
 				}
@@ -58,16 +58,17 @@ module.exports = function( grunt ) {
 						'wp-Accountancy.php',
 						'README.txt',
 						'LICENSE.txt',
-						'Public/**/*',
-						'Admin/**/*',
-						'Includes/**/*',
+						'src/Public/**/*',
+						'src/Admin/**/*',
+						'src/Includes/**/*',
 						'vendor/**/*'
 					],
 					dest: 'zip/wp-accountancy.zip'
 				}
 			},
 			shell: {
-				command: 'ftp -i -s:plugin_upload.ftp'
+				do_ftp_target: 'ftp -i -s:plugin_upload.ftp',
+				do_make_pot: 'wp i18n make-pot . languages/wpacc.pot'
 			}
 		}
 	);
@@ -95,12 +96,13 @@ module.exports = function( grunt ) {
 		[
 			'versie_check',
 			'wp_readme_to_markdown',
+			'shell:do_make_pot',
 			'uglify',
 			'cssmin',
 			'composer:update:no-autoloader:no-dev:verbose',
 			'composer:dump-autoload:optimize',
 			'zip',
-			'shell:command',
+			'shell:do_ftp',
 			'composer:update'
 		]
 	);

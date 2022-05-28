@@ -68,7 +68,7 @@ class TransactionQuery {
 		if ( $query_vars['type'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND type = %s', $query_vars['type'] );
 		}
-		if ( $query_vars['order'] ) {
+		if ( $query_vars['order_by'] ) {
 			$order_by          = strcasecmp( 'desc', $query_vars['order_by'] ) ? 'DESC' : 'ASC';
 			$this->query_order = $wpdb->prepare( ' ORDER BY %s %s', $query_vars['order'], $order_by );
 			return;
@@ -85,13 +85,7 @@ class TransactionQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}wpacc_transaction %s %s",
-				$this->query_where,
-				$this->query_order,
-			)
-		);
+		return $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wpacc_transaction $this->query_where $this->query_order" ); // phpcs:ignore
 	}
 
 }

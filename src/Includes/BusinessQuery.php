@@ -35,6 +35,7 @@ class BusinessQuery {
 			'active' => 0,
 			'name'   => 0,
 			'id'     => 0,
+			'slug'   => '',
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
 		$this->query_where = 'WHERE 1 = 1';

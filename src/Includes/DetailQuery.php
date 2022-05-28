@@ -67,12 +67,7 @@ class DetailQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}wpacc_detail %s ORDER BY order_number",
-				$this->query_where
-			)
-		);
+		return $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wpacc_detail $this->query_where ORDER BY order_number" ); // phpcs:ignore
 	}
 
 }

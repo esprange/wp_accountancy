@@ -11,123 +11,129 @@
 namespace WP_Accountancy\Public;
 
 use WP_Accountancy\Includes\Account;
-use WP_Accountancy\Includes\ChartOfAccounts;
-use WP_Accountancy\Includes\ChartOfAccountsQuery;
+use WP_Accountancy\Includes\AccountQuery;
+use WP_Accountancy\Includes\DebtorQuery;
+use WP_Accountancy\Includes\Detail;
 use WP_Accountancy\Includes\DetailQuery;
-use function WP_Accountancy\Includes\notify;
-use function WP_Accountancy\Includes\business;
+use WP_Accountancy\Includes\TaxCodeQuery;
+use WP_Accountancy\Includes\Transaction;
+use WP_Accountancy\Includes\TransactionQuery;
 
 /**
- * The Public filters.
+ * The Sales Display class.
  */
 class SalesDisplay extends Display {
 
 	/**
-	 * Ordered list of accounts.
+	 * Create the sales.
 	 *
-	 * @var array $summary list.
+	 * @return string
 	 */
-	private array $summary;
+	public function create() : string {
+		return $this->read();
+	}
 
 	/**
-	 * Start date of summary
+	 * Update the sales.
 	 *
-	 * @var string $from Start date of summary.
+	 * @return string
 	 */
-	private string $from  = '2000-01-01'; // Allow the past, if one likes historical data.
+	public function update() : string {
+		global $wpacc_business;
+		$input              = filter_input_array( INPUT_POST );
+		$sales              = new Transaction( intval( $input['id'] ?? 0 ) );
+		$sales->debtor_id   = intval( $input['debtor_id'] ?? 0 );
+		$sales->reference   = sanitize_text_field( $input['reference'] ?? '' );
+		$sales->address     = sanitize_text_field( $input['address'] ?? '' );
+		$sales->invoice_id  = sanitize_text_field( $input['invoice_id'] ?? '' );
+		$sales->date        = sanitize_text_field( $input['date'] ?? '' );
+		$sales->description = sanitize_text_field( $input['description'] ?? '' );
+		$sales->type        = Transaction::SALES_INVOICE;
+		$sales->business_id = $wpacc_business->id;
+		$sales->update();
+		foreach ( $input['detail_id'] ?? [] as $index => $detail_id ) {
+			$detail = new Detail( intval( $detail_id ) );
+			$detail->transaction_id = $sales->id;
+			$detail->account_id     = intval( $input['detail.account_id'][$index] );
+			$detail->quantity       = floatval( $input['detail.quantity'][$index] );
+			$detail->unitprice      = floatval( $input['detail.unitprice'][$index] );
+			$detail->description    = sanitize_text_field( $input['detail.description'][ $index] );
+			$detail->taxcode_id     = intval( $input['detail.description'][ $index] );
+			$detail->order_number   = $index;
+			$detail->update();
+		}
+		return $this->notify( -1, __( 'Transaction saved', 'wpacc' ) );
+	}
 
 	/**
-	 * End date of summary
+	 * Delete the sales
 	 *
-	 * @var string $until End date of summary.
+	 * @return string
 	 */
-	private string $until = '2100-01-01'; // Not to expect that WordPress still exists by the time :-).
+	public function delete() : string {
+		$sales_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
+		if ( $sales_id ) {
+			$sales = new Account( intval( $sales_id ) );
+			if ( $sales->delete() ) {
+				return $this->notify( - 1, __( 'Sales transaction removed', 'wpacc' ) );
+			}
+			return $this->notify( 1, __( 'Remove not allowed', 'wpacc' ) );
+		}
+		return $this->notify( 1, __( 'Internal error' ) );
+	}
 
 	/**
-	 * Render the existing business
+	 * Display the form
+	 *
+	 * @return string
+	 */
+	public function read() : string {
+		$sales_id    = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
+		$sales       = new Transaction( intval( $sales_id ) );
+		$debtors     = ( new DebtorQuery() )->get_results( true );
+		$details     = ( new DetailQuery( [ 'transaction_id' => $sales->id ] ) )->get_results();
+		$accounts    = ( new AccountQuery() )->get_results( true );
+		$taxcode_ids = ( new TaxCodeQuery() )->get_results( true );
+		$forms       = new Forms();
+		$html        =
+			$forms->form_field( [ 'name' => 'date', 'type' => 'date', 'value' => $sales->date, 'label' => __( 'Issue date', 'wpacc' ), 'required' => true ] ) .
+			$forms->form_field( [ 'name' => 'debtor', 'type' => 'select', 'value' => $sales->debtor_id, 'label' => __( 'Customer', 'wpacc' ), 'required' => true, 'list' => $debtors ] ) .
+			$forms->form_field( [ 'name' => 'reference', 'value' => $sales->reference, 'label' => __( 'Reference', 'wpacc' ) ] ) .
+			$forms->form_field( [ 'name' => 'address', 'textarea', 'value' => $sales->address, 'label' => __( 'Billing address', 'wpacc' ) ] ) .
+			$forms->form_field( [ 'name' => 'description', 'value' => $sales->description, 'label' => __( 'Description', 'wpacc' ) ] ) .
+			$forms->forms_table( [
+				'id'          => 'id',
+				'account_id'  => __( 'Account', 'wpacc' ),
+ 				'description' => __( 'Description', 'wpacc' ),
+ 				'quantity'    => __( 'Quantity', 'wpacc' ),
+ 				'unitprice'   => __( 'Unitprice', 'wpacc' ),
+ 				'taxcode_id'  => __( 'Taxcode', 'wpacc' ),
+				],
+				[
+				'id'          => [ 'name' => 'detail_id[]', 'type' => 'hidden' ],
+				'account_id'  => [ 'name' => 'account_id[]', 'type' => 'select', 'list' => $accounts ],
+				'description' => [ 'name' => 'description[]' ],
+				'quantity'    => [ 'name' => 'quantity[]', 'type' => 'number' ],
+				'unitprice'   => [ 'name' => 'unitprice[]', 'type' => 'currency' ],
+				'taxcode_id'  => [ 'name' => 'taxcode_id[]', 'type' => 'select', 'list' => $taxcode_ids ],
+				],
+				$details
+			) .
+			$forms->form_field( [ 'name' => 'id', 'type' => 'hidden', 'value' => $sales->id ] ) .
+			$forms->action_button( 'update', __( 'Save', 'wpacc' ) ) .
+			( $sales->id ? $forms->action_button( 'delete', __( 'Delete', 'wpacc' ), false ) : '' );
+		return $this->form( $html );
+	}
+
+	/**
+	 * Render the existing sales
 	 *
 	 * @return string
 	 */
 	public function overview() : string {
-		$coa     = ( new ChartOfAccounts( business()->id ) )->get_results();
-		$details = ( new ChartOfAccountsQuery(
-			business()->id,
-			[
-				'from'  => $this->from,
-				'until' => $this->until,
-			]
-		) )->get_results();
-
-//		foreach ( Account::VALID_ITEMS as $item ) {
-//			$this->summary[ $item ]['account'] = array_filter(
-//				$coa,
-//				function ( $account ) use ( $item ) {
-//					return $item === $account->type;
-//				}
-//			);
-//			$this->summary[ $item ]['value']   = array_sum(
-//				array_map(
-//					function ( $detail ) {
-//						return $detail->unitprice * $detail->quantity;
-//					},
-//					array_filter(
-//						$details,
-//						function ( $detail ) use ( $item ) {
-//							return $item === $detail->$this->summary[ $item ]['account']->type;
-//						}
-//					)
-//				)
-//			);
-//		}
-		foreach ( Account::VALID_ITEMS as $item ) {
-			usort(
-				$this->summary[ $item ],
-				function( $left, $right ) {
-					return $left['account']->order_number <=> $right['account']->order_number;
-				}
-			);
-		}
-		ob_start();
-		?>
-		<div style="float:left;width:50%;" >
-			<?php $this->list( Account::ASSETS_ITEM, __( 'Assets', 'wpacc' ) ); ?>
-			<?php $this->list( Account::LIABILITY_ITEM, __( 'Liabilities', 'wpacc' ) ); ?>
-			<?php $this->list( Account::EQUITY_ITEM, __( 'Equity', 'wpacc' ) ); ?>
-		</div>
-		<div style="float:right; width:50%;" >
-			<?php $this->list( Account::INCOME_ITEM, __( 'Assets', 'wpacc' ) ); ?>
-			<?php $this->list( Account::EXPENSE_ITEM, __( 'Expenses', 'wpacc' ) ); ?>
-		</div>
-		<?php
-		return ob_get_clean() . $this->form( $this->action_button( 'change', __( 'Change', 'wpacc' ) ) );
+		$sales = new TransactionQuery( [ 'type' => Transaction::SALES_INVOICE ] );
+		$forms  = new Forms();
+		return $this->form( $forms->table( ['id' => 'id', 'name' => __( 'Name', 'wpacc' ) ], $sales->get_results() ) );
 	}
 
-	public function change() : string {
-		ob_start();
-		?>
-		<label for="wpacc_start"></label>
-
-		<?php
-		return ob_get_clean();
-	}
-
-	/**
-	 * Show the account list
-	 *
-	 * @param string $type  Type of accounts to show.
-	 * @param string $title The contents of the header.
-	 */
-	private function list( string $type, string $title ) {
-		?>
-		<h2><?php echo esc_html( $title ); ?></h2>
-		<ul style="list-style-type: none;">
-		<?php foreach ( $this->summary[ $type ] as $account ) : ?>
-			<li><?php echo esc_html( $account->name ); ?><span style="text-align:right;"><?php echo esc_html( $this->summary['value'] ); ?></span></li>
-		<?php endforeach; ?>
-			<li>
-				<strong><?php esc_html_e( 'Total', 'wpacc' ); ?></strong>
-			</li>
-		</ul>
-		<?php
-	}
 }

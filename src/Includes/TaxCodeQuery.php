@@ -56,16 +56,15 @@ class TaxCodeQuery {
 	 *
 	 * @since 1.0.0
 	 *
+	 * @parameter bool $as_array If true, results are return as id, name pairs.
 	 * @return array
 	 */
-	public function get_results() : array {
+	public function get_results( bool $as_array ) : array {
 		global $wpdb;
-		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}wpacc_taxcode %s ORDER BY name",
-				$this->query_where
-			)
-		);
+		if ( $as_array ) {
+			return $wpdb->get_results( "SELECT id, name FROM {$wpdb->prefix}wpacc_taxcode $this->query_where ORDER BY name", ARRAY_A ); // phpcs:ignore
+		}
+		return $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wpacc_taxcode $this->query_where ORDER BY name" ); // phpcs:ignore
 	}
 
 }

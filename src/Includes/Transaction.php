@@ -18,7 +18,7 @@ namespace WP_Accountancy\Includes;
  * @property int    debtor_id
  * @property int    creditor_id
  * @property string reference
- * @property int    invoice_id
+ * @property string invoice_id
  * @property string address
  * @property string date
  * @property string type
@@ -33,6 +33,7 @@ class Transaction {
 	const RECEIPT                = 'receipt';
 	const PAYMENT                = 'payment';
 	const FIXED_ASSET            = 'fixed asset';
+	const START_BALANCE          = 'start balance';
 
 	/**
 	 * Constructor

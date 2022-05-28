@@ -1,57 +1,74 @@
+/**
+ * The styles sheet.
+ *
+ * @since      1.0.0
+ *
+ * @package    WP-Accountancy
+ * @subpackage WP-Accountancy/Public
+ */
+
+:root {
+	--head: 3rem;
+}
+
+/*
+ * The layout.
+ */
 div.wpacc-container {
-	width: 100%;
-	font-size: small;
-	padding: 1rem;
-}
-@media (min-width: 600px) {
-	div.wpacc-container {
-		padding: 0;
-	}
-}
-
-.wpacc-form {
 	display: grid;
-	grid-template-columns: 2fr 1fr;
-	grid-gap: 2rem;
+	font-size: small;
+	gap: 1rem 1rem;
+	grid-template-columns: [left] 20% [right] 80%;
+	grid-template-rows: [head] var(--head) [main] auto;
 }
 
-.wpacc-form label {
-	display: block;
-}
-
-.wpacc-form p {
-	margin: 0;
-}
-
-.wpacc-full-width {
-	grid-column: 1 / 3;
-}
-
-.wpacc-head {
+div.wpacc-head {
 	background-color: #555;
 	color: white;
-	width: 100%;
+	font-size: large;
+	grid-column: right;
+	grid-row: head;
+	text-align: center;
 }
 
-table.wpacc,
-table.wpacc-select {
-	table-layout: auto;
+div.wpacc-main {
+	grid-column: right;
+	grid-row: main;
 }
 
+div.wpacc-menu {
+	display: block;
+	grid-column: left;
+	grid-row: main;
+}
+
+@media screen and (max-width: 600px) {
+	div.wpacc-container {
+		grid-template-columns : 1fr;
+	}
+
+	div.wpacc-head {
+		grid-column: 1;
+	}
+
+	div.wpacc-main {
+		grid-column: 1;
+	}
+
+	div.wpacc-menu {
+		grid-column: unset;
+	}
+
+}
+
+/*
+ * Navigation
+ */
 nav.wpacc-menu ul {
 	list-style-type: none;
 	margin:0;
 	padding:0;
 	background-color: #f1f1f1;
-}
-
-nav.wpacc-menu-top ul {
-	display: inline-block;
-	overflow: hidden;
-}
-
-nav.wpacc-menu-top li {
-	float: left;
 }
 
 nav.wpacc-menu li a {
@@ -65,5 +82,92 @@ nav.wpacc-menu li a:hover {
 	background-color: #555;
 	color: white;
 	cursor: pointer;
+}
+
+button.wpacc-menu-dropdown {
+	display: none;
+	height: var(--head);
+}
+
+@media screen and (max-width: 600px) {
+	button.wpacc-menu-dropdown {
+		display: inline-block;
+		float: right;
+	}
+
+	nav.wpacc-menu ul {
+		display: none;
+		z-index: 999;
+		background-color: white;
+		position: absolute;
+		right: 0;
+	}
+
+	nav.wpacc-menu ul li {
+		position: relative;
+		display: block;
+		float: none;
+		right: 0;
+		padding-right: 15px;
+		text-align: right;
+	}
+
+}
+
+/*
+ * Tables
+ */
+table.wpacc,
+table.wpacc-select {
+	table-layout: auto;
+}
+
+table.wpacc a:hover,
+table.wpacc-select a:hover {
+	cursor: pointer;
+}
+
+/**
+ * The business link
+ */
+a.wpacc-business {
+	color: white;
+	line-height: var(--head);
+	padding: 0 10px;
+}
+
+a.wpacc-business,
+a.wpacc-business:link,
+a.wpacc-business:visited,
+a.wpacc-business:hover,
+a.wpacc-business:active {
+	text-decoration: none;
+	box-shadow: none;
+}
+
+a.wpacc-business:hover {
+	display: inline-block;
+	outline: solid white;
+	cursor: pointer;
+}
+
+/*
+ * Forms
+ */
+form.wpacc-form {
+	background-color: #ffffff;
+	color: #444444;
+	font-size: 16px;
+	font-weight: 300;
+	margin: 0;
+	padding: 0;
+}
+
+form.wpacc-form label {
+	display: block;
+}
+
+form.wpacc-form p {
+	margin: 0;
 }
 

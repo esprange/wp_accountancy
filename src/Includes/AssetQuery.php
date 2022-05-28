@@ -1,6 +1,6 @@
 <?php
 /**
- * Definition chart of account query class
+ * Definition asset query class
  *
  * @since      1.0.0
  *
@@ -11,9 +11,9 @@
 namespace WP_Accountancy\Includes;
 
 /**
- * Account query class.
+ * Asset query class.
  */
-class ChartOfAccountsQuery {
+class AssetQuery {
 
 	/**
 	 * De query string
@@ -34,25 +34,25 @@ class ChartOfAccountsQuery {
 		global $wpacc_business;
 		$defaults          = [
 			'business_id' => $wpacc_business->id,
-			'type'        => '',
+			'name'        => '',
 			'active'      => 0,
 			'id'          => 0,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
-		$this->query_where = 'WHERE 1 = 1';
+		$this->query_where = $wpdb->prepare( 'WHERE business_id = %d', $wpacc_business->id );
 		if ( $query_vars['active'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND active = %d', (int) $query_vars['active'] );
+			$this->query_where .= $wpdb->prepare( ' AND active_id = %d', (int) $query_vars['active'] );
 		}
 		if ( $query_vars['id'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND id = %d', $query_vars['id'] );
 		}
-		if ( $query_vars['type'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND name = %s', $query_vars['type'] );
+		if ( $query_vars['name'] ) {
+			$this->query_where .= $wpdb->prepare( ' AND name = %s', $query_vars['name'] );
 		}
 	}
 
 	/**
-	 * Get the raw account results.
+	 * Get the asset results.
 	 *
 	 * @since 1.0.0
 	 *
@@ -60,14 +60,7 @@ class ChartOfAccountsQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		global $wpacc_business;
-		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT sum( d.quantity * d.unitprice ) as value, a.type as type, a.name as name, a.id as id FROM {$wpdb->prefix}wpacc_account AS a
-				LEFT JOIN {$wpdb->prefix}wpacc_detail as d ON a.id=d.account_id AND a.business_id=%d GROUP BY a.type",
-				$wpacc_business->id
-			)
-		);
+		return $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wpacc_assets $this->query_where ORDER BY name" ); // phpcs:ignore
 	}
 
 }

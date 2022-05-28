@@ -28,8 +28,10 @@ class Account {
 	public const EQUITY_ITEM    = 'equity';
 	public const INCOME_ITEM    = 'income';
 	public const EXPENSE_ITEM   = 'expense';
+	public const BANK_ITEM      = 'bank';
+	public const CASH_ITEM      = 'cash';
 	public const TOTAL_ITEM     = 'total';
-	public const VALID_ITEMS    = [ self::ASSETS_ITEM, self::LIABILITY_ITEM, self::EQUITY_ITEM, self::INCOME_ITEM, self::EXPENSE_ITEM, self::TOTAL_ITEM ];
+	public const COA_ITEMS      = [ self::ASSETS_ITEM, self::LIABILITY_ITEM, self::EQUITY_ITEM, self::INCOME_ITEM, self::EXPENSE_ITEM, self::TOTAL_ITEM ];
 
 	/**
 	 * Constructor
@@ -84,6 +86,16 @@ class Account {
 		$wpdb->replace( "{$wpdb->prefix}wpacc_account", $data );
 		$this->id = $wpdb->insert_id;
 		return $this->id;
+	}
+
+	/**
+	 * Delete the account entry.
+	 *
+	 * @return bool
+	 */
+	public function delete() : bool {
+		global $wpdb;
+		return (bool) $wpdb->delete( "{$wpdb->prefix}wpacc_account", [ 'id' => $this->id ] );
 	}
 
 }

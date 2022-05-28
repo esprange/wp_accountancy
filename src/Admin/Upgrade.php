@@ -106,6 +106,23 @@ class Upgrade {
 		$this->foreign_key( 'taxcode', 'business' );
 
 		/**
+		 * Taxcodes, can be different for each business.
+		 */
+		dbDelta(
+			"CREATE TABLE {$wpdb->prefix}wpacc_asset (
+			id           INT (10) NOT NULL AUTO_INCREMENT,
+			business_id  INT (10) NOT NULL,
+			name         VARCHAR (50) NOT NULL,
+			description  TEXT,
+			rate         FLOAT,
+			cost        DECIMAL (13,4)
+			provision    DECIMAL (13,4),
+			PRIMARY KEY  (id)
+			) $charset_collate;"
+		);
+		$this->foreign_key( 'asset', 'business' );
+
+		/**
 		 * The accounts of the general ledger. The COA exists for each business. A record can be a group, a group total or a regular account
 		 * Regular accounts refer to the group using the group_id reference.
 		 */
@@ -124,6 +141,7 @@ class Upgrade {
 		);
 		$this->foreign_key( 'account', 'business' );
 		$this->foreign_key( 'account', 'taxcode' );
+		$this->foreign_key( 'account', 'account', 'group_id' );
 
 		/**
 		 * The creditors
@@ -168,7 +186,7 @@ class Upgrade {
 			debtor_id   INT (10),
 			creditor_id INT (10),
 			reference   TINYTEXT,
-			invoice_id  INT (10),
+			invoice_id  TINYTEXT,
 			address     TEXT,
 			date        DATE,
 			type        TINYTEXT,
@@ -208,13 +226,15 @@ class Upgrade {
 	/**
 	 * Create the foreignkey if is does not exist yet.
 	 *
-	 * @param string $table  The table for which the constraint is required.
-	 * @param string $parent The parent table to which the foreign key refers.
+	 * @param string $table   The table for which the constraint is required.
+	 * @param string $parent  The parent table to which the foreign key refers.
+	 * @param string $foreign The foreign key, optional.
 	 *
 	 * @return void
 	 */
-	private function foreign_key( string $table, string $parent ) {
+	private function foreign_key( string $table, string $parent, string $foreign = '' ) {
 		global $wpdb;
+		$foreign = $foreign ?: "{$parent}_id";
 		// phpcs:disable -- next line cannot be used with prepare.
 		if ( ! $wpdb->get_var(
 			"SELECT COUNT(*)
@@ -225,7 +245,7 @@ class Upgrade {
 			        CONSTRAINT_TYPE   = 'FOREIGN KEY'"
 			) ) {
 			$wpdb->query( "ALTER TABLE {$wpdb->prefix}wpacc_$table
-				ADD CONSTRAINT fk_{$parent}_$table FOREIGN KEY ({$parent}_id) REFERENCES {$wpdb->prefix}wpacc_$parent(id)"
+				ADD CONSTRAINT fk_{$parent}_$table FOREIGN KEY ($foreign) REFERENCES {$wpdb->prefix}wpacc_$parent(id)"
 			);
 		}
 		// phpcs:enable

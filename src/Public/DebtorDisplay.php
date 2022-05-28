@@ -12,7 +12,6 @@ namespace WP_Accountancy\Public;
 
 use WP_Accountancy\Includes\Debtor;
 use WP_Accountancy\Includes\DebtorQuery;
-use function WP_Accountancy\Includes\notify;
 
 /**
  * The Debtor display class.
@@ -20,19 +19,12 @@ use function WP_Accountancy\Includes\notify;
 class DebtorDisplay extends Display {
 
 	/**
-	 * Debtor
-	 *
-	 * @var Debtor $debtor The debtor.
-	 */
-	private Debtor $debtor;
-
-	/**
 	 * Create the debtor.
 	 *
 	 * @return string
 	 */
 	public function create() : string {
-		return $this->update();
+		return $this->read();
 	}
 
 	/**
@@ -41,27 +33,17 @@ class DebtorDisplay extends Display {
 	 * @return string
 	 */
 	public function update() : string {
-		$input = filter_input_array(
-			INPUT_POST,
-			[
-				'id'            => FILTER_SANITIZE_NUMBER_INT,
-				'name'          => FILTER_SANITIZE_STRING,
-				'address'       => FILTER_SANITIZE_STRING,
-				'email_address' => FILTER_SANITIZE_STRING,
-				'active'        => FILTER_SANITIZE_NUMBER_INT,
-			]
-		);
-		if ( $input['id'] ) {
-			$this->debtor = new Debtor( $input['id'] );
-		}
-		$this->debtor->name          = $input['name'];
-		$this->debtor->address       = $input['address'];
-		$this->debtor->email_address = $input['email_address'];
-		$this->debtor->active        = $input['active'];
-		$this->debtor->business_id   = $this->business->id;
-		$this->debtor->update();
-		do_action( 'wpacc_debtor_select', $this->debtor->id );
-		return notify( -1, __( 'Customer saved', 'wpacc' ) );
+		global $wpacc_business;
+		$input                   = filter_input_array( INPUT_POST );
+		$debtor                  = new Debtor( intval( $input['id'] ?? 0 ) );
+		$debtor->name            = sanitize_text_field( $input['name'] ?? '' );
+		$debtor->address         = sanitize_textarea_field( $input['address'] ?? '' );
+		$debtor->billing_address = sanitize_textarea_field( $input['billing_address'] ?? '' );
+		$debtor->email_address   = sanitize_email( $input['email_address'] ?? '' );
+		$debtor->active          = boolval( $input['active'] ?? false );
+		$debtor->business_id     = $wpacc_business->id;
+		$debtor->update();
+		return $this->notify( -1, __( 'Customer saved', 'wpacc' ) );
 	}
 
 	/**
@@ -70,15 +52,15 @@ class DebtorDisplay extends Display {
 	 * @return string
 	 */
 	public function delete() : string {
-		$debtor_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
+		$debtor_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
 		if ( $debtor_id ) {
-			$this->debtor = new Debtor( $debtor_id );
-			if ( $this->debtor->delete() ) {
-				return notify( - 1, __( 'Customer removed', 'wpacc' ) );
+			$debtor = new Debtor( intval( $debtor_id ) );
+			if ( $debtor->delete() ) {
+				return $this->notify( - 1, __( 'Customer removed', 'wpacc' ) );
 			}
-			return notify( 1, __( 'Remove not allowed', 'wpacc' ) );
+			return $this->notify( 1, __( 'Remove not allowed', 'wpacc' ) );
 		}
-		return notify( 1, __( 'Internal error' ) );
+		return $this->notify( 1, __( 'Internal error' ) );
 	}
 
 	/**
@@ -87,27 +69,19 @@ class DebtorDisplay extends Display {
 	 * @return string
 	 */
 	public function read() : string {
-		$debtor_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
-		if ( $debtor_id ) {
-			$this->debtor = new Debtor( $debtor_id );
-		}
-		ob_start();
-		?>
-		<label for="wpacc_name"><?php esc_html_e( 'Name', 'wpacc' ); ?>
-			<input name="name" id="wpacc_name" value="<?php echo esc_attr( $this->debtor->name ); ?>" >
-		</label>
-		<label for="wpacc_address"><?php esc_html_e( 'Address', 'wpacc' ); ?>
-			<textarea name="address" id="wpacc_address" ><?php echo esc_attr( $this->debtor->address ); ?></textarea>
-		</label>
-		<label for="wpacc_email_address"><?php esc_html_e( 'EMail', 'wpacc' ); ?>
-			<input name="email_address" id="wpacc_email_address" value="<?php echo esc_attr( $this->debtor->email_address ); ?>" >
-		</label>
-		<label for="wpacc_active"><?php esc_html_e( 'Active', 'wpacc' ); ?>
-			<input name="active" id="wpacc_active" type="checkbox" <?php checked( $this->debtor->active ); ?>" >
-		</label>
-		<input type="hidden" name="id" value="<?php echo esc_attr( $this->debtor->id ); ?>" />
-		<?php
-		return $this->form( ob_get_clean() . $this->action_button( $this->debtor->id ? 'update' : 'create', __( 'Save', 'wpacc' ) ) );
+		$debtor_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
+		$debtor    = new Debtor( intval( $debtor_id ) );
+		$forms     = new Forms();
+		$html      =
+			$forms->form_field( [ 'name' => 'name', 'value' => $debtor->name, 'label' => __( 'Name', 'wpacc' ), 'required' => true ] ) .
+			$forms->form_field( [ 'name' => 'address', 'type' => 'textarea', 'value' => $debtor->address, 'label'=> __( 'Address', 'wpacc' ) ] ) .
+			$forms->form_field( [ 'name' => 'billing_address', 'type' => 'textarea', 'value' => $debtor->billing_address, 'label'=> __( 'Billing address', 'wpacc' ) ] ) .
+			$forms->form_field( [ 'name' => 'email_address', 'type' => 'email', 'value' => $debtor->email_address, 'label' => __( 'Email', 'wpacc' ) ] ) .
+			$forms->form_field( [ 'name' => 'active', 'type' => 'checkbox', 'value' => $debtor->active, 'label' => __( 'Active', 'wpacc' ) ] ) .
+			$forms->form_field( [ 'name' => 'id', 'type' => 'hidden', 'value' => $debtor->id ] ) .
+			$forms->action_button( 'update', __( 'Save', 'wpacc' ) ) .
+			( $debtor->id ? $forms->action_button( 'delete', __( 'Delete', 'wpacc' ), false ) : '' );
+		return $this->form( $html );
 	}
 
 	/**
@@ -116,31 +90,9 @@ class DebtorDisplay extends Display {
 	 * @return string
 	 */
 	public function overview() : string {
-		$debtors = new DebtorQuery( $this->business->id );
-		?>
-		<table class="wpacc display" >
-			<thead>
-			<tr>
-				<th></th>
-				<th></th>
-				<th><?php esc_html_e( 'Name', 'wpacc' ); ?></th>
-			</tr>
-			</thead>
-			<tbody>
-			<?php foreach ( $debtors->get_results() as $debtor ) : ?>
-				<tr>
-					<td></td>
-					<td><?php echo esc_html( $debtor->id ); ?></td>
-					<td><a href="<?php echo esc_url( sprintf( '?wpacc_action=read&id=%d', $debtor->id ) ); ?>"><?php echo esc_html( $debtor->name ); ?></a></td>
-				</tr>
-			<?php endforeach; ?>
-			</tbody>
-		</table>
-		}
-		?>
-		<?php
-		return ob_get_clean() . $this->form( $this->action_button( 'change', __( 'Change', 'wpacc' ) ) );
+		$debtors = new DebtorQuery();
+		$forms   = new Forms();
+		return $this->form( $forms->table( ['id' => 'id', 'name' => __( 'Name', 'wpacc' ) ], $debtors->get_results() ) );
 	}
-
 
 }

@@ -10,7 +10,6 @@
 
 namespace WP_Accountancy\Includes;
 
-use WP_REST_Request;
 /**
  * The REST API class.
  */
@@ -28,6 +27,10 @@ class REST {
 		[
 			'class' => TransactionApi::class,
 			'route' => '/transactions',
+		],
+		[
+			'class' => AssetApi::class,
+			'route' => '/assets',
 		],
 	];
 

@@ -10,9 +10,6 @@
 
 namespace WP_Accountancy\Public;
 
-use WP_Accountancy\Includes\Business;
-use function WP_Accountancy\Includes\business;
-
 /**
  * The Display class.
  */
@@ -55,71 +52,21 @@ abstract class Display {
 	 * @return string
 	 */
 	final public function container( string $contents ) : string {
-		global $business;
-		$left_menu = [
-			SummaryDisplay::Class      => __( 'Summary', 'wpacc' ),
-			BankcashDisplay::Class     => __( 'Bank and Cash Accounts', 'wpacc' ),
-			InteraccountDisplay::Class => __( 'Inter Account Transfers', 'wpacc' ),
-			DebtorDisplay::Class       => __( 'Customers', 'wpacc' ),
-			SalesDisplay::Class        => __( 'Sales Invoices', 'wpacc' ),
-			CreditnoteDisplay::Class   => __( 'Credit Notes', 'wpacc' ),
-			CreditorDisplay::Class     => __( 'Suppliers', 'wpacc' ),
-			PurchaseDisplay::Class     => __( 'Purchase Invoices', 'wpacc' ),
-			AssetDisplay::Class        => __( 'Fixed Assets', 'wpacc' ),
-			DepreciationDisplay::Class => __( 'Depreciation Entries', 'wpacc' ),
-			JournalDisplay::Class      => __( 'Journal Entries', 'wpacc' ),
-			ReportDisplay::Class       => __( 'Reports', 'wpacc' ),
-			SettingDisplay::Class      => __( 'Settings', 'wpacc' ),
-		];
-		$top_menu  = [
-			BusinessDisplay::Class => __( 'Business', 'wpacc' ),
-		];
-		$html      = <<<EOT
-		<div class="wpacc-container">
-			<div class="wpacc-head">
-				<nav class="wpacc-menu wpacc-menu-top" >
-				<ul>
-		EOT;
-		foreach ( $top_menu as $key => $menu_item ) {
-			$html .= <<<EOT
-				<li><a data-menu="$key">$menu_item</a></li>
-		EOT;
-		}
-		$html .= <<<EOT
-				</ul>
-				</nav>
-				<span style="text-align: center">{$business->name}</span>
-			</div>
-			<div style="float: left; width: 20%;">
-			<nav class="wpacc-menu">
-			<ul>
-		EOT;
-		foreach ( $left_menu as $key => $menu_item ) {
-			$html .= <<<EOT
-			<li><a data-menu="$key" >$menu_item</a></li>
-			EOT;
-		}
-		$html .= <<<EOT
-			</ul>
-			</nav>
-			</div>
-			<div style="float: right; width: 80%; padding-left: 10px" id="wpacc">$contents</div>
-		</div>
-		EOT;
-		return $html;
-	}
-
-	/**
-	 * Build a form submit button
-	 *
-	 * @param string $action The button action.
-	 * @param string $text   The button label.
-	 *
-	 * @return string
-	 */
-	final protected function action_button( string $action, string $text ) : string {
+		$head = $this->head();
+		$menu = $this->menu();
 		return <<<EOT
-		<button name="wpacc_action" type="button" value="$action" >$text</button>
+		<div class="wpacc-container">
+			<div class="wpacc-head" id="wpacc-head">
+				$head
+				<button class="wpacc-menu-dropdown" id="wpacc-menu-dropdown">&#9776;</button>
+			</div>
+			<div class="wpacc-menu" id="wpacc-menu">
+				$menu
+			</div>
+			<div class="wpacc-main" id="wpacc-main">
+				$contents
+			</div>
+		</div>
 		EOT;
 	}
 
@@ -138,4 +85,74 @@ abstract class Display {
 		EOT;
 	}
 
+	/**
+	 * Create notification for the user.
+	 *
+	 * @param int    $status  1 success, 0 error, -1 information.
+	 * @param string $message The message.
+	 * @return string Html text.
+	 * @noinspection PhpUnnecessaryCurlyVarSyntaxInspection
+	 */
+	final function notify( int $status, string $message ) : string {
+		$levels = [
+			-1 => 'wpacc-inform',
+			0  => 'wpacc-fout',
+			1  => 'wpacc-succes',
+		];
+		return "<div class=\"{$levels[$status]}\"><p>$message</p></div>";
+	}
+
+	/**
+	 * Prepare the top row
+	 *
+	 * @return string
+	 *
+	 * @todo For the multi business option, the business name should be a button.
+	 */
+	private function head() : string {
+		global $wpacc_business;
+		$businessdisplay = BusinessDisplay::Class;
+		$html            = <<<EOT
+		<a data-menu="$businessdisplay" class="wpacc-business">$wpacc_business->name</a>
+		EOT;
+		return apply_filters( 'wpacc_head', $html );
+	}
+
+	/**
+	 * Prepare the menu.
+	 *
+	 * @return string
+	 */
+	private function menu() : string {
+		$menu = [
+			SummaryDisplay::Class      => __( 'Summary', 'wpacc' ),
+			BankcashDisplay::Class     => __( 'Bank and Cash Accounts', 'wpacc' ),
+			InteraccountDisplay::Class => __( 'Inter Account Transfers', 'wpacc' ),
+			DebtorDisplay::Class       => __( 'Customers', 'wpacc' ),
+			SalesDisplay::Class        => __( 'Sales Invoices', 'wpacc' ),
+			CreditnoteDisplay::Class   => __( 'Credit Notes', 'wpacc' ),
+			CreditorDisplay::Class     => __( 'Suppliers', 'wpacc' ),
+			PurchaseDisplay::Class     => __( 'Purchase Invoices', 'wpacc' ),
+			AssetDisplay::Class        => __( 'Fixed Assets', 'wpacc' ),
+			DepreciationDisplay::Class => __( 'Depreciation Entries', 'wpacc' ),
+			JournalDisplay::Class      => __( 'Journal Entries', 'wpacc' ),
+			ReportDisplay::Class       => __( 'Reports', 'wpacc' ),
+			SettingDisplay::Class      => __( 'Settings', 'wpacc' ),
+		];
+		$menu = apply_filters( 'wpacc_menu', $menu );
+		$html = <<<EOT
+		<nav class="wpacc-menu">
+			<ul>
+		EOT;
+		foreach ( $menu as $key => $menu_item ) {
+			$html .= <<<EOT
+				<li><a data-menu="$key" >$menu_item</a></li>
+			EOT;
+		}
+		$html .= <<<EOT
+			</ul>
+		</nav>
+		EOT;
+		return $html;
+	}
 }
