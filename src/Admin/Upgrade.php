@@ -18,7 +18,7 @@ class Upgrade {
 	/**
 	 * Plugin-database-version
 	 */
-	const DBVERSION = 9;
+	const DBVERSION = 10;
 
 	/**
 	 * Execute upgrade actions if needed.
@@ -81,7 +81,7 @@ class Upgrade {
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_business (
 			id      INT (10) NOT NULL AUTO_INCREMENT,
-			slug	TINYTEXT NOT NULL,
+			slug	TINYTEXT,
 			name    TINYTEXT,
 			address TEXT,
 			country TINYTEXT,
@@ -115,7 +115,7 @@ class Upgrade {
 			name         VARCHAR (50) NOT NULL,
 			description  TEXT,
 			rate         FLOAT,
-			cost        DECIMAL (13,4)
+			cost        DECIMAL (13,4),
 			provision    DECIMAL (13,4),
 			PRIMARY KEY  (id)
 			) $charset_collate;"
@@ -233,6 +233,9 @@ class Upgrade {
 	 * @return void
 	 */
 	private function foreign_key( string $table, string $parent, string $foreign = '' ) {
+		if ( defined( 'WPACC_TEST' ) ) {
+			return; // Phpunit creates temporary tables which don't allow foreign key constraints.
+		}
 		global $wpdb;
 		$foreign = $foreign ?: "{$parent}_id";
 		// phpcs:disable -- next line cannot be used with prepare.
@@ -244,6 +247,9 @@ class Upgrade {
 			        CONSTRAINT_NAME   = 'fk_{$parent}_$table' AND
 			        CONSTRAINT_TYPE   = 'FOREIGN KEY'"
 			) ) {
+			$query = "ALTER TABLE {$wpdb->prefix}wpacc_$table
+				ADD CONSTRAINT fk_{$parent}_$table FOREIGN KEY ($foreign) REFERENCES {$wpdb->prefix}wpacc_$parent(id)";
+			echo $query;
 			$wpdb->query( "ALTER TABLE {$wpdb->prefix}wpacc_$table
 				ADD CONSTRAINT fk_{$parent}_$table FOREIGN KEY ($foreign) REFERENCES {$wpdb->prefix}wpacc_$parent(id)"
 			);

@@ -18,6 +18,15 @@ use function WP_Accountancy\Includes\notify;
 class InteraccountDisplay extends Display {
 
 	/**
+	 * Provide the top title
+	 *
+	 * @return string
+	 */
+	public function get_title(): string {
+		return __( 'Interaccount transactions', 'wpacc' );
+	}
+
+	/**
 	 * Render the existing business
 	 *
 	 * @return string

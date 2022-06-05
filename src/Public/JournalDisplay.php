@@ -18,6 +18,15 @@ use function WP_Accountancy\Includes\notify;
 class JournalDisplay extends Display {
 
 	/**
+	 * Provide the top title
+	 *
+	 * @return string
+	 */
+	public function get_title(): string {
+		return __( 'Journal transactions', 'wpacc' );
+	}
+
+	/**
 	 * Render the existing business
 	 *
 	 * @return string

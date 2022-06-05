@@ -60,7 +60,7 @@ class AssetQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		return $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wpacc_assets $this->query_where ORDER BY name" ); // phpcs:ignore
+		return $wpdb->get_results( "SELECT *, id as asset_id FROM {$wpdb->prefix}wpacc_assets $this->query_where ORDER BY name" );
 	}
 
 }

@@ -138,8 +138,8 @@ class Accountancy {
 		$plugin_filters = new \WP_Accountancy\Public\Filters();
 		$plugin_actions = new \WP_Accountancy\Public\Actions();
 
-		$this->loader->add_action( 'init', $plugin_actions, 'init_business', 9 );
 		$this->loader->add_action( 'init', $plugin_actions, 'add_shortcode' );
+		$this->loader->add_action( 'wp_loaded', $plugin_actions, 'init_business' );
 		$this->loader->add_action( 'wp_ajax_wpacc_formhandler', $plugin_actions, 'formhandler' );
 		$this->loader->add_action( 'wp_ajax_wpacc_menuhandler', $plugin_actions, 'menuhandler' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_actions, 'load_script' );

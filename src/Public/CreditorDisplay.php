@@ -19,6 +19,15 @@ use WP_Accountancy\Includes\CreditorQuery;
 class CreditorDisplay extends Display {
 
 	/**
+	 * Provide the top title
+	 *
+	 * @return string
+	 */
+	public function get_title(): string {
+		return __( 'Suppliers', 'wpacc' );
+	}
+
+	/**
 	 * Create the creditor.
 	 *
 	 * @return string
@@ -35,7 +44,7 @@ class CreditorDisplay extends Display {
 	public function update() : string {
 		global $wpacc_business;
 		$input                   = filter_input_array( INPUT_POST );
-		$creditor                = new Creditor( intval( $input['id'] ?? 0 ) );
+		$creditor                = new Creditor( intval( $input['creditor_id'] ?? 0 ) );
 		$creditor->name          = sanitize_text_field( $input['name'] ?? '' );
 		$creditor->address       = sanitize_textarea_field( $input['address'] ?? '' );
 		$creditor->email_address = sanitize_email( $input['email_address'] ?? '' );
@@ -51,7 +60,7 @@ class CreditorDisplay extends Display {
 	 * @return string
 	 */
 	public function delete() : string {
-		$creditor_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
+		$creditor_id = filter_input( INPUT_POST, 'creditor_id', FILTER_SANITIZE_NUMBER_INT );
 		if ( $creditor_id ) {
 			$creditor = new Creditor( intval( $creditor_id ) );
 			if ( $creditor->delete() ) {
@@ -72,13 +81,56 @@ class CreditorDisplay extends Display {
 		$creditor    = new Creditor( intval( $creditor_id ) );
 		$forms       = new Forms();
 		$html        =
-			$forms->form_field( [ 'name' => 'name', 'value' => $creditor->name, 'label' => __( 'Name', 'wpacc' ), 'required' => true ] ) .
-			$forms->form_field( [ 'name' => 'address', 'type' => 'textarea', 'value' => $creditor->address, 'label'=> __( 'Address', 'wpacc' ) ] ) .
-			$forms->form_field( [ 'name' => 'email_address', 'type' => 'email', 'value' => $creditor->email_address, 'label' => __( 'Email', 'wpacc' ) ] ) .
-			$forms->form_field( [ 'name' => 'active', 'type' => 'checkbox', 'value' => $creditor->active, 'label' => __( 'Active', 'wpacc' ) ] ) .
-			$forms->form_field( [ 'name' => 'id', 'type' => 'hidden', 'value' => $creditor->id ] ) .
-			$forms->action_button( 'update', __( 'Save', 'wpacc' ) ) .
-			( $creditor->id ? $forms->action_button( 'delete', __( 'Delete', 'wpacc' ), false ) : '' );
+			$this->field->render(
+				[
+					'name'     => 'name',
+					'value'    => $creditor->name,
+					'label'    => __( 'Name', 'wpacc' ),
+					'required' => true,
+				]
+			) .
+			$this->field->render(
+				[
+					'name'  => 'address',
+					'type'  => 'textarea',
+					'value' => $creditor->address,
+					'label' => __(
+						'Address',
+						'wpacc'
+					),
+				]
+			) .
+			$this->field->render(
+				[
+					'name'  => 'email_address',
+					'type'  => 'email',
+					'value' => $creditor->email_address,
+					'label' => __(
+						'Email',
+						'wpacc'
+					),
+				]
+			) .
+			$this->field->render(
+				[
+					'name'  => 'active',
+					'type'  => 'checkbox',
+					'value' => $creditor->active,
+					'label' => __(
+						'Active',
+						'wpacc'
+					),
+				]
+			) .
+			$this->field->render(
+				[
+					'name'  => 'creditor_id',
+					'type'  => 'hidden',
+					'value' => $creditor->id,
+				]
+			) .
+			$forms->action_save( __( 'Save', 'wpacc' ) ) .
+			( $creditor->id ? $forms->action_delete( __( 'Delete', 'wpacc' ) ) : '' );
 		return $this->form( $html );
 	}
 
@@ -88,9 +140,30 @@ class CreditorDisplay extends Display {
 	 * @return string
 	 */
 	public function overview() : string {
-		$creditors = new CreditorQuery();
-		$forms     = new Forms();
-		return $this->form( $forms->table( ['id' => 'id', 'name' => __( 'Name', 'wpacc' ) ], $creditors->get_results() ) );
+		return $this->form(
+			( new Table() )->render(
+				[
+					'fields'  => [
+						[
+							'name'  => 'creditor_id',
+							'type'  => 'static',
+							'label' => '',
+						],
+						[
+							'name'  => 'name',
+							'type'  => 'zoom',
+							'label' => __(
+								'Name',
+								'wpacc'
+							),
+						],
+					],
+					'items'   => ( new CreditorQuery() )->get_results(),
+					'options' => [ 'create' => __( 'New supplier', 'wpacc' ) ],
+				]
+			)
+		);
+
 	}
 
 }

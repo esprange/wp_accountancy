@@ -18,6 +18,15 @@ use function WP_Accountancy\Includes\notify;
 class ReportDisplay extends Display {
 
 	/**
+	 * Provide the top title
+	 *
+	 * @return string
+	 */
+	public function get_title(): string {
+		return __( 'Reports', 'wpacc' );
+	}
+
+	/**
 	 * Render the existing business
 	 *
 	 * @return string

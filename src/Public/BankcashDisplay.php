@@ -22,6 +22,16 @@ use function WP_Accountancy\Includes\notify;
  * The Public filters.
  */
 class BankcashDisplay extends Display {
+
+	/**
+	 * Provide the top title
+	 *
+	 * @return string
+	 */
+	public function get_title(): string {
+		return __( 'Bank and Cash accounts', 'wpacc' );
+	}
+
 	/**
 	 * Create the bank or cash.
 	 *
@@ -151,8 +161,15 @@ class BankcashDisplay extends Display {
 		$detail->update();
 	}
 
+	/**
+	 * To do
+	 *
+	 * @param int $account_id To do.
+	 *
+	 * @return float The value.
+	 */
 	private function get_start_balance( int $account_id ) : float {
 		$transactions = ( new TransactionQuery( [ 'id' => $account_id ] ) )->get_results();
-
+		return 0;
 	}
 }

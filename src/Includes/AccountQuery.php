@@ -56,15 +56,17 @@ class AccountQuery {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @parameter bool $as_array If true, results are return as id, name pairs.
 	 * @return array
 	 */
-	public function get_results( bool $as_array = false ) : array {
+	public function get_results() : array {
 		global $wpdb;
-		if ( $as_array ) {
-			return $wpdb->get_results( "SELECT id, name FROM {$wpdb->prefix}wpacc_account $this->query_where ORDER BY name", ARRAY_A );  // phpcs:ignore
-		}
-		return $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wpacc_account $this->query_where ORDER BY order_number" ); // phpcs:ignore
+		return $wpdb->get_results(
+			"SELECT id as account_id, name, business_id, taxcode_id, group_id, type, active, order_number
+			FROM {$wpdb->prefix}wpacc_account $this->query_where
+			ORDER BY order_number",
+			OBJECT_K
+		);
 	}
+
 
 }

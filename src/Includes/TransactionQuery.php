@@ -85,7 +85,12 @@ class TransactionQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		return $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wpacc_transaction $this->query_where $this->query_order" ); // phpcs:ignore
+		return $wpdb->get_results(
+			"SELECT id as transaction_id, business_id, debtor_id, creditor_id, reference, invoice_id, address, date, type, description
+			FROM {$wpdb->prefix}wpacc_transaction $this->query_where
+			$this->query_order",
+			OBJECT_K
+		);
 	}
 
 }

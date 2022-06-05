@@ -18,56 +18,6 @@
 	 * Actions after document ready or ajax ready
 	 */
 	function onload() {
-		const $table      = $( 'table.wpacc' ),
-			$table_select = $( 'table.wpacc-select' ),
-			$datepicker   = $( 'input.wpacc-date' );
-		if ( ! $.fn.DataTable.isDataTable( 'table.wpacc' ) ) {
-			let table = $table.DataTable(
-				{
-					columnDefs: [ {
-						visible: false,
-						searchable: false,
-						targets: 0
-					} ],
-					dom: 'Bfrtip'
-				}
-			);
-			if ( $table.data( 'create' ) ) {
-				table.button().add( 0, {
-					text: wpacc_i18n.create,
-					action: function () {
-						doAjaxForm([{wpacc_action: 'create'}])
-					}
-				} );
-			}
-			if ( $table.data( 'addrow' ) ) {
-				$table.append( '<button class="dt-button" id="wpacc_add_row">Add row</button>' );
-			}
-		}
-		if ( ! $.fn.DataTable.isDataTable( 'table.wpacc-select' ) ) {
-			$table_select.DataTable(
-				{
-					columnDefs: [{
-						orderable: false,
-						className: 'select-checkbox',
-						targets: 0
-					}, {
-						visible: false,
-						searchable: false,
-						targets: 1
-					}],
-					deferRender: true,
-					dom: 'Bfrtip',
-					select: {
-						style: 'single',
-						selector: 'td:first-child'
-					}
-				}
-			);
-		}
-		if ( $datepicker[0] && ! $datepicker.hasClass( 'hasDatepicker' ) ) {
-			$datepicker.datepicker();
-		}
 	}
 
 	/**
@@ -204,9 +154,10 @@
 			 */
 			.on(
 				'click',
-				'a',
+				'a.wpacc-zoom',
 				function( e ) {
-					doAjaxForm( [ { wpacc_action: 'read' }, { id: $( this ).data( 'id' ) } ] );
+					let id = $( this ). closest( 'tr' ). children( 'td:first' ).text();
+					doAjaxForm( [ { wpacc_action: 'read' }, { id: id } ] );
 					e.preventDefault();
 				}
 			)
@@ -228,8 +179,8 @@
 			 * Show the currently selected item in a select table.
 			 */
 			.on(
-				'draw.dt',
-				'table.wpacc-select',
+				'click',
+				'table.wpacc-select input[type=checkbox]',
 				function() {
 					const table = $( this ).DataTable();
 					let id      = $( this ).data( 'selected' );

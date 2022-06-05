@@ -6,6 +6,7 @@
 		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
 		<exclude name="WordPress.PHP.DisallowShortTernary"/>
 		<exclude name="WordPress.DateTime.RestrictedFunctions.date_date"/>
+		<exclude name="WordPress.DB.PreparedSQL.InterpolatedNotPrepared"/>
 		<exclude name="WordPress.Files.Filename"/>
 	</rule>
 	<rule ref="WordPress-Docs" />

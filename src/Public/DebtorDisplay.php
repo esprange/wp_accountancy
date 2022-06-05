@@ -19,6 +19,15 @@ use WP_Accountancy\Includes\DebtorQuery;
 class DebtorDisplay extends Display {
 
 	/**
+	 * Provide the top title
+	 *
+	 * @return string
+	 */
+	public function get_title(): string {
+		return __( 'Customers', 'wpacc' );
+	}
+
+	/**
 	 * Create the debtor.
 	 *
 	 * @return string
@@ -35,7 +44,7 @@ class DebtorDisplay extends Display {
 	public function update() : string {
 		global $wpacc_business;
 		$input                   = filter_input_array( INPUT_POST );
-		$debtor                  = new Debtor( intval( $input['id'] ?? 0 ) );
+		$debtor                  = new Debtor( intval( $input['debtor_id'] ?? 0 ) );
 		$debtor->name            = sanitize_text_field( $input['name'] ?? '' );
 		$debtor->address         = sanitize_textarea_field( $input['address'] ?? '' );
 		$debtor->billing_address = sanitize_textarea_field( $input['billing_address'] ?? '' );
@@ -52,7 +61,7 @@ class DebtorDisplay extends Display {
 	 * @return string
 	 */
 	public function delete() : string {
-		$debtor_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
+		$debtor_id = filter_input( INPUT_POST, 'debtor_id', FILTER_SANITIZE_NUMBER_INT );
 		if ( $debtor_id ) {
 			$debtor = new Debtor( intval( $debtor_id ) );
 			if ( $debtor->delete() ) {
@@ -71,16 +80,68 @@ class DebtorDisplay extends Display {
 	public function read() : string {
 		$debtor_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
 		$debtor    = new Debtor( intval( $debtor_id ) );
-		$forms     = new Forms();
 		$html      =
-			$forms->form_field( [ 'name' => 'name', 'value' => $debtor->name, 'label' => __( 'Name', 'wpacc' ), 'required' => true ] ) .
-			$forms->form_field( [ 'name' => 'address', 'type' => 'textarea', 'value' => $debtor->address, 'label'=> __( 'Address', 'wpacc' ) ] ) .
-			$forms->form_field( [ 'name' => 'billing_address', 'type' => 'textarea', 'value' => $debtor->billing_address, 'label'=> __( 'Billing address', 'wpacc' ) ] ) .
-			$forms->form_field( [ 'name' => 'email_address', 'type' => 'email', 'value' => $debtor->email_address, 'label' => __( 'Email', 'wpacc' ) ] ) .
-			$forms->form_field( [ 'name' => 'active', 'type' => 'checkbox', 'value' => $debtor->active, 'label' => __( 'Active', 'wpacc' ) ] ) .
-			$forms->form_field( [ 'name' => 'id', 'type' => 'hidden', 'value' => $debtor->id ] ) .
-			$forms->action_button( 'update', __( 'Save', 'wpacc' ) ) .
-			( $debtor->id ? $forms->action_button( 'delete', __( 'Delete', 'wpacc' ), false ) : '' );
+			$this->field->render(
+				[
+					'name'     => 'name',
+					'value'    => $debtor->name,
+					'label'    => __( 'Name', 'wpacc' ),
+					'required' => true,
+				]
+			) .
+			$this->field->render(
+				[
+					'name'  => 'address',
+					'type'  => 'textarea',
+					'value' => $debtor->address,
+					'label' => __(
+						'Address',
+						'wpacc'
+					),
+				]
+			) .
+			$this->field->render(
+				[
+					'name'  => 'billing_address',
+					'type'  => 'textarea',
+					'value' => $debtor->billing_address,
+					'label' => __(
+						'Billing address',
+						'wpacc'
+					),
+				]
+			) .
+			$this->field->render(
+				[
+					'name'  => 'email_address',
+					'type'  => 'email',
+					'value' => $debtor->email_address,
+					'label' => __(
+						'Email',
+						'wpacc'
+					),
+				]
+			) .
+			$this->field->render(
+				[
+					'name'  => 'active',
+					'type'  => 'checkbox',
+					'value' => $debtor->active,
+					'label' => __(
+						'Active',
+						'wpacc'
+					),
+				]
+			) .
+			$this->field->render(
+				[
+					'name'  => 'debtor_id',
+					'type'  => 'hidden',
+					'value' => $debtor->id,
+				]
+			) .
+			$this->button->action_save( __( 'Save', 'wpacc' ) ) .
+			( $debtor->id ? $this->button->action_delete( __( 'Delete', 'wpacc' ) ) : '' );
 		return $this->form( $html );
 	}
 
@@ -90,9 +151,28 @@ class DebtorDisplay extends Display {
 	 * @return string
 	 */
 	public function overview() : string {
-		$debtors = new DebtorQuery();
-		$forms   = new Forms();
-		return $this->form( $forms->table( ['id' => 'id', 'name' => __( 'Name', 'wpacc' ) ], $debtors->get_results() ) );
+		return $this->form(
+			( new Table() )->render(
+				[
+					'fields'  => [
+						[
+							'name'  => 'debtor_id',
+							'type'  => 'static',
+							'label' => '',
+						],
+						[
+							'name'  => 'name',
+							'type'  => 'zoom',
+							'label' => __(
+								'Name',
+								'wpacc'
+							),
+						],
+					],
+					'items'   => ( new DebtorQuery() )->get_results(),
+					'options' => [ 'create' => __( 'New customer', 'wpacc' ) ],
+				]
+			)
+		);
 	}
-
 }

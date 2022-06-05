@@ -82,8 +82,8 @@ class Transaction {
 		$data = [
 			'id'          => $this->id,
 			'business_id' => $wpacc_business->id,
-			'debtor_id'   => $this->debtor_id,
-			'creditor_id' => $this->creditor_id,
+			'debtor_id'   => intval( $this->debtor_id ) ?: null,
+			'creditor_id' => intval( $this->creditor_id ) ?: null,
 			'reference'   => $this->reference,
 			'invoice_id'  => $this->invoice_id,
 			'address'     => $this->address,

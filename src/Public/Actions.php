@@ -67,9 +67,7 @@ class Actions {
 				$atts        = shortcode_atts( [ 'business' => '' ], $atts );
 				$business_id = $wpacc_business->id;
 				if ( $atts['business'] ) {
-					$business_name = $atts['business'];
-					$businesses    = new BusinessQuery( [ 'name' => $business_name ] );
-					$business_id   = count( $businesses ) ? $businesses[0]->id : $business_id;
+					$business_id = intval( $atts['business'] );
 				}
 				if ( $business_id ) {
 					do_action( 'wpacc_business_select', $business_id );

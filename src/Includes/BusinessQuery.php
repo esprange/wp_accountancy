@@ -62,7 +62,7 @@ class BusinessQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		return $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wpacc_business $this->query_where ORDER BY name" ); // phpcs:ignore
+		return $wpdb->get_results( "SELECT *, id as business_id FROM {$wpdb->prefix}wpacc_business $this->query_where ORDER BY name" );
 	}
 
 }

@@ -56,15 +56,16 @@ class DebtorQuery {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @parameter bool $as_array If true, results are return as id, name pairs.
 	 * @return array
 	 */
-	public function get_results( bool $as_array = false ) : array {
+	public function get_results() : array {
 		global $wpdb;
-		if ( $as_array ) {
-			return $wpdb->get_results( "SELECT id, name FROM {$wpdb->prefix}wpacc_debtor $this->query_where ORDER BY name", ARRAY_A );  // phpcs:ignore
-		}
-		return $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wpacc_debtor $this->query_where ORDER BY name" );  // phpcs:ignore
+		return $wpdb->get_results(
+			"SELECT id as debtor_id, name, business_id, address, billing_address, email_address, active
+			FROM {$wpdb->prefix}wpacc_debtor $this->query_where
+			ORDER BY name",
+			OBJECT_K
+		);
 	}
 
 }

@@ -21,6 +21,15 @@ use function WP_Accountancy\Includes\notify;
 class SummaryDisplay extends Display {
 
 	/**
+	 * Provide the top title
+	 *
+	 * @return string
+	 */
+	public function get_title(): string {
+		return __( 'Summary', 'wpacc' );
+	}
+
+	/**
 	 * Ordered list of accounts.
 	 *
 	 * @var array $summary list.
@@ -71,6 +80,11 @@ class SummaryDisplay extends Display {
 		return ob_get_clean() . $this->form( $forms->action_button( 'change', __( 'Change', 'wpacc' ) ) );
 	}
 
+	/**
+	 * Change function
+	 *
+	 * @return string
+	 */
 	public function change() : string {
 		ob_start();
 		?>

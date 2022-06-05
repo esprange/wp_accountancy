@@ -40,6 +40,15 @@ class BusinessDisplay extends Display {
 	];
 
 	/**
+	 * Provide the top title
+	 *
+	 * @return string
+	 */
+	public function get_title(): string {
+		return __( 'Businesses', 'wpacc' );
+	}
+
+	/**
 	 * Create the business.
 	 *
 	 * @return string

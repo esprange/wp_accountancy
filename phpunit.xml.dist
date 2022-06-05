@@ -1,21 +1,22 @@
 <?xml version="1.0"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="tests/bootstrap.php" backupGlobals="false" colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-  <coverage processUncoveredFiles="true">
-    <include>
-      <directory suffix=".php">./includes</directory>
-      <directory suffix=".php">./public</directory>
-      <directory suffix=".php">./admin</directory>
-    </include>
-    <exclude>
-      <directory>./*/partials</directory>
-      <directory>./*/js</directory>
-      <directory>./*/css</directory>
-      <directory>./*/images</directory>
-    </exclude>
-  </coverage>
-  <testsuites>
-    <testsuite name="wp-accountancy">
-      <directory prefix="class-test-" suffix=".php">./tests/</directory>
-    </testsuite>
-  </testsuites>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./tests/Bootstrap.php" backupGlobals="false"
+		 colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true"
+		 convertWarningsToExceptions="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+	<coverage processUncoveredFiles="true">
+		<include>
+			<directory suffix=".php">./src/Includes</directory>
+			<directory suffix=".php">./src/Public</directory>
+			<directory suffix=".php">./src/Admin</directory>
+		</include>
+		<exclude>
+			<directory>./src/*/js</directory>
+			<directory>./src/*/css</directory>
+			<directory>./src/*/images</directory>
+		</exclude>
+	</coverage>
+	<testsuites>
+		<testsuite name="wp-accountancy">
+			<directory prefix="Test_" suffix=".php">./tests/</directory>
+		</testsuite>
+	</testsuites>
 </phpunit>

@@ -23,16 +23,54 @@ abstract class Display {
 	abstract public function overview() : string;
 
 	/**
+	 * Provide the top title of the contents
+	 *
+	 * @return string
+	 */
+	abstract public function get_title() : string;
+
+	/**
+	 * Button object
+	 *
+	 * @var Button To render a button.
+	 */
+	public Button $button;
+
+	/**
+	 * Table object
+	 *
+	 * @var Table To render a table.
+	 */
+	public Table $table;
+
+	/**
+	 * Field object
+	 *
+	 * @var Field To render a field.
+	 */
+	public Field $field;
+
+	/**
+	 * Constructor
+	 */
+	public function __construct() {
+		$this->button = new Button();
+		$this->table  = new Table();
+		$this->field  = new Field();
+	}
+
+	/**
 	 * The controller.
 	 *
 	 * @return string
 	 */
 	final public function controller() : string {
 		$action = filter_input( INPUT_POST, 'wpacc_action' ) ?: filter_input( INPUT_GET, 'wpacc_action' );
+		$title  = '<span class="wpacc-title" >' . $this->get_title() . '</span>';
 		if ( $action && method_exists( $this, $action ) ) {
-			return $this->$action();
+			return $title . $this->$action();
 		}
-		return $this->overview();
+		return $title . $this->overview();
 	}
 
 	/**
@@ -93,11 +131,11 @@ abstract class Display {
 	 * @return string Html text.
 	 * @noinspection PhpUnnecessaryCurlyVarSyntaxInspection
 	 */
-	final function notify( int $status, string $message ) : string {
+	final protected function notify( int $status, string $message ) : string {
 		$levels = [
 			-1 => 'wpacc-inform',
-			0  => 'wpacc-fout',
-			1  => 'wpacc-succes',
+			0  => 'wpacc-error',
+			1  => 'wpacc-success',
 		];
 		return "<div class=\"{$levels[$status]}\"><p>$message</p></div>";
 	}
