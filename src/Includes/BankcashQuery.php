@@ -34,5 +34,4 @@ class BankcashQuery extends AccountQuery {
 		);
 	}
 
-
 }
