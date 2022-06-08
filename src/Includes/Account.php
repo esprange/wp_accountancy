@@ -19,8 +19,9 @@ namespace WP_Accountancy\Includes;
  * @property int    group_id
  * @property string name
  * @property string type
- * @property bool   active,
+ * @property bool   active
  * @property int    order_number
+ * @property float  initial_value
  */
 class Account {
 	public const ASSETS_ITEM    = 'assets';
@@ -28,8 +29,10 @@ class Account {
 	public const EQUITY_ITEM    = 'equity';
 	public const INCOME_ITEM    = 'income';
 	public const EXPENSE_ITEM   = 'expense';
+	public const BANK_ITEM      = 'bank';
+	public const CASH_ITEM      = 'cash';
 	public const TOTAL_ITEM     = 'total';
-	public const VALID_ITEMS    = [ self::ASSETS_ITEM, self::LIABILITY_ITEM, self::EQUITY_ITEM, self::INCOME_ITEM, self::EXPENSE_ITEM, self::TOTAL_ITEM ];
+	public const COA_ITEMS      = [ self::ASSETS_ITEM, self::LIABILITY_ITEM, self::EQUITY_ITEM, self::INCOME_ITEM, self::EXPENSE_ITEM, self::TOTAL_ITEM ];
 
 	/**
 	 * Constructor
@@ -39,14 +42,15 @@ class Account {
 	public function __construct( int $account_id = 0 ) {
 		global $wpacc_business;
 		$data = [
-			'id'           => $account_id,
-			'business_id'  => $wpacc_business->id,
-			'taxcode_id'   => null,
-			'group_id'     => null,
-			'name'         => '',
-			'active'       => true,
-			'order_number' => 0,
-			'type'         => '',
+			'id'            => $account_id,
+			'business_id'   => $wpacc_business->id,
+			'taxcode_id'    => null,
+			'group_id'      => null,
+			'name'          => '',
+			'active'        => true,
+			'order_number'  => 0,
+			'type'          => '',
+			'initial_value' => 0.0,
 		];
 		global $wpdb;
 		$result = $wpdb->get_row(
@@ -72,18 +76,29 @@ class Account {
 		global $wpdb;
 		global $wpacc_business;
 		$data = [
-			'id'           => $this->id,
-			'business_id'  => $wpacc_business->id,
-			'name'         => $this->name,
-			'taxcode_id'   => $this->taxcode_id,
-			'group_id'     => $this->group_id,
-			'order_number' => $this->order_number,
-			'active'       => $this->active,
-			'type'         => $this->type,
+			'id'            => $this->id,
+			'business_id'   => $wpacc_business->id,
+			'name'          => $this->name,
+			'taxcode_id'    => $this->taxcode_id,
+			'group_id'      => $this->group_id,
+			'order_number'  => $this->order_number,
+			'active'        => $this->active,
+			'type'          => $this->type,
+			'initial_value' => $this->initial_value,
 		];
 		$wpdb->replace( "{$wpdb->prefix}wpacc_account", $data );
 		$this->id = $wpdb->insert_id;
 		return $this->id;
+	}
+
+	/**
+	 * Delete the account entry.
+	 *
+	 * @return bool
+	 */
+	public function delete() : bool {
+		global $wpdb;
+		return (bool) $wpdb->delete( "{$wpdb->prefix}wpacc_account", [ 'id' => $this->id ] );
 	}
 
 }

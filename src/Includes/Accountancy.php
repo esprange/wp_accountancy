@@ -39,22 +39,6 @@ function setup() : array {
 }
 
 /**
- * Returns the active business object
- *
- * @return Business
- */
-function business() : Business {
-	/**
-	 * The active business object.
-	 */
-	global $wpacc_business;
-	if ( ! is_object( $wpacc_business ) ) {
-		$wpacc_business = new Business( intval( get_transient( WPACC_BUSINESS . get_current_user_id() ) ) ?: 0 );
-	}
-	return $wpacc_business;
-}
-
-/**
  * Returns the plugin version
  *
  * @return string The version.
@@ -68,29 +52,12 @@ function version() : string {
 }
 
 /**
- * Create notification for the user.
- *
- * @param int    $status  1 success, 0 error, -1 information.
- * @param string $message The message.
- * @return string Html text.
- * @noinspection PhpUnnecessaryCurlyVarSyntaxInspection
- */
-function notify( int $status, string $message ) : string {
-	$levels = [
-		-1 => 'wpacc-inform',
-		0  => 'wpacc-fout',
-		1  => 'wpacc-succes',
-	];
-	return "<div class=\"{$levels[$status]}\"><p>$message</p></div>";
-}
-
-/**
  * Generic call for error reporting.
  *
  * @param string $object  Object at which the error occurs.
  * @param string $message The error message.
  */
-function error( string $object, string $message ) {
+function error( string $object, string $message ) : void {
 	error_log( "wpacc $object: $message" ); // phpcs:ignore
 }
 
@@ -127,8 +94,10 @@ class Accountancy {
 	 */
 	public function __construct() {
 		$this->load_dependencies();
+		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->define_addons_hooks();
 		$this->loader->run();
 	}
 
@@ -138,7 +107,7 @@ class Accountancy {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function load_dependencies() {
+	private function load_dependencies() : void {
 		$this->loader = new Loader();
 	}
 
@@ -149,8 +118,7 @@ class Accountancy {
 	 * @access   private
 	 * @noinspection PhpFullyQualifiedNameUsageInspection
 	 */
-	private function define_admin_hooks() {
-		$plugin_filters = new \WP_Accountancy\Admin\Filters();
+	private function define_admin_hooks() : void {
 		$plugin_actions = new \WP_Accountancy\Admin\Actions();
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_actions, 'enqueue_scripts_and_styles' );
@@ -165,17 +133,44 @@ class Accountancy {
 	 * @access   private
 	 * @noinspection PhpFullyQualifiedNameUsageInspection
 	 */
-	private function define_public_hooks() {
-		$plugin_filters = new \WP_Accountancy\Public\Filters();
+	private function define_public_hooks() : void {
 		$plugin_actions = new \WP_Accountancy\Public\Actions();
 
 		$this->loader->add_action( 'init', $plugin_actions, 'add_shortcode' );
-		$this->loader->add_action( 'init', $plugin_actions, 'select_business' );
-		$this->loader->add_filter( 'load_textdomain_mofile', $plugin_filters, 'load_translations', 10, 2 );
+		$this->loader->add_action( 'wp_loaded', $plugin_actions, 'init_business' );
 		$this->loader->add_action( 'wp_ajax_wpacc_formhandler', $plugin_actions, 'formhandler' );
 		$this->loader->add_action( 'wp_ajax_wpacc_menuhandler', $plugin_actions, 'menuhandler' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_actions, 'load_script' );
 		$this->loader->add_action( 'wpacc_business_select', $plugin_actions, 'business_select' );
+	}
+
+	/**
+	 * Register Addons hooks.
+	 *
+	 * @return void
+	 */
+	private function define_addons_hooks() : void {
+		$addons = get_option( 'wpacc_addons', [] );
+		foreach ( $addons as $addon ) {
+			$addon_class = "WP_Accountancy\Addons\{$addon}";
+			if ( class_exists( $addon_class ) ) {
+				$addon_object = new $addon_class();
+				$addon_object->define_hooks();
+			}
+		}
+	}
+
+	/**
+	 * Load the textdomain.
+	 *
+	 * @internal Action for plugins_loaded
+	 */
+	public function load_plugin_textdomain() : void {
+		load_plugin_textdomain(
+			'wpacc',
+			false,
+			'wp_accountancy/languages/'
+		);
 	}
 
 	/**
@@ -187,5 +182,13 @@ class Accountancy {
 	public function get_loader() : Loader {
 		return $this->loader;
 	}
+
+	/**
+	 * Generic action for localization
+	 */
+	private function set_locale() : void {
+		$this->loader->add_action( 'plugins_loaded', $this, 'load_plugin_textdomain' );
+	}
+
 
 }

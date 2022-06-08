@@ -3,7 +3,7 @@
  * Plugin Name:       WP-Accountancy
  * Plugin URI:        http://github.com/esprnge/wp-accountancy
  * Description:       Accountancy plugin for WordPress.
- * Version:           1.0
+ * Version:           1.0.0
  * Author:            Eric Sprangers
  * Author URI:        http://URI_Of_The_Plugin_Author
  * License:           GPL-3.0+
@@ -57,7 +57,7 @@ register_deactivation_hook(
  */
 define( 'WPACC_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 const WPACC_SLUG     = 'wpacc';
-const WPACC_BUSINESS = 'wpacc_business_';
+const WPACC_BUSINESS = 'wpacc_business';
 
 /**
  * Plugin execution.

@@ -20,7 +20,7 @@ class ChartOfAccountsQuery {
 	 *
 	 * @var string De query.
 	 */
-	private string $query_where;
+	protected string $query_where;
 
 	/**
 	 * The constructor
@@ -60,11 +60,12 @@ class ChartOfAccountsQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
+		global $wpacc_business;
 		return $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT sum( d.quantity * d.unitprice ) as value, a.type as type, a.name as name, a.id as id FROM {$wpdb->prefix}wpacc_account AS a
 				LEFT JOIN {$wpdb->prefix}wpacc_detail as d ON a.id=d.account_id AND a.business_id=%d GROUP BY a.type",
-				business()->id
+				$wpacc_business->id
 			)
 		);
 	}

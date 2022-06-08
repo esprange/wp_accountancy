@@ -20,7 +20,7 @@ class TransactionQuery {
 	 *
 	 * @var string De query.
 	 */
-	private string $query_where;
+	protected string $query_where;
 
 	/**
 	 * De query string
@@ -68,7 +68,7 @@ class TransactionQuery {
 		if ( $query_vars['type'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND type = %s', $query_vars['type'] );
 		}
-		if ( $query_vars['order'] ) {
+		if ( $query_vars['order_by'] ) {
 			$order_by          = strcasecmp( 'desc', $query_vars['order_by'] ) ? 'DESC' : 'ASC';
 			$this->query_order = $wpdb->prepare( ' ORDER BY %s %s', $query_vars['order'], $order_by );
 			return;
@@ -86,11 +86,10 @@ class TransactionQuery {
 	public function get_results() : array {
 		global $wpdb;
 		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}wpacc_transaction %s %s",
-				$this->query_where,
-				$this->query_order,
-			)
+			"SELECT id as transaction_id, business_id, debtor_id, creditor_id, reference, invoice_id, address, date, type, description
+			FROM {$wpdb->prefix}wpacc_transaction $this->query_where
+			$this->query_order",
+			OBJECT_K
 		);
 	}
 

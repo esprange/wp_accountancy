@@ -20,7 +20,7 @@ class ConfigHandler {
 	 *
 	 * @since    1.0.0
 	 */
-	public function display_settings_page() {
+	public function display_settings_page(): void {
 		$display    = new ConfigDisplay();
 		$active_tab = filter_input( INPUT_GET, 'tab' ) ?: __( 'Options', 'wpacc' );
 		?>

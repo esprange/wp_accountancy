@@ -20,7 +20,7 @@ class BusinessQuery {
 	 *
 	 * @var string De query.
 	 */
-	private string $query_where;
+	protected string $query_where;
 
 	/**
 	 * The constructor
@@ -35,6 +35,7 @@ class BusinessQuery {
 			'active' => 0,
 			'name'   => 0,
 			'id'     => 0,
+			'slug'   => '',
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
 		$this->query_where = 'WHERE 1 = 1';
@@ -61,7 +62,7 @@ class BusinessQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		return $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}wpacc_business $this->query_where ORDER BY name" ); // phpcs:ignore
+		return $wpdb->get_results( "SELECT *, id as business_id FROM {$wpdb->prefix}wpacc_business $this->query_where ORDER BY name" );
 	}
 
 }

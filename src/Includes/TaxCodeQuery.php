@@ -20,7 +20,7 @@ class TaxCodeQuery {
 	 *
 	 * @var string De query.
 	 */
-	private string $query_where;
+	protected string $query_where;
 
 	/**
 	 * The constructor
@@ -61,10 +61,10 @@ class TaxCodeQuery {
 	public function get_results() : array {
 		global $wpdb;
 		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}wpacc_taxcode %s ORDER BY name",
-				$this->query_where
-			)
+			"SELECT id as taxcode_id, name, business_id, rate, active
+			FROM {$wpdb->prefix}wpacc_taxcode $this->query_where
+			ORDER BY name",
+			OBJECT_K
 		);
 	}
 

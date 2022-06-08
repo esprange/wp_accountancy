@@ -20,7 +20,7 @@ class CreditorQuery {
 	 *
 	 * @var string De query.
 	 */
-	private string $query_where;
+	protected string $query_where;
 
 	/**
 	 * The constructor
@@ -52,7 +52,7 @@ class CreditorQuery {
 	}
 
 	/**
-	 * Get the raw account results.
+	 * Get the creditor results.
 	 *
 	 * @since 1.0.0
 	 *
@@ -61,10 +61,10 @@ class CreditorQuery {
 	public function get_results() : array {
 		global $wpdb;
 		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}wpacc_creditor %s ORDER BY name",
-				$this->query_where
-			)
+			"SELECT id as creditor_id, name, business_id, address, email_address, active
+			FROM {$wpdb->prefix}wpacc_creditor $this->query_where
+			ORDER BY name",
+			OBJECT_K
 		);
 	}
 

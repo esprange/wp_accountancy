@@ -10,7 +10,6 @@
 
 namespace WP_Accountancy\Includes;
 
-use WP_REST_Request;
 /**
  * The REST API class.
  */
@@ -29,6 +28,10 @@ class REST {
 			'class' => TransactionApi::class,
 			'route' => '/transactions',
 		],
+		[
+			'class' => AssetApi::class,
+			'route' => '/assets',
+		],
 	];
 
 	/**
@@ -36,7 +39,7 @@ class REST {
 	 *
 	 * @return void
 	 */
-	public function register() {
+	public function register(): void {
 		$namespace = WP_ACCOUNTANCY_API . '/V1';
 		$args      = [
 			'id' => [

@@ -11,16 +11,21 @@
 namespace WP_Accountancy\Public;
 
 use WP_Accountancy\Includes\Account;
-use WP_Accountancy\Includes\ChartOfAccounts;
 use WP_Accountancy\Includes\ChartOfAccountsQuery;
-use WP_Accountancy\Includes\DetailQuery;
-use function WP_Accountancy\Includes\notify;
-use function WP_Accountancy\Includes\business;
 
 /**
  * The Public filters.
  */
 class SummaryDisplay extends Display {
+
+	/**
+	 * Provide the top title
+	 *
+	 * @return string
+	 */
+	public function get_title(): string {
+		return __( 'Summary', 'wpacc' );
+	}
 
 	/**
 	 * Ordered list of accounts.
@@ -49,9 +54,7 @@ class SummaryDisplay extends Display {
 	 * @return string
 	 */
 	public function overview() : string {
-		$coa           = ( new ChartOfAccounts( business()->id ) )->get_results();
 		$this->summary = ( new ChartOfAccountsQuery(
-			business()->id,
 			[
 				'from'  => $this->from,
 				'until' => $this->until,
@@ -70,9 +73,14 @@ class SummaryDisplay extends Display {
 			<?php $this->list( Account::EXPENSE_ITEM, __( 'Expenses', 'wpacc' ) ); ?>
 		</div>
 		<?php
-		return ob_get_clean() . $this->form( $this->action_button( 'change', __( 'Change', 'wpacc' ) ) );
+		return ob_get_clean() . $this->form( $this->button->action( 'change', __( 'Change', 'wpacc' ) ) );
 	}
 
+	/**
+	 * Change function
+	 *
+	 * @return string
+	 */
 	public function change() : string {
 		ob_start();
 		?>
@@ -108,7 +116,7 @@ class SummaryDisplay extends Display {
 			}
 		);
 		?>
-		<h2><?php echo esc_html( $title ); ?></h2>
+		<span style="font-size: large"><?php echo esc_html( $title ); ?></span>
 		<ul style="list-style-type: none;">
 		<?php foreach ( $list as $list_item ) : ?>
 			<li>

@@ -6,7 +6,7 @@
  * @package WP_Accounting
  */
 
-/* global wpaccData */
+/* global wp, wpaccData, wpacc_i18n */
 
 /**
  * Jquery part
@@ -18,36 +18,6 @@
 	 * Actions after document ready or ajax ready
 	 */
 	function onload() {
-		const $table      = $( 'table.wpacc' ),
-			$table_select = $( 'table.wpacc-select' ),
-			$datepicker   = $( 'input.wpacc-date' );
-		if ( ! $.fn.DataTable.isDataTable( 'table.wpacc' ) ) {
-			$table.DataTable();
-		}
-		if ( ! $.fn.DataTable.isDataTable( 'table.wpacc-select' ) ) {
-			$table_select.DataTable(
-				{
-					columnDefs: [{
-						orderable: false,
-						className: 'select-checkbox',
-						targets: 0
-					}, {
-						visible: false,
-						searchable: false,
-						targets: 1
-					}],
-					deferRender: true,
-					dom: 'Bfrtip',
-					select: {
-						style: 'single',
-						selector: 'td:first-child'
-					}
-				}
-			);
-		}
-		if ( $datepicker[0] && ! $datepicker.hasClass( 'hasDatepicker' ) ) {
-			$datepicker.datepicker();
-		}
 	}
 
 	/**
@@ -56,7 +26,17 @@
 	 * @param {array} params
 	 */
 	function doAjaxForm( params = [] ) {
-		const formData = new FormData( document.getElementById( 'wpacc-form' ) );
+		const form     = document.getElementById( 'wpacc-form' );
+		const formData = new FormData( form );
+		/**
+		 * Validate the input data
+		 */
+		if ( ! form.reportValidity() ) {
+			return false;
+		}
+		/**
+		 * Add form handling data to the input
+		 */
 		formData.append( 'action', 'wpacc_formhandler' );
 		formData.append( '_ajax_nonce', $( 'form[data-wpacc_nonce]' ).data( 'wpacc_nonce' ) );
 		formData.append( 'display', $( 'form[data-wpacc_display]' ).data( 'wpacc_display' ) );
@@ -83,12 +63,12 @@
 		).done(
 			function ( response ) {
 				if ( '' !== response.data ) {
-					$( '#wpacc' ).html( response.data );
+					$( '#wpacc-main' ).html( response.data );
 				}
 			}
 		).fail(
 			function( jqXHR ) {
-				$( '#wpacc' ).html( jqXHR.responseJSON.message );
+				$( '#wpacc-main' ).html( jqXHR.responseJSON.message );
 			}
 		);
 	}
@@ -110,7 +90,7 @@
 			}
 		).done(
 			function ( response ) {
-				$( '#wpacc' ).html( response.data );
+				$( '#wpacc-main' ).html( response.data );
 			}
 		);
 	}
@@ -129,20 +109,62 @@
 	 */
 	$(
 		function() {
-			$( 'nav.wpacc-menu a' ).on(
+			/**
+			 * Events for the menu sections.
+			 */
+			$( '[data-menu]' ).on(
 				'click',
 				function() {
 					doAjaxMenu( $( this ).data( 'menu' ) );
 				}
 			)
+			$( '#wpacc-menu-dropdown' ).on(
+				'click',
+				function( e ) {
+					$( '#wpacc-menu ul' ).slideToggle( 500 );
+					e.preventDefault();
+				}
+			)
+			$( window ).on(
+				'resize',
+				function() {
+					if ( window.matchMedia( '(min-width: 600px)' ).matches ) {
+						$( '#wpacc-menu ul' ).show();
+					}
+				}
+			);
 
-			$( '#wpacc' ).on(
+			/**
+			 * Events for the content section.
+			 */
+			$( '#wpacc-main' )
+			/**
+			 * A button is clicked
+			 */
+			.on(
 				'click',
 				'button[name=wpacc_action]',
-				function() {
+				function( e ) {
 					doAjaxForm( [ { wpacc_action: $( this ).val() } ] );
+					e.preventDefault();
 				}
-			).on(
+			)
+			/**
+			 * An anchor is clicked
+			 */
+			.on(
+				'click',
+				'a.wpacc-zoom',
+				function( e ) {
+					let id = $( this ). closest( 'tr' ). children( 'td:first' ).text();
+					doAjaxForm( [ { wpacc_action: 'read' }, { id: id } ] );
+					e.preventDefault();
+				}
+			)
+			/**
+			 * Selection of an item in a select table.
+			 */
+			.on(
 				'select.dt',
 				'table.wpacc-select',
 				function( e, dt, type, index ) {
@@ -152,21 +174,42 @@
 						doAjaxForm( [ { wpacc_action:'select' }, { id: id } ] );
 					}
 				}
-			).on(
-				'draw.dt',
-				'table.wpacc-select',
-				function( e, dt, type, index ) {
+			)
+			/**
+			 * Show the currently selected item in a select table.
+			 */
+			.on(
+				'click',
+				'table.wpacc-select input[type=checkbox]',
+				function() {
 					const table = $( this ).DataTable();
 					let id      = $( this ).data( 'selected' );
 					if ( 'undefined' !== id ) {
 						table.rows().every(
 							function ( rowIdx, tableLoop, rowLoop) {
-								if (  this.data()[1] === + id ) {
+								if ( + this.data()[1] === id ) {
 									this.select();
 								}
 							}
 						);
 					}
+				}
+			)
+			.on(
+				'click',
+				'button.wpacc-add-row',
+				function( e ) {
+					const $last_row = $( '.wpacc-table tbody tr:last' ),
+						$new_row    = $last_row.clone();
+					const table     = $( '.wpacc-table' ).DataTable();
+					$new_row.each(
+						function () {
+							$( this ).val( '' );
+						}
+					)
+					$new_row.appendTo( $last_row );
+					table.draw();
+					e.preventDefault();
 				}
 			);
 		}

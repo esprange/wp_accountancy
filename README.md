@@ -1,10 +1,10 @@
  === wpacc ===
-Contributors: Eric Sprangers
-Donate link: https://www.wpacc.nl
-Tags: Accountancy, Bookkeeping
-Requires at least: 4.8.0
-Tested up to: 5.9.2
-Stable tag: 1.0.0
+**Contributors:** [eric-sprangers](https://profiles.wordpress.org/eric-sprangers/)  
+**Donate link:** https://www.wpacc.nl  
+**Tags:** Accountancy, Bookkeeping  
+**Requires at least:** 4.8.0  
+**Tested up to:** 5.9.2  
+**Stable tag:** 1.0.0  
 
 
 [![CodeFactor](https://www.codefactor.io/repository/github/esprange/wp-accountancy/badge)](https://www.codefactor.io/repository/github/esprange/wp_accountancy)
@@ -12,24 +12,24 @@ Stable tag: 1.0.0
 
 WordPress plugin for Accountancy purposes.
 
-== Description ==
+## Description ##
 
 
-== Installation ==
+## Installation ##
 
 Regular WordPress plugin installation.
 
-== Screenshot ==
+## Screenshot ##
 * None yet *
 
-== Changelog ==
-= 1.0.0 =
+## Changelog ##
+### 1.0.0 ###
 * Initial version
 
-== Upgrade Notice ==
+## Upgrade Notice ##
 
 none.
 
-== Additionele info ==
+## Additionele info ##
 
 n.a.

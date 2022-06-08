@@ -1,6 +1,6 @@
 <?php
 /**
- * Definition creditor api class
+ * Definition asset api class
  *
  * @since      1.0.0
  *
@@ -14,11 +14,11 @@ use WP_REST_Response;
 use WP_REST_Request;
 
 /**
- * Creditor API class.
+ * Asset API class.
  *
  * @noinspection PhpUnused
  */
-class CreditorAPI extends API {
+class AssetAPI extends API {
 
 	/**
 	 * List function
@@ -28,8 +28,8 @@ class CreditorAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function list( WP_REST_Request $request ) : WP_REST_Response {
-		$creditors = ( new CreditorQuery() )->get_results();
-		return new WP_REST_Response( array_walk( $creditors, 'get_object_vars' ) );
+		$assets = ( new AssetQuery() )->get_results();
+		return new WP_REST_Response( array_walk( $assets, 'get_object_vars' ) );
 	}
 
 	/**
@@ -40,10 +40,10 @@ class CreditorAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function get( WP_REST_Request $request ) : WP_REST_Response {
-		$id       = intval( $request->get_param( 'id' ) );
-		$creditor = new Creditor( $id );
-		if ( $creditor->id ) {
-			return new WP_REST_Response( array_walk( $creditor, 'get_object_vars' ) );
+		$id    = intval( $request->get_param( 'id' ) );
+		$asset = new Asset( $id );
+		if ( $asset->id ) {
+			return new WP_REST_Response( get_object_vars( $asset ) );
 		}
 		return new WP_REST_Response( null, 404 );
 	}
@@ -56,16 +56,16 @@ class CreditorAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function update( WP_REST_Request $request ) : WP_REST_Response {
-		$id       = intval( $request->get_param( 'id' ) );
-		$creditor = new Creditor( $id );
-		if ( $creditor->id ) {
+		$id    = intval( $request->get_param( 'id' ) );
+		$asset = new Asset( $id );
+		if ( $asset->id ) {
 			$update = $request->get_body_params();
 			foreach ( $update as $key => $value ) {
-				if ( property_exists( $creditor, $key ) && gettype( $creditor->$key ) === gettype( $value ) ) {
-					$creditor->$key = $value;
+				if ( property_exists( $asset, $key ) && gettype( $asset->$key ) === gettype( $value ) ) {
+					$asset->$key = $value;
 				}
 			}
-			$creditor->update();
+			$asset->update();
 			return new WP_REST_Response( null, 204 );
 		}
 		return new WP_REST_Response( null, 404 );
@@ -79,10 +79,10 @@ class CreditorAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function cancel( WP_REST_Request $request ) : WP_REST_Response {
-		$id       = intval( $request->get_param( 'id' ) );
-		$creditor = new Creditor( $id );
-		if ( $creditor->id ) {
-			if ( $creditor->delete() ) {
+		$id    = intval( $request->get_param( 'id' ) );
+		$asset = new Asset( $id );
+		if ( $asset->id ) {
+			if ( $asset->delete() ) {
 				return new WP_REST_Response( null, 204 );
 			}
 			return new WP_REST_Response( null, 409 );
@@ -98,13 +98,13 @@ class CreditorAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function create( WP_REST_Request $request ) : WP_REST_Response {
-		$creditor = new Creditor();
+		$asset = new Asset();
 		foreach ( $request->get_body_params() as $key => $value ) {
-			if ( property_exists( $creditor, $key ) && gettype( $creditor->$key ) === gettype( $value ) ) {
-				$creditor->$key = $value;
+			if ( property_exists( $asset, $key ) && gettype( $asset->$key ) === gettype( $value ) ) {
+				$asset->$key = $value;
 			}
 		}
-		$id = $creditor->update();
+		$id = $asset->update();
 		if ( $id ) {
 			return new WP_REST_Response( [ 'id' => $id ] );
 		}

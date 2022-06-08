@@ -13,8 +13,6 @@ namespace WP_Accountancy\Public;
 use WP_Accountancy\Includes\Business;
 use WP_Accountancy\Includes\BusinessQuery;
 use WP_Accountancy\Includes\ChartOfAccounts;
-use function WP_Accountancy\Includes\notify;
-use function WP_Accountancy\Includes\business;
 
 /**
  * The Public filters.
@@ -41,14 +39,24 @@ class BusinessDisplay extends Display {
 	];
 
 	/**
+	 * Provide the top title
+	 *
+	 * @return string
+	 */
+	public function get_title(): string {
+		return __( 'Businesses', 'wpacc' );
+	}
+
+	/**
 	 * Create the business.
 	 *
 	 * @return string
 	 */
 	public function create() : string {
+		global $wpacc_business;
 		$result = $this->update();
-		$coa    = new ChartOfAccounts( $this->business->id );
-		$coa->import( WPACC_PLUGIN_PATH . 'templates\\' . self::COUNTRIES[ $this->business->country ]['template'] );
+		$coa    = new ChartOfAccounts();
+		$coa->import( WPACC_PLUGIN_PATH . 'templates\\' . self::COUNTRIES[ $wpacc_business->country ]['template'] );
 		return $result;
 	}
 
@@ -58,10 +66,8 @@ class BusinessDisplay extends Display {
 	 * @return string
 	 */
 	public function read() : string {
-		$business_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
-		if ( $business_id ) {
-			$business = new Business( $business_id );
-		}
+		$business_id   = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
+		$business      = new Business( $business_id ?? 0 );
 		$country_names = array_keys( self::COUNTRIES );
 		sort( $country_names );
 		ob_start();
@@ -84,7 +90,7 @@ class BusinessDisplay extends Display {
 			</label>
 			<input type="hidden" name="id" value="<?php echo esc_attr( $business->id ); ?>" />
 		<?php
-		return $this->form( ob_get_clean() . $this->action_button( $this->business->id ? 'update' : 'create', __( 'Save', 'wpacc' ) ) );
+		return $this->form( ob_get_clean() . $this->button->action( $business->id ? 'update' : 'create', __( 'Save', 'wpacc' ) ) );
 	}
 
 	/**
@@ -93,10 +99,11 @@ class BusinessDisplay extends Display {
 	 * @return string
 	 */
 	public function overview() : string {
+		global $wpacc_business;
 		$businesses = new BusinessQuery();
 		ob_start();
 		?>
-		<table class="wpacc-select display" data-selected="<?php echo esc_attr( business()->id ); ?>">
+		<table class="wpacc-select display" data-selected="<?php echo esc_attr( $wpacc_business->id ); ?>">
 			<thead>
 			<tr>
 				<th></th>
@@ -115,7 +122,7 @@ class BusinessDisplay extends Display {
 			</tbody>
 		</table>
 		<?php
-		return $this->form( ob_get_clean() . $this->action_button( 'read', __( 'Create', 'wpacc' ) ) );
+		return $this->form( ob_get_clean() . $this->button->action( 'read', __( 'Create', 'wpacc' ) ) );
 	}
 
 	/**
@@ -124,26 +131,24 @@ class BusinessDisplay extends Display {
 	 * @return string
 	 */
 	public function update() : string {
-		$input = filter_input_array(
+		$input             = filter_input_array(
 			INPUT_POST,
 			[
 				'id'      => FILTER_SANITIZE_NUMBER_INT,
-				'name'    => FILTER_SANITIZE_STRING,
-				'address' => FILTER_SANITIZE_STRING,
-				'country' => FILTER_SANITIZE_STRING,
-				'logo'    => FILTER_SANITIZE_STRING,
+				'name'    => FILTER_UNSAFE_RAW,
+				'address' => FILTER_UNSAFE_RAW,
+				'country' => FILTER_UNSAFE_RAW,
+				'logo'    => FILTER_UNSAFE_RAW,
 			]
 		);
-		if ( $input['id'] ) {
-			$this->business = new Business( $input['id'] );
-		}
-		$this->business->name    = $input['name'];
-		$this->business->address = $input['address'];
-		$this->business->country = $input['country'];
-		$this->business->logo    = $input['logo'];
-		$this->business->update();
-		do_action( 'wpacc_business_select', $this->business->id );
-		return notify( -1, __( 'Business saved', 'wpacc' ) );
+		$business          = new Business( $input['id'] ?? 0 );
+		$business->name    = $input['name'];
+		$business->address = $input['address'];
+		$business->country = $input['country'];
+		$business->logo    = $input['logo'];
+		$business->update();
+		do_action( 'wpacc_business_select', $business->id );
+		return $this->notify( -1, __( 'Business saved', 'wpacc' ) );
 	}
 
 	/**
@@ -152,18 +157,19 @@ class BusinessDisplay extends Display {
 	 * @return string
 	 */
 	public function delete() : string {
+		global $wpacc_business;
 		$business_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
 		if ( $business_id ) {
-			$this->business = new Business( $business_id );
-			if ( $this->business->delete() ) {
-				return notify( - 1, __( 'Business removed', 'wpacc' ) );
+			$business = new Business( $business_id );
+			if ( $business->delete() ) {
+				if ( $wpacc_business->id === $business_id ) {
+					do_action( 'wpacc_business_select', 0 );
+				}
+				return $this->notify( - 1, __( 'Business removed', 'wpacc' ) );
 			}
-			return notify( 1, __( 'Remove not allowed', 'wpacc' ) );
+			return $this->notify( 0, __( 'Remove not allowed', 'wpacc' ) );
 		}
-		if ( business()->id === $business_id ) {
-			do_action( 'wpacc_business_select', 0 );
-		}
-		return notify( 1, __( 'Internal error' ) );
+		return $this->notify( 0, __( 'Internal error' ) );
 	}
 
 	/**
@@ -173,7 +179,7 @@ class BusinessDisplay extends Display {
 	 */
 	public function select() : string {
 		$business_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
-		do_action( 'wpacc_business_select', $business_id );
+		do_action( 'wpacc_business_select', intval( $business_id ) );
 		return '';
 	}
 

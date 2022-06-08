@@ -1,6 +1,6 @@
 <?php
 /**
- * Definition account query class
+ * Definition asset query class
  *
  * @since      1.0.0
  *
@@ -11,9 +11,9 @@
 namespace WP_Accountancy\Includes;
 
 /**
- * Account query class.
+ * Asset query class.
  */
-class AccountQuery {
+class AssetQuery {
 
 	/**
 	 * De query string
@@ -34,25 +34,25 @@ class AccountQuery {
 		global $wpacc_business;
 		$defaults          = [
 			'business_id' => $wpacc_business->id,
-			'type'        => '',
+			'name'        => '',
 			'active'      => 0,
 			'id'          => 0,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
 		$this->query_where = $wpdb->prepare( 'WHERE business_id = %d', $wpacc_business->id );
 		if ( $query_vars['active'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND active = %d', (int) $query_vars['active'] );
+			$this->query_where .= $wpdb->prepare( ' AND active_id = %d', (int) $query_vars['active'] );
 		}
 		if ( $query_vars['id'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND id = %d', $query_vars['id'] );
 		}
-		if ( $query_vars['type'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND name = %s', $query_vars['type'] );
+		if ( $query_vars['name'] ) {
+			$this->query_where .= $wpdb->prepare( ' AND name = %s', $query_vars['name'] );
 		}
 	}
 
 	/**
-	 * Get the raw account results.
+	 * Get the asset results.
 	 *
 	 * @since 1.0.0
 	 *
@@ -60,13 +60,7 @@ class AccountQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		return $wpdb->get_results(
-			"SELECT id as account_id, name, business_id, taxcode_id, group_id, type, active, order_number
-			FROM {$wpdb->prefix}wpacc_account $this->query_where
-			ORDER BY order_number",
-			OBJECT_K
-		);
+		return $wpdb->get_results( "SELECT *, id as asset_id FROM {$wpdb->prefix}wpacc_asset $this->query_where ORDER BY name" );
 	}
-
 
 }
