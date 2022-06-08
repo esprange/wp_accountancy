@@ -39,7 +39,7 @@ class REST {
 	 *
 	 * @return void
 	 */
-	public function register() {
+	public function register(): void {
 		$namespace = WP_ACCOUNTANCY_API . '/V1';
 		$args      = [
 			'id' => [

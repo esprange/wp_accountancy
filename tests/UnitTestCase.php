@@ -10,7 +10,6 @@ namespace WP_Accountancy\Tests;
 use PHPUnit\Framework\Constraint\Constraint;
 use WP_UnitTestCase;
 use WP_Accountancy\Includes\Accountancy;
-use WP_Accountancy\Admin\Upgrade;
 
 /**
  * Mock filter input array function

@@ -20,7 +20,7 @@ class AssetQuery {
 	 *
 	 * @var string De query.
 	 */
-	private string $query_where;
+	protected string $query_where;
 
 	/**
 	 * The constructor
@@ -60,7 +60,7 @@ class AssetQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		return $wpdb->get_results( "SELECT *, id as asset_id FROM {$wpdb->prefix}wpacc_assets $this->query_where ORDER BY name" );
+		return $wpdb->get_results( "SELECT *, id as asset_id FROM {$wpdb->prefix}wpacc_asset $this->query_where ORDER BY name" );
 	}
 
 }

@@ -13,7 +13,6 @@ namespace WP_Accountancy\Public;
 use WP_Accountancy\Includes\Business;
 use WP_Accountancy\Includes\BusinessQuery;
 use WP_Accountancy\Includes\ChartOfAccounts;
-use function WP_Accountancy\Includes\notify;
 
 /**
  * The Public filters.
@@ -91,7 +90,7 @@ class BusinessDisplay extends Display {
 			</label>
 			<input type="hidden" name="id" value="<?php echo esc_attr( $business->id ); ?>" />
 		<?php
-		return $this->form( ob_get_clean() . $this->action_button( $business->id ? 'update' : 'create', __( 'Save', 'wpacc' ) ) );
+		return $this->form( ob_get_clean() . $this->button->action( $business->id ? 'update' : 'create', __( 'Save', 'wpacc' ) ) );
 	}
 
 	/**
@@ -123,7 +122,7 @@ class BusinessDisplay extends Display {
 			</tbody>
 		</table>
 		<?php
-		return $this->form( ob_get_clean() . $this->action_button( 'read', __( 'Create', 'wpacc' ) ) );
+		return $this->form( ob_get_clean() . $this->button->action( 'read', __( 'Create', 'wpacc' ) ) );
 	}
 
 	/**
@@ -149,7 +148,7 @@ class BusinessDisplay extends Display {
 		$business->logo    = $input['logo'];
 		$business->update();
 		do_action( 'wpacc_business_select', $business->id );
-		return notify( -1, __( 'Business saved', 'wpacc' ) );
+		return $this->notify( -1, __( 'Business saved', 'wpacc' ) );
 	}
 
 	/**
@@ -166,11 +165,11 @@ class BusinessDisplay extends Display {
 				if ( $wpacc_business->id === $business_id ) {
 					do_action( 'wpacc_business_select', 0 );
 				}
-				return notify( - 1, __( 'Business removed', 'wpacc' ) );
+				return $this->notify( - 1, __( 'Business removed', 'wpacc' ) );
 			}
-			return notify( 1, __( 'Remove not allowed', 'wpacc' ) );
+			return $this->notify( 0, __( 'Remove not allowed', 'wpacc' ) );
 		}
-		return notify( 1, __( 'Internal error' ) );
+		return $this->notify( 0, __( 'Internal error' ) );
 	}
 
 	/**

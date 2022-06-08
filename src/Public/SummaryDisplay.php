@@ -11,9 +11,7 @@
 namespace WP_Accountancy\Public;
 
 use WP_Accountancy\Includes\Account;
-use WP_Accountancy\Includes\ChartOfAccounts;
 use WP_Accountancy\Includes\ChartOfAccountsQuery;
-use function WP_Accountancy\Includes\notify;
 
 /**
  * The Public filters.
@@ -56,7 +54,6 @@ class SummaryDisplay extends Display {
 	 * @return string
 	 */
 	public function overview() : string {
-		$coa           = ( new ChartOfAccounts() )->get_results();
 		$this->summary = ( new ChartOfAccountsQuery(
 			[
 				'from'  => $this->from,
@@ -76,8 +73,7 @@ class SummaryDisplay extends Display {
 			<?php $this->list( Account::EXPENSE_ITEM, __( 'Expenses', 'wpacc' ) ); ?>
 		</div>
 		<?php
-		$forms = new Forms();
-		return ob_get_clean() . $this->form( $forms->action_button( 'change', __( 'Change', 'wpacc' ) ) );
+		return ob_get_clean() . $this->form( $this->button->action( 'change', __( 'Change', 'wpacc' ) ) );
 	}
 
 	/**

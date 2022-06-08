@@ -67,9 +67,9 @@ class DebtorDisplay extends Display {
 			if ( $debtor->delete() ) {
 				return $this->notify( - 1, __( 'Customer removed', 'wpacc' ) );
 			}
-			return $this->notify( 1, __( 'Remove not allowed', 'wpacc' ) );
+			return $this->notify( 0, __( 'Remove not allowed', 'wpacc' ) );
 		}
-		return $this->notify( 1, __( 'Internal error' ) );
+		return $this->notify( 0, __( 'Internal error' ) );
 	}
 
 	/**
@@ -80,7 +80,7 @@ class DebtorDisplay extends Display {
 	public function read() : string {
 		$debtor_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
 		$debtor    = new Debtor( intval( $debtor_id ) );
-		$html      =
+		return $this->form(
 			$this->field->render(
 				[
 					'name'     => 'name',
@@ -94,10 +94,7 @@ class DebtorDisplay extends Display {
 					'name'  => 'address',
 					'type'  => 'textarea',
 					'value' => $debtor->address,
-					'label' => __(
-						'Address',
-						'wpacc'
-					),
+					'label' => __( 'Address', 'wpacc' ),
 				]
 			) .
 			$this->field->render(
@@ -105,10 +102,7 @@ class DebtorDisplay extends Display {
 					'name'  => 'billing_address',
 					'type'  => 'textarea',
 					'value' => $debtor->billing_address,
-					'label' => __(
-						'Billing address',
-						'wpacc'
-					),
+					'label' => __( 'Billing address', 'wpacc' ),
 				]
 			) .
 			$this->field->render(
@@ -116,10 +110,7 @@ class DebtorDisplay extends Display {
 					'name'  => 'email_address',
 					'type'  => 'email',
 					'value' => $debtor->email_address,
-					'label' => __(
-						'Email',
-						'wpacc'
-					),
+					'label' => __( 'Email', 'wpacc' ),
 				]
 			) .
 			$this->field->render(
@@ -127,10 +118,7 @@ class DebtorDisplay extends Display {
 					'name'  => 'active',
 					'type'  => 'checkbox',
 					'value' => $debtor->active,
-					'label' => __(
-						'Active',
-						'wpacc'
-					),
+					'label' => __( 'Active', 'wpacc' ),
 				]
 			) .
 			$this->field->render(
@@ -140,9 +128,8 @@ class DebtorDisplay extends Display {
 					'value' => $debtor->id,
 				]
 			) .
-			$this->button->action_save( __( 'Save', 'wpacc' ) ) .
-			( $debtor->id ? $this->button->action_delete( __( 'Delete', 'wpacc' ) ) : '' );
-		return $this->form( $html );
+			$this->button->save( __( 'Save', 'wpacc' ) ) . ( $debtor->id ? $this->button->delete( __( 'Delete', 'wpacc' ) ) : '' )
+		);
 	}
 
 	/**
@@ -152,7 +139,7 @@ class DebtorDisplay extends Display {
 	 */
 	public function overview() : string {
 		return $this->form(
-			( new Table() )->render(
+			$this->table->render(
 				[
 					'fields'  => [
 						[
@@ -170,7 +157,7 @@ class DebtorDisplay extends Display {
 						],
 					],
 					'items'   => ( new DebtorQuery() )->get_results(),
-					'options' => [ 'create' => __( 'New customer', 'wpacc' ) ],
+					'options' => [ 'button_create' => __( 'New customer', 'wpacc' ) ],
 				]
 			)
 		);

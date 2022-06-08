@@ -38,7 +38,7 @@ class ChartOfAccounts {
 	 *
 	 * @return void
 	 */
-	public function add( Account $account ) {
+	public function add( Account $account ): void {
 		if ( false === $this->find( $account->id ) ) {
 			$this->accounts[] = $account;
 		}
@@ -51,7 +51,7 @@ class ChartOfAccounts {
 	 *
 	 * @return void
 	 */
-	public function remove( Account $account ) {
+	public function remove( Account $account ): void {
 		$index = $this->find( $account->id );
 		if ( false !== $index ) {
 			unset( $this->accounts[ $index ] );
@@ -65,7 +65,7 @@ class ChartOfAccounts {
 	 *
 	 * @return void
 	 */
-	public function import( string $jsonfile ) {
+	public function import( string $jsonfile ): void {
 		$json = file_get_contents( $jsonfile, true ); // phpcs:ignore
 		$coa  = json_decode( $json, true )['coa'] ?? [];
 		foreach ( $coa as $account_item ) {

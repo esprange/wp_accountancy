@@ -57,7 +57,7 @@ function version() : string {
  * @param string $object  Object at which the error occurs.
  * @param string $message The error message.
  */
-function error( string $object, string $message ) {
+function error( string $object, string $message ) : void {
 	error_log( "wpacc $object: $message" ); // phpcs:ignore
 }
 
@@ -107,7 +107,7 @@ class Accountancy {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function load_dependencies() {
+	private function load_dependencies() : void {
 		$this->loader = new Loader();
 	}
 
@@ -118,8 +118,7 @@ class Accountancy {
 	 * @access   private
 	 * @noinspection PhpFullyQualifiedNameUsageInspection
 	 */
-	private function define_admin_hooks() {
-		$plugin_filters = new \WP_Accountancy\Admin\Filters();
+	private function define_admin_hooks() : void {
 		$plugin_actions = new \WP_Accountancy\Admin\Actions();
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_actions, 'enqueue_scripts_and_styles' );
@@ -134,8 +133,7 @@ class Accountancy {
 	 * @access   private
 	 * @noinspection PhpFullyQualifiedNameUsageInspection
 	 */
-	private function define_public_hooks() {
-		$plugin_filters = new \WP_Accountancy\Public\Filters();
+	private function define_public_hooks() : void {
 		$plugin_actions = new \WP_Accountancy\Public\Actions();
 
 		$this->loader->add_action( 'init', $plugin_actions, 'add_shortcode' );
@@ -151,7 +149,7 @@ class Accountancy {
 	 *
 	 * @return void
 	 */
-	private function define_addons_hooks() {
+	private function define_addons_hooks() : void {
 		$addons = get_option( 'wpacc_addons', [] );
 		foreach ( $addons as $addon ) {
 			$addon_class = "WP_Accountancy\Addons\{$addon}";
@@ -167,7 +165,7 @@ class Accountancy {
 	 *
 	 * @internal Action for plugins_loaded
 	 */
-	public function load_plugin_textdomain() {
+	public function load_plugin_textdomain() : void {
 		load_plugin_textdomain(
 			'wpacc',
 			false,
@@ -188,7 +186,7 @@ class Accountancy {
 	/**
 	 * Generic action for localization
 	 */
-	private function set_locale() {
+	private function set_locale() : void {
 		$this->loader->add_action( 'plugins_loaded', $this, 'load_plugin_textdomain' );
 	}
 

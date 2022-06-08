@@ -30,7 +30,7 @@ class Table {
 	 *     options: an array with options to be added to the table
 	 *          paging:   add paging to the table
 	 *          addrow:   add am add row button below the table, the table starts with an empty row
-	 *          create:   add a button on top to create a new item in the list
+	 *          create*:  add a button on top to create a new item in the list
 	 *          select:   first field is a checkbox that can be used to select a row, if not set, first field is hidden
 	 *
 	 * @param array $args The table data.
@@ -45,7 +45,34 @@ class Table {
 				'options' => [],
 			]
 		);
-		return $this->render_table_head( $args ) . $this->render_table_body( $args ) . $this->render_table_foot( $args );
+		return $this->render_table_buttons( $args ) .
+			$this->render_table_head( $args ) .
+			$this->render_table_body( $args ) .
+			$this->render_table_foot( $args );
+	}
+
+	/**
+	 * Render buttons, if exist.
+	 *
+	 * @param array $args The table data.
+	 * @return string
+	 */
+	private function render_table_buttons( array $args ) : string {
+		$html    = '';
+		$buttons = array_filter(
+			$args['options'],
+			function( $key ) {
+				return str_starts_with( $key, 'button' );
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+		foreach ( $buttons as $key => $button ) {
+			$action = str_replace( 'button_', '', $key );
+			$html  .= <<<EOT
+			<button type="button" class="wpacc-btn" name="wpacc_action" value="$action" >$button</button>
+			EOT;
+		}
+		return $html;
 	}
 
 	/**
@@ -56,12 +83,9 @@ class Table {
 	 * @return string
 	 */
 	private function render_table_head( array $args ) : string {
-		$create = isset( $args['options']['create'] ) ?
-			'<button type="button" class="wpacc-btn" name="wpacc_action" value="create" >' . $args['options']['create'] . '</button>' : '';
-		$hide   = isset( $args['options']['select'] ) ? '' : 'style="visibility:collapse"';
-		$cols   = count( $args['fields'] ) - 1;
-		$html   = <<<EOT
-		$create
+		$hide = isset( $args['options']['select'] ) ? '' : 'style="visibility:collapse"';
+		$cols = count( $args['fields'] ) - 1;
+		$html = <<<EOT
 			<table class="wpacc" >
 			<colgroup>
 				<col $hide>

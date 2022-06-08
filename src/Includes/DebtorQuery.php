@@ -20,7 +20,7 @@ class DebtorQuery {
 	 *
 	 * @var string De query.
 	 */
-	private string $query_where;
+	protected string $query_where;
 
 	/**
 	 * The constructor

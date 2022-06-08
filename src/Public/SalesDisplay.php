@@ -86,9 +86,9 @@ class SalesDisplay extends Display {
 			if ( $sales->delete() ) {
 				return $this->notify( - 1, __( 'Sales transaction removed', 'wpacc' ) );
 			}
-			return $this->notify( 1, __( 'Remove not allowed', 'wpacc' ) );
+			return $this->notify( 0, __( 'Remove not allowed', 'wpacc' ) );
 		}
-		return $this->notify( 1, __( 'Internal error' ) );
+		return $this->notify( 0, __( 'Internal error' ) );
 	}
 
 	/**
@@ -203,8 +203,8 @@ class SalesDisplay extends Display {
 					'value' => $sales->id,
 				]
 			) .
-			$this->button->action_button( 'update', __( 'Save', 'wpacc' ) ) .
-			( $sales->id ? $this->button->action_button( 'delete', __( 'Delete', 'wpacc' ), false ) : '' );
+			$this->button->save( __( 'Save', 'wpacc' ) ) .
+			$sales->id ? $this->button->delete( __( 'Delete', 'wpacc' ) ) : '';
 		return $this->form( $html );
 	}
 
@@ -251,7 +251,7 @@ class SalesDisplay extends Display {
 						],
 					],
 					'items'   => $sales->get_results(),
-					'options' => [ 'create' => __( 'New sales invoice', 'wpacc' ) ],
+					'options' => [ 'button_create' => __( 'New sales invoice', 'wpacc' ) ],
 				]
 			)
 		);

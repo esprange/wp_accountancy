@@ -9,9 +9,6 @@
 
 namespace WP_Accountancy\Admin;
 
-use function WP_Accountancy\Includes\setup as current_setup;
-use function WP_Accountancy\Includes\options as current_options;
-
 /**
  * Admin display class
  */

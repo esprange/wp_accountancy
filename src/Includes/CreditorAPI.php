@@ -43,7 +43,7 @@ class CreditorAPI extends API {
 		$id       = intval( $request->get_param( 'id' ) );
 		$creditor = new Creditor( $id );
 		if ( $creditor->id ) {
-			return new WP_REST_Response( array_walk( new Creditor(), 'get_object_vars' ) );
+			return new WP_REST_Response( array_walk( $creditor, 'get_object_vars' ) );
 		}
 		return new WP_REST_Response( null, 404 );
 	}

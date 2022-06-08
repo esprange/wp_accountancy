@@ -66,9 +66,9 @@ class CreditorDisplay extends Display {
 			if ( $creditor->delete() ) {
 				return $this->notify( - 1, __( 'Supplier removed', 'wpacc' ) );
 			}
-			return $this->notify( 1, __( 'Remove not allowed', 'wpacc' ) );
+			return $this->notify( 0, __( 'Remove not allowed', 'wpacc' ) );
 		}
-		return $this->notify( 1, __( 'Internal error' ) );
+		return $this->notify( 0, __( 'Internal error' ) );
 	}
 
 	/**
@@ -79,7 +79,6 @@ class CreditorDisplay extends Display {
 	public function read() : string {
 		$creditor_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
 		$creditor    = new Creditor( intval( $creditor_id ) );
-		$forms       = new Forms();
 		$html        =
 			$this->field->render(
 				[
@@ -129,8 +128,8 @@ class CreditorDisplay extends Display {
 					'value' => $creditor->id,
 				]
 			) .
-			$forms->action_save( __( 'Save', 'wpacc' ) ) .
-			( $creditor->id ? $forms->action_delete( __( 'Delete', 'wpacc' ) ) : '' );
+			$this->button->save( __( 'Save', 'wpacc' ) ) .
+			( $creditor->id ? $this->button->delete( __( 'Delete', 'wpacc' ) ) : '' );
 		return $this->form( $html );
 	}
 
@@ -159,7 +158,7 @@ class CreditorDisplay extends Display {
 						],
 					],
 					'items'   => ( new CreditorQuery() )->get_results(),
-					'options' => [ 'create' => __( 'New supplier', 'wpacc' ) ],
+					'options' => [ 'button_create' => __( 'New supplier', 'wpacc' ) ],
 				]
 			)
 		);

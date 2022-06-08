@@ -36,7 +36,36 @@ class Test_Table extends UnitTestCase {
 			]
 		);
 		$this->assertValidHtml( $html, 'Invalid html empty' );
-		$this->assertEquals( substr_count( $html, '<tr>' ), 2, 'Number of rows incorrect' );
+		$this->assertEquals( 2, substr_count( $html, '<tr>' ), 'Number of rows incorrect' );
+	}
+
+	/**
+	 * Test render of buttons function.
+	 */
+	public function test_buttons() {
+		$table = new Table();
+		$html  = $table->render(
+			[
+				'fields'  => [
+					[
+						'name'  => 'id',
+						'type'  => 'static',
+						'label' => '',
+					],
+					[
+						'name'  => 'test',
+						'type'  => 'static',
+						'label' => 'Test',
+					],
+				],
+				'options' => [
+					'button_test_1' => 'Test 1',
+					'button_test2'  => 'Test 2',
+				],
+			]
+		);
+		$this->assertValidHtml( $html, 'Invalid html empty' );
+		$this->assertEquals( 2, substr_count( $html, '<button' ), 'Number of buttons incorrect' );
 	}
 
 	/**
@@ -78,7 +107,7 @@ class Test_Table extends UnitTestCase {
 	 *
 	 * @return void
 	 */
-	public function test_render_checkbox() {
+	public function test_render_checkbox(): void {
 		$table = new Table();
 		$html  = $table->render(
 			[
@@ -106,7 +135,7 @@ class Test_Table extends UnitTestCase {
 				],
 			],
 		);
-		$this->assertEquals( substr_count( $html, 'radio' ), 2, 'Number of radio buttons incorrect' );
+		$this->assertEquals( 2, substr_count( $html, 'radio' ), 'Number of radio buttons incorrect' );
 		$this->assertValidHtml( $html, 'Invalid html 2' );
 	}
 
@@ -115,7 +144,7 @@ class Test_Table extends UnitTestCase {
 	 *
 	 * @return void
 	 */
-	public function test_render_zoom() {
+	public function test_render_zoom(): void {
 		$table = new Table();
 		$html  = $table->render(
 			[
@@ -143,7 +172,7 @@ class Test_Table extends UnitTestCase {
 				],
 			],
 		);
-		$this->assertEquals( substr_count( $html, 'wpacc-zoom' ), 2, 'Number of zooms incorrect' );
+		$this->assertEquals( 2, substr_count( $html, 'wpacc-zoom' ), 'Number of zooms incorrect' );
 		$this->assertValidHtml( $html, 'Invalid html zoom' );
 	}
 
@@ -152,7 +181,7 @@ class Test_Table extends UnitTestCase {
 	 *
 	 * @return void
 	 */
-	public function test_render_inputs() {
+	public function test_render_inputs(): void {
 		$table = new Table();
 		$html  = $table->render(
 			[

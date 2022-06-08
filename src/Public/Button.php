@@ -24,7 +24,7 @@ class Button {
 	 *
 	 * @return string
 	 */
-	public function action_button( string $action, string $text, bool $left = true ) : string {
+	public function action( string $action, string $text, bool $left = true ) : string {
 		$position = $left ? 'left' : 'right';
 		return <<<EOT
 		<button name="wpacc_action" type="button" class="wpacc-btn" style="float: $position;" value="$action" >$text</button>
@@ -38,7 +38,7 @@ class Button {
 	 *
 	 * @return string
 	 */
-	public function action_save( string $text ) : string {
+	public function save( string $text ) : string {
 		return <<<EOT
 		<button name="wpacc_action" type="button" class="wpacc-btn wpacc-btn-save" style="float: left;" value="update" >$text</button>
 		EOT;
@@ -51,7 +51,7 @@ class Button {
 	 *
 	 * @return string
 	 */
-	public function action_delete( $text ) : string {
+	public function delete( $text ) : string {
 		return <<<EOT
 		<button name="wpacc_action" type="button" class="wpacc-btn wpacc-btn-delete" style="float: right;" value="delete" >$text</button>
 		EOT;

@@ -12,7 +12,6 @@ namespace WP_Accountancy\Public;
 
 use WP_Accountancy\Includes\Asset;
 use WP_Accountancy\Includes\AssetQuery;
-use function WP_Accountancy\Includes\notify;
 
 /**
  * The Public filters.
@@ -63,7 +62,7 @@ class AssetDisplay extends Display {
 		$asset->active      = $input['active'];
 		$asset->business_id = $wpacc_business->id;
 		$asset->update();
-		return notify( -1, __( 'Asset saved', 'wpacc' ) );
+		return $this->notify( -1, __( 'Asset saved', 'wpacc' ) );
 	}
 
 	/**
@@ -76,11 +75,11 @@ class AssetDisplay extends Display {
 		if ( $asset_id ) {
 			$asset = new Asset( $asset_id );
 			if ( $asset->delete() ) {
-				return notify( - 1, __( 'Asset removed', 'wpacc' ) );
+				return $this->$this->notify( - 1, __( 'Asset removed', 'wpacc' ) );
 			}
-			return notify( 1, __( 'Remove not allowed', 'wpacc' ) );
+			return $this->notify( 0, __( 'Remove not allowed', 'wpacc' ) );
 		}
-		return notify( 1, __( 'Internal error' ) );
+		return $this->notify( 0, __( 'Internal error' ) );
 	}
 
 	/**
@@ -112,7 +111,7 @@ class AssetDisplay extends Display {
 		</label>
 		<input type="hidden" name="id" value="<?php echo esc_attr( $asset->id ); ?>" />
 		<?php
-		return $this->form( ob_get_clean() . $this->action_button( $asset->id ? 'update' : 'create', __( 'Save', 'wpacc' ) ) );
+		return $this->form( ob_get_clean() . $this->button->action( $asset->id ? 'update' : 'create', __( 'Save', 'wpacc' ) ) );
 	}
 
 	/**
@@ -144,7 +143,7 @@ class AssetDisplay extends Display {
 		}
 		?>
 		<?php
-		return ob_get_clean() . $this->form( $this->action_button( 'change', __( 'Change', 'wpacc' ) ) );
+		return ob_get_clean() . $this->form( $this->button->action( 'change', __( 'Change', 'wpacc' ) ) );
 	}
 
 }

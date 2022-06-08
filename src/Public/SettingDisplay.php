@@ -10,8 +10,6 @@
 
 namespace WP_Accountancy\Public;
 
-use function WP_Accountancy\Includes\notify;
-
 /**
  * The Public filters.
  */
@@ -36,6 +34,6 @@ class SettingDisplay extends Display {
 		?>
 		setting
 		<?php
-		return ob_get_clean() . $this->form( $this->action_button( 'change', __( 'Change', 'wpacc' ) ) );
+		return ob_get_clean() . $this->form( $this->button->action( 'change', __( 'Change', 'wpacc' ) ) );
 	}
 }

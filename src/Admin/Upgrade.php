@@ -18,14 +18,14 @@ class Upgrade {
 	/**
 	 * Plugin-database-version
 	 */
-	const DBVERSION = 10;
+	const DBVERSION = 11;
 
 	/**
 	 * Execute upgrade actions if needed.
 	 *
 	 * @since 1.0.0
 	 */
-	public function run() {
+	public function run(): void {
 		$data = get_plugin_data( WPACC_PLUGIN_PATH . 'wp-accountancy.php', false, false );
 		update_option( 'wpacc-plugin-version', $data['Version'] );
 		$database_version = intval( get_option( 'wpacc-database-version', 0 ) );
@@ -40,7 +40,7 @@ class Upgrade {
 	/**
 	 * Converteer opties.
 	 */
-	private function convert_options() {
+	private function convert_options(): void {
 		$default_options = [
 			'multibusiness' => false,
 		];
@@ -70,7 +70,7 @@ class Upgrade {
 	 *
 	 * @suppressWarnings(PHPMD.ExcessiveMethodLength)
 	 */
-	public function convert_database() {
+	public function convert_database(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -128,14 +128,15 @@ class Upgrade {
 		 */
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_account (
-			id           INT (10) NOT NULL AUTO_INCREMENT,
-			business_id  INT (10) NOT NULL,
-			taxcode_id   INT (10),
-			name         VARCHAR (50),
-			group_id     INT (10),
-			type         TINYTEXT,
-			order_number INT,
-			active       TINYINT(1) DEFAULT 1,
+			id            INT (10) NOT NULL AUTO_INCREMENT,
+			business_id   INT (10) NOT NULL,
+			taxcode_id    INT (10),
+			name          VARCHAR (50),
+			group_id      INT (10),
+			type          TINYTEXT,
+			order_number  INT,
+			active        TINYINT(1) DEFAULT 1,
+			initial_value DECIMAL(13,4) DEFAULT 0.0,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
@@ -232,7 +233,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function foreign_key( string $table, string $parent, string $foreign = '' ) {
+	private function foreign_key( string $table, string $parent, string $foreign = '' ): void {
 		if ( defined( 'WPACC_TEST' ) ) {
 			return; // Phpunit creates temporary tables which don't allow foreign key constraints.
 		}
@@ -260,7 +261,7 @@ class Upgrade {
 	/**
 	 * Converteer data
 	 */
-	private function convert_data() {
+	private function convert_data(): void {
 		// Currently, no action.
 	}
 

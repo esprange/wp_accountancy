@@ -24,7 +24,7 @@ class Actions {
 	 *
 	 * @internal Action for wp_enqueue_scripts.
 	 */
-	public function load_script() {
+	public function load_script(): void {
 		$dev                        = 'development' === wp_get_environment_type() ? '' : '.min';
 		$datatables_version         = '1.12.0';
 		$datatables_select_version  = '1.3.4';
@@ -46,7 +46,7 @@ class Actions {
 	 *
 	 * @internal Action for init.
 	 */
-	public function add_shortcode() {
+	public function add_shortcode(): void {
 		add_shortcode(
 			WPACC_SLUG,
 			function( mixed $atts ) : string {
@@ -83,7 +83,7 @@ class Actions {
 	 *
 	 * @internal Action for wp_ajax_wpacc_formhandler
 	 */
-	public function formhandler() {
+	public function formhandler(): void {
 		$display_class = filter_input( INPUT_POST, 'display', FILTER_UNSAFE_RAW );
 		if ( $display_class ) {
 			if ( class_exists( $display_class ) ) {
@@ -102,7 +102,7 @@ class Actions {
 	 *
 	 * @internal Action for wp_ajax_wpacc_menuhandler
 	 */
-	public function menuhandler() {
+	public function menuhandler(): void {
 		$display_class = filter_input( INPUT_GET, 'menu', FILTER_UNSAFE_RAW );
 		if ( $display_class ) {
 			if ( class_exists( $display_class ) ) {
@@ -120,7 +120,7 @@ class Actions {
 	 *
 	 * @internal Action for wpacc_business_select
 	 */
-	public function business_select( int $business_id ) {
+	public function business_select( int $business_id ): void {
 		update_user_meta( get_current_user_id(), WPACC_BUSINESS, $business_id );
 		global $wpacc_business;
 		$wpacc_business = new Business( $business_id );
@@ -131,7 +131,7 @@ class Actions {
 	 *
 	 * @internal Action for init
 	 */
-	public function init_business() {
+	public function init_business(): void {
 		global $wpacc_business;
 		$business_id = get_user_meta( get_current_user_id(), WPACC_BUSINESS, true );
 		if ( $business_id ) {

@@ -42,7 +42,7 @@ class Actions {
 	 *
 	 * @internal Action for admin_enqueue_scripts.
 	 */
-	public function enqueue_scripts_and_styles() {
+	public function enqueue_scripts_and_styles() : void {
 		wp_enqueue_script( 'wpacc_admin', plugin_dir_url( __FILE__ ) . 'js/admin.js', [ 'jquery' ], version(), false );
 	}
 
@@ -53,7 +53,7 @@ class Actions {
 	 *
 	 * @internal Action for admin_menu.
 	 */
-	public function add_plugin_admin_menu() {
+	public function add_plugin_admin_menu(): void {
 		add_menu_page( __( 'Configuration', 'wpacc' ), 'WP-Accountancy', 'manage_options', 'wpacc', [ $this->confighandler, 'display_settings_page' ], plugins_url( '/images/wpacc_icon.png', __FILE__ ), 30 );
 		add_submenu_page( 'wpacc', __( 'Configuration', 'wpacc' ), __( 'Configuration', 'wpacc' ), 'manage_options', 'wpacc', null );
 	}
@@ -65,7 +65,7 @@ class Actions {
 	 *
 	 * @internal Action for admin_init.
 	 */
-	public function initialize() {
+	public function initialize(): void {
 		$upgrade = new Upgrade();
 		$upgrade->run();
 		if ( ! wp_next_scheduled( 'wpacc_daily_jobs' ) ) {

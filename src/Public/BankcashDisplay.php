@@ -11,15 +11,10 @@
 namespace WP_Accountancy\Public;
 
 use WP_Accountancy\Includes\Account;
-use WP_Accountancy\Includes\Detail;
-use WP_Accountancy\Includes\DetailQuery;
-use WP_Accountancy\Includes\Transaction;
-use WP_Accountancy\Includes\AssetQuery;
-use WP_Accountancy\Includes\TransactionQuery;
-use function WP_Accountancy\Includes\notify;
+use WP_Accountancy\Includes\BankcashQuery;
 
 /**
- * The Public filters.
+ * The Bank Cash display.
  */
 class BankcashDisplay extends Display {
 
@@ -33,12 +28,25 @@ class BankcashDisplay extends Display {
 	}
 
 	/**
-	 * Create the bank or cash.
+	 * Create the bank account.
 	 *
 	 * @return string
 	 */
-	public function create() : string {
-		return $this->update();
+	public function create_bank() : string {
+		$account       = new Account();
+		$account->type = Account::BANK_ITEM;
+		return $this->details( $account );
+	}
+
+	/**
+	 * Create the cash account.
+	 *
+	 * @return string
+	 */
+	public function create_cash() : string {
+		$account       = new Account();
+		$account->type = Account::CASH_ITEM;
+		return $this->details( $account );
 	}
 
 	/**
@@ -48,24 +56,24 @@ class BankcashDisplay extends Display {
 	 */
 	public function update() : string {
 		global $wpacc_business;
-		$input                = filter_input_array(
+		$input                  = filter_input_array(
 			INPUT_POST,
 			[
-				'id'     => FILTER_SANITIZE_NUMBER_INT,
-				'name'   => FILTER_UNSAFE_RAW,
-				'type'   => FILTER_UNSAFE_RAW,
-				'start'  => FILTER_SANITIZE_NUMBER_FLOAT,
-				'active' => FILTER_SANITIZE_NUMBER_INT,
+				'bankcash_id'   => FILTER_SANITIZE_NUMBER_INT,
+				'name'          => FILTER_UNSAFE_RAW,
+				'type'          => FILTER_UNSAFE_RAW,
+				'initial_value' => FILTER_SANITIZE_NUMBER_FLOAT,
+				'active'        => FILTER_SANITIZE_NUMBER_INT,
 			]
 		);
-		$account              = new Account( $input['id'] );
-		$account->name        = $input['name'];
-		$account->type        = $input['type'];
-		$account->active      = $input['active'];
-		$account->business_id = $wpacc_business->id;
+		$account                = new Account( $input['bankcash_id'] );
+		$account->name          = $input['name'];
+		$account->type          = $input['type'];
+		$account->active        = $input['active'];
+		$account->business_id   = $wpacc_business->id;
+		$account->initial_value = $input['initial_value'];
 		$account->update();
-		$this->start_balance( $account->id, $input['start'] );
-		return notify( -1, 'bank' === $account->type ? __( 'Bank saved', 'wpacc' ) : __( 'Cash saved', 'wpacc' ) );
+		return $this->notify( -1, 'bank' === $account->type ? __( 'Bank saved', 'wpacc' ) : __( 'Cash saved', 'wpacc' ) );
 	}
 
 	/**
@@ -78,98 +86,111 @@ class BankcashDisplay extends Display {
 		if ( $account_id ) {
 			$account = new Account( $account_id );
 			if ( $account->delete() ) {
-				return notify( - 1, 'bank' === $account->type ? __( 'Bank removed', 'wpacc' ) : __( 'Cash removed', 'wpacc' ) );
+				return $this->notify( - 1, Account::BANK_ITEM === $account->type ? __( 'Bank removed', 'wpacc' ) : __( 'Cash removed', 'wpacc' ) );
 			}
-			return notify( 1, __( 'Remove not allowed', 'wpacc' ) );
+			return $this->notify( 0, __( 'Remove not allowed', 'wpacc' ) );
 		}
-		return notify( 1, __( 'Internal error' ) );
+		return $this->notify( 0, __( 'Internal error' ) );
 	}
 
 	/**
-	 * Display the form
+	 * Display the existing bank or cash account
 	 *
 	 * @return string
 	 */
 	public function read() : string {
-		$account = new Account( intval( filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
-		ob_start();
-		?>
-		<label for="wpacc_name"><?php esc_html_e( 'Name', 'wpacc' ); ?>
-			<input name="name" id="wpacc_name" value="<?php echo esc_attr( $account->name ); ?>" >
-		</label>
-		<label for="wpacc_start"><?php esc_html_e( 'Starting Balance', 'wpacc' ); ?>
-			<input name="start" type="number" id="wpacc_start" value="<?php echo esc_attr( $account->start ); ?>" >
-		</label>
-		<label for="wpacc_active"><?php esc_html_e( 'Active', 'wpacc' ); ?>
-			<input name="active" id="wpacc_active" type="checkbox" <?php checked( $account->active ); ?>" >
-		</label>
-		<input type="hidden" name="id" value="<?php echo esc_attr( $account->id ); ?>" />
-		<?php
-		return $this->form( ob_get_clean() . $this->action_button( $account->id ? 'update' : 'create', __( 'Save', 'wpacc' ) ) );
+		$account_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
+		if ( $account_id ) {
+			$account = new Account( $account_id );
+			return $this->details( $account );
+		}
+		return $this->notify( 0, __( 'Internal error' ) );
 	}
 
 	/**
-	 * Render the existing assets
+	 * Display the details of the account
+	 *
+	 * @param Account $account The bank or cash account.
+	 * @return string
+	 */
+	private function details( Account $account ) : string {
+		return $this->form(
+			$this->field->render(
+				[
+					'name'  => 'name',
+					'type'  => 'text',
+					'label' => __( 'Naam', 'wpacc' ),
+					'value' => $account->name,
+				]
+			) .
+			$this->field->render(
+				[
+					'name'  => 'initial_value',
+					'type'  => 'currency',
+					'value' => $account->active,
+					'label' => __( 'Start balance', 'wpacc' ),
+				]
+			) .
+			$this->field->render(
+				[
+					'name'  => 'active',
+					'type'  => 'checkbox',
+					'value' => $account->active,
+					'label' => __( 'Active', 'wpacc' ),
+				]
+			) .
+			$this->field->render(
+				[
+					'name'  => 'type',
+					'type'  => 'hidden',
+					'value' => $account->type,
+				]
+			) .
+			$this->field->render(
+				[
+					'name'  => 'bankcash_id',
+					'type'  => 'hidden',
+					'value' => $account->id,
+				]
+			) .
+			$this->button->save( __( 'Save', 'wpacc' ) ) . ( $account->id ? $this->button->delete( __( 'Delete', 'wpacc' ) ) : '' )
+		);
+	}
+
+	/**
+	 * Render the existing bank and cash accounts
 	 *
 	 * @return string
 	 */
 	public function overview() : string {
-		$assets = new AssetQuery();
-		?>
-		<table class="wpacc display" >
-			<thead>
-			<tr>
-				<th></th>
-				<th></th>
-				<th><?php esc_html_e( 'Name', 'wpacc' ); ?></th>
-			</tr>
-			</thead>
-			<tbody>
-			<?php foreach ( $assets->get_results() as $asset ) : ?>
-				<tr>
-					<td></td>
-					<td><?php echo esc_html( $asset->id ); ?></td>
-					<td><a href="<?php echo esc_url( sprintf( '?wpacc_action=read&id=%d', $asset->id ) ); ?>"><?php echo esc_html( $asset->name ); ?></a></td>
-				</tr>
-			<?php endforeach; ?>
-			</tbody>
-		</table>
-		}
-		?>
-		<?php
-		return ob_get_clean() . $this->form( $this->action_button( 'change', __( 'Change', 'wpacc' ) ) );
+		return $this->form(
+			$this->table->render(
+				[
+					'fields'  => [
+						[
+							'name'  => 'bankcash_id',
+							'type'  => 'static',
+							'label' => '',
+						],
+						[
+							'name'  => 'name',
+							'type'  => 'static',
+							'label' => __( 'Name', 'wpacc' ),
+						],
+						[
+							'name'  => 'actual_balance',
+							'type'  => 'zoom',
+							'label' => __( 'Balance', 'wpacc' ),
+						],
+					],
+					'items'   => ( new BankcashQuery() )->get_results(),
+					'options' => [
+						'button_create_bank' => __( 'New bank account', 'wpacc' ),
+						'button_create_cash' => __( 'New cash account', 'wpacc' ),
+					],
+				]
+			)
+		);
 	}
 
-	/**
-	 * Create or update the start amount of this bank or cash position
-	 *
-	 * @param int   $account_id The account id of the bank or cash definition.
-	 * @param float $start      The starting balance.
-	 *
-	 * @return void
-	 */
-	private function set_start_balance( int $account_id, float $start ) {
-		$transactions      = ( new TransactionQuery( [ 'id' => $account_id ] ) )->get_results();
-		$transaction       = Transaction::START_BALANCE === $transactions[0]->type ? $transactions[0] : new Transaction();
-		$transaction->type = Transaction::START_BALANCE;
-		$transaction->update();
-		$details            = ( new DetailQuery( [ 'transaction_id' => $transaction->id ] ) )->get_results();
-		$detail             = $details ? $details[0] : new Detail( $transaction->id );
-		$detail->account_id = $account_id;
-		$detail->amount     = 1;
-		$detail->unitprice  = $start;
-		$detail->update();
-	}
-
-	/**
-	 * To do
-	 *
-	 * @param int $account_id To do.
-	 *
-	 * @return float The value.
-	 */
-	private function get_start_balance( int $account_id ) : float {
-		$transactions = ( new TransactionQuery( [ 'id' => $account_id ] ) )->get_results();
-		return 0;
-	}
 }

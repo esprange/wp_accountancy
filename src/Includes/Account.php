@@ -19,8 +19,9 @@ namespace WP_Accountancy\Includes;
  * @property int    group_id
  * @property string name
  * @property string type
- * @property bool   active,
+ * @property bool   active
  * @property int    order_number
+ * @property float  initial_value
  */
 class Account {
 	public const ASSETS_ITEM    = 'assets';
@@ -41,14 +42,15 @@ class Account {
 	public function __construct( int $account_id = 0 ) {
 		global $wpacc_business;
 		$data = [
-			'id'           => $account_id,
-			'business_id'  => $wpacc_business->id,
-			'taxcode_id'   => null,
-			'group_id'     => null,
-			'name'         => '',
-			'active'       => true,
-			'order_number' => 0,
-			'type'         => '',
+			'id'            => $account_id,
+			'business_id'   => $wpacc_business->id,
+			'taxcode_id'    => null,
+			'group_id'      => null,
+			'name'          => '',
+			'active'        => true,
+			'order_number'  => 0,
+			'type'          => '',
+			'initial_value' => 0.0,
 		];
 		global $wpdb;
 		$result = $wpdb->get_row(
@@ -74,14 +76,15 @@ class Account {
 		global $wpdb;
 		global $wpacc_business;
 		$data = [
-			'id'           => $this->id,
-			'business_id'  => $wpacc_business->id,
-			'name'         => $this->name,
-			'taxcode_id'   => $this->taxcode_id,
-			'group_id'     => $this->group_id,
-			'order_number' => $this->order_number,
-			'active'       => $this->active,
-			'type'         => $this->type,
+			'id'            => $this->id,
+			'business_id'   => $wpacc_business->id,
+			'name'          => $this->name,
+			'taxcode_id'    => $this->taxcode_id,
+			'group_id'      => $this->group_id,
+			'order_number'  => $this->order_number,
+			'active'        => $this->active,
+			'type'          => $this->type,
+			'initial_value' => $this->initial_value,
 		];
 		$wpdb->replace( "{$wpdb->prefix}wpacc_account", $data );
 		$this->id = $wpdb->insert_id;
