@@ -25,20 +25,9 @@ class Actions {
 	 * @internal Action for wp_enqueue_scripts.
 	 */
 	public function load_script(): void {
-		$dev                        = 'development' === wp_get_environment_type() ? '' : '.min';
-		$datatables_version         = '1.12.0';
-		$datatables_select_version  = '1.3.4';
-		$datatables_buttons_version = '2.2.3';
-		$jquery_ui_version          = wp_scripts()->registered['jquery-ui-core']->ver;
-		wp_register_style( 'jquery-ui', sprintf( '//code.jquery.com/ui/%s/themes/smoothness/jquery-ui.css', $jquery_ui_version ), [], $jquery_ui_version );
-		wp_register_style( 'datatables', sprintf( '//cdn.datatables.net/%s/css/jquery.dataTables.min.css', $datatables_version ), [], $datatables_version );
-		wp_register_style( 'datatables_select', sprintf( '//cdn.datatables.net/select/%s/css/select.dataTables.min.css', $datatables_select_version ), [], $datatables_select_version );
-		wp_register_style( 'datatables_buttons', sprintf( '//cdn.datatables.net/buttons/%s/css/buttons.dataTables.min.css', $datatables_buttons_version ), [], $datatables_buttons_version );
-		wp_register_style( 'wpacc', plugin_dir_url( __FILE__ ) . "/css/wpacc$dev.css", [ 'jquery-ui', 'datatables', 'datatables_select', 'datatables_buttons' ], version() );
-		wp_register_script( 'datatables', sprintf( '//cdn.datatables.net/%s/js/jquery.dataTables.min.js', $datatables_version ), [ 'jquery' ], $datatables_version, true );
-		wp_register_script( 'datatables_select', sprintf( '//cdn.datatables.net/select/%s/js/dataTables.select.min.js', $datatables_select_version ), [ 'jquery', 'datatables' ], $datatables_select_version, true );
-		wp_register_script( 'datatables_buttons', sprintf( '//cdn.datatables.net/buttons/%s/js/dataTables.buttons.min.js', $datatables_buttons_version ), [ 'jquery', 'datatables' ], $datatables_buttons_version, true );
-		wp_register_script( 'wpacc', plugin_dir_url( __FILE__ ) . "/js/wpacc-ajax$dev.js", [ 'jquery', 'datatables', 'datatables_select', 'datatables_buttons', 'jquery-ui-datepicker' ], version(), true );
+		$dev = 'development' === wp_get_environment_type() ? '' : '.min';
+		wp_register_style( 'wpacc', plugin_dir_url( __FILE__ ) . "/css/wpacc$dev.css", [], version() );
+		wp_register_script( 'wpacc', plugin_dir_url( __FILE__ ) . "/js/wpacc-ajax$dev.js", [ 'jquery' ], version(), true );
 	}
 
 	/**

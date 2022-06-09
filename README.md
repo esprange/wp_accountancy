@@ -3,7 +3,7 @@
 **Donate link:** https://www.wpacc.nl  
 **Tags:** Accountancy, Bookkeeping  
 **Requires at least:** 4.8.0  
-**Tested up to:** 5.9.2  
+**Tested up to:** 6.0.0  
 **Stable tag:** 1.0.0  
 
 
@@ -20,11 +20,11 @@ WordPress plugin for Accountancy purposes.
 Regular WordPress plugin installation.
 
 ## Screenshot ##
-* None yet *
+  * None yet
 
 ## Changelog ##
 ### 1.0.0 ###
-* Initial version
+  * Initial version
 
 ## Upgrade Notice ##
 
