@@ -31,9 +31,9 @@ function filter_input_array( int $type, array|int $options = FILTER_DEFAULT, boo
  * Mock filter input function
  *
  * @param int       $type     Type input Post of Get.
- * @param string    $var_name Variable naam.
+ * @param string    $var_name Variable name.
  * @param int       $filter   Filter.
- * @param array|int $options  Filter opties.
+ * @param array|int $options  Filter options.
  *
  * @return mixed
  */

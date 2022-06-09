@@ -119,7 +119,7 @@ class BankcashDisplay extends Display {
 				[
 					'name'  => 'name',
 					'type'  => 'text',
-					'label' => __( 'Naam', 'wpacc' ),
+					'label' => __( 'Name', 'wpacc' ),
 					'value' => $account->name,
 				]
 			) .

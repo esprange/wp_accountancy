@@ -37,8 +37,8 @@ class Field {
 		$args    = (object) wp_parse_args( $args, $default );
 		$html    = '';
 		if ( $args->label ) {
-			$html         = "<label for=\"$args->tagref\" >$args->label";
-			$args->tagref = "id=\"wpacc_{$args['name']}\"";
+			$html         = "<label for=\"wpacc_$index\" >$args->label";
+			$args->tagref = "id=\"wpacc_$index\"";
 		}
 		$html .= match ( $args->type ) {
 			'static'    => $this->render_static( $args ),
@@ -56,7 +56,7 @@ class Field {
 			'zoom',     => $this->render_zoom( $args ),
 		};
 		$index++;
-		$html .= ! empty( $args->label ) ? '</label>' : '';
+		$html .= $args->label ? '</label>' : '';
 		return $html;
 	}
 

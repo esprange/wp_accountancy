@@ -18,8 +18,7 @@ class Upgrade {
 	/**
 	 * Plugin-database-version
 	 */
-	const DBVERSION = 11;
-
+	const DBVERSION = 18;
 	/**
 	 * Execute upgrade actions if needed.
 	 *
@@ -81,7 +80,7 @@ class Upgrade {
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_business (
 			id      INT (10) NOT NULL AUTO_INCREMENT,
-			slug	TINYTEXT,
+			slug    TINYTEXT,
 			name    TINYTEXT,
 			address TEXT,
 			country TINYTEXT,

@@ -161,54 +161,18 @@
 					e.preventDefault();
 				}
 			)
-			/**
-			 * Selection of an item in a select table.
-			 */
-			.on(
-				'select.dt',
-				'table.wpacc-select',
-				function( e, dt, type, index ) {
-					if ( 'row' === type ) {
-						const table = $( this ).DataTable();
-						let id      = table.rows( index ).data()[0][1];
-						doAjaxForm( [ { wpacc_action:'select' }, { id: id } ] );
-					}
-				}
-			)
-			/**
-			 * Show the currently selected item in a select table.
-			 */
-			.on(
-				'click',
-				'table.wpacc-select input[type=checkbox]',
-				function() {
-					const table = $( this ).DataTable();
-					let id      = $( this ).data( 'selected' );
-					if ( 'undefined' !== id ) {
-						table.rows().every(
-							function ( rowIdx, tableLoop, rowLoop) {
-								if ( + this.data()[1] === id ) {
-									this.select();
-								}
-							}
-						);
-					}
-				}
-			)
 			.on(
 				'click',
 				'button.wpacc-add-row',
 				function( e ) {
 					const $last_row = $( '.wpacc-table tbody tr:last' ),
 						$new_row    = $last_row.clone();
-					const table     = $( '.wpacc-table' ).DataTable();
-					$new_row.each(
+					$new_row.find( 'td *' ).each(
 						function () {
 							$( this ).val( '' );
 						}
 					)
-					$new_row.appendTo( $last_row );
-					table.draw();
+					$( '.wpacc-table tbody' ).append( $last_row );
 					e.preventDefault();
 				}
 			);

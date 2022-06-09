@@ -68,11 +68,11 @@ class Loader {
 	 * @access   private
 	 * @param    array  $hooks            Collection of hooks to register in.
 	 * @param    string $hook             Name of hook.
-	 * @param    object $component        Class De class naam waar de hook geregistreerd wordt.
+	 * @param    object $component        Class De class name where the hook is registered at.
 	 * @param    string $callback         Method name.
 	 * @param    int    $priority         Optional priority. Default is 10.
 	 * @param    int    $accepted_args    Optional number of arguments transferred to the callback. Default is 1.
-	 * @return   array                    De collectie.
+	 * @return   array                    The collection.
 	 */
 	private function add( array $hooks, string $hook, object $component, string $callback, int $priority, int $accepted_args ) : array {
 		$hooks[] = array(
