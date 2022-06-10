@@ -63,13 +63,11 @@ div.wpacc-menu {
 /*
  * Tables
  */
-table.wpacc,
-table.wpacc-select {
+table.wpacc {
 	table-layout: auto;
 }
 
-table.wpacc a:hover,
-table.wpacc-select a:hover {
+table.wpacc a:hover {
 	cursor: pointer;
 }
 
@@ -123,7 +121,6 @@ button.wpacc-menu-dropdown {
 		right: 0;
 		text-align: right;
 	}
-
 }
 
 /**

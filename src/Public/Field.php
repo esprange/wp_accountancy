@@ -111,10 +111,10 @@ class Field {
 		$html = <<<EOT
 		<select name="$args->name" $args->tagref $args->required $args->readonly >
 		EOT;
-		foreach ( $args->list as $id => $option ) {
-			$selected = selected( $args->value, $id, false );
+		foreach ( $args->list as $option_id => $option ) {
+			$selected = selected( $args->value, $option_id, false );
 			$html    .= <<<EOT
-			<option value="$id" $selected >$option->name</option>
+			<option value="$option_id" $selected >$option->name</option>
 
 		EOT;
 		}

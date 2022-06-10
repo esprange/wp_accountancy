@@ -40,8 +40,7 @@ class TransactionAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function get( WP_REST_Request $request ) : WP_REST_Response {
-		$id          = intval( $request->get_param( 'id' ) );
-		$transaction = new Transaction( $id );
+		$transaction = new Transaction( intval( $request->get_param( 'id' ) ) );
 		if ( $transaction->id ) {
 			$data           = get_object_vars( $transaction );
 			$details        = ( new DetailQuery( [ 'transaction_id' => $transaction->id ] ) )->get_results();
@@ -59,8 +58,7 @@ class TransactionAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function update( WP_REST_Request $request ) : WP_REST_Response {
-		$id          = intval( $request->get_param( 'id' ) );
-		$transaction = new Transaction( $id );
+		$transaction = new Transaction( intval( $request->get_param( 'id' ) ) );
 		if ( $transaction->id ) {
 			$update = $request->get_body_params();
 			foreach ( $update as $key => $value ) {
@@ -82,8 +80,7 @@ class TransactionAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function cancel( WP_REST_Request $request ) : WP_REST_Response {
-		$id          = intval( $request->get_param( 'id' ) );
-		$transaction = new Transaction( $id );
+		$transaction = new Transaction(intval( $request->get_param( 'id' ) ) );
 		if ( $transaction->id ) {
 			if ( $transaction->delete() ) {
 				return new WP_REST_Response( null, 204 );
@@ -107,9 +104,9 @@ class TransactionAPI extends API {
 				$transaction->$key = $value;
 			}
 		}
-		$id = $transaction->update();
-		if ( $id ) {
-			return new WP_REST_Response( [ 'id' => $id ] );
+		$transaction_id = $transaction->update();
+		if ( $transaction_id ) {
+			return new WP_REST_Response( [ 'id' => $transaction_id ] );
 		}
 		return new WP_REST_Response( null, 400 );
 	}

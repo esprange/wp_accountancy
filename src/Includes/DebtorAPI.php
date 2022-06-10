@@ -40,8 +40,7 @@ class DebtorAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function get( WP_REST_Request $request ) : WP_REST_Response {
-		$id     = intval( $request->get_param( 'id' ) );
-		$debtor = new Debtor( $id );
+		$debtor = new Debtor( intval( $request->get_param( 'id' ) ) );
 		if ( $debtor->id ) {
 			return new WP_REST_Response( get_object_vars( $debtor ) );
 		}
@@ -56,8 +55,7 @@ class DebtorAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function update( WP_REST_Request $request ) : WP_REST_Response {
-		$id     = intval( $request->get_param( 'id' ) );
-		$debtor = new Debtor( $id );
+		$debtor = new Debtor( intval( $request->get_param( 'id' ) ) );
 		if ( $debtor->id ) {
 			$update = $request->get_body_params();
 			foreach ( $update as $key => $value ) {
@@ -79,8 +77,7 @@ class DebtorAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function cancel( WP_REST_Request $request ) : WP_REST_Response {
-		$id     = intval( $request->get_param( 'id' ) );
-		$debtor = new Debtor( $id );
+		$debtor = new Debtor( intval( $request->get_param( 'id' ) ) );
 		if ( $debtor->id ) {
 			if ( $debtor->delete() ) {
 				return new WP_REST_Response( null, 204 );
@@ -104,9 +101,9 @@ class DebtorAPI extends API {
 				$debtor->$key = $value;
 			}
 		}
-		$id = $debtor->update();
-		if ( $id ) {
-			return new WP_REST_Response( [ 'id' => $id ] );
+		$debtor_id = $debtor->update();
+		if ( $debtor_id ) {
+			return new WP_REST_Response( [ 'id' => $debtor_id ] );
 		}
 		return new WP_REST_Response( null, 400 );
 	}

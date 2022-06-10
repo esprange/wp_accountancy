@@ -103,7 +103,7 @@ class BusinessDisplay extends Display {
 		$businesses = new BusinessQuery();
 		ob_start();
 		?>
-		<table class="wpacc-select display" data-selected="<?php echo esc_attr( $wpacc_business->id ); ?>">
+		<table class="wpacc" data-selected="<?php echo esc_attr( $wpacc_business->id ); ?>">
 			<thead>
 			<tr>
 				<th></th>

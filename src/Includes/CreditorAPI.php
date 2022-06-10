@@ -40,8 +40,7 @@ class CreditorAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function get( WP_REST_Request $request ) : WP_REST_Response {
-		$id       = intval( $request->get_param( 'id' ) );
-		$creditor = new Creditor( $id );
+		$creditor = new Creditor( intval( $request->get_param( 'id' ) ) );
 		if ( $creditor->id ) {
 			return new WP_REST_Response( array_walk( $creditor, 'get_object_vars' ) );
 		}
@@ -56,8 +55,7 @@ class CreditorAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function update( WP_REST_Request $request ) : WP_REST_Response {
-		$id       = intval( $request->get_param( 'id' ) );
-		$creditor = new Creditor( $id );
+		$creditor = new Creditor( intval( $request->get_param( 'id' ) ) );
 		if ( $creditor->id ) {
 			$update = $request->get_body_params();
 			foreach ( $update as $key => $value ) {
@@ -79,8 +77,7 @@ class CreditorAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function cancel( WP_REST_Request $request ) : WP_REST_Response {
-		$id       = intval( $request->get_param( 'id' ) );
-		$creditor = new Creditor( $id );
+		$creditor = new Creditor( intval( $request->get_param( 'id' ) ) );
 		if ( $creditor->id ) {
 			if ( $creditor->delete() ) {
 				return new WP_REST_Response( null, 204 );
@@ -104,9 +101,9 @@ class CreditorAPI extends API {
 				$creditor->$key = $value;
 			}
 		}
-		$id = $creditor->update();
-		if ( $id ) {
-			return new WP_REST_Response( [ 'id' => $id ] );
+		$creditor_id = $creditor->update();
+		if ( $creditor_id ) {
+			return new WP_REST_Response( [ 'id' => $creditor_id ] );
 		}
 		return new WP_REST_Response( null, 400 );
 	}

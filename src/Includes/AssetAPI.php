@@ -40,8 +40,7 @@ class AssetAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function get( WP_REST_Request $request ) : WP_REST_Response {
-		$id    = intval( $request->get_param( 'id' ) );
-		$asset = new Asset( $id );
+		$asset = new Asset( intval( $request->get_param( 'id' ) ) );
 		if ( $asset->id ) {
 			return new WP_REST_Response( get_object_vars( $asset ) );
 		}
@@ -56,8 +55,7 @@ class AssetAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function update( WP_REST_Request $request ) : WP_REST_Response {
-		$id    = intval( $request->get_param( 'id' ) );
-		$asset = new Asset( $id );
+		$asset = new Asset( intval( $request->get_param( 'id' ) ) );
 		if ( $asset->id ) {
 			$update = $request->get_body_params();
 			foreach ( $update as $key => $value ) {
@@ -79,8 +77,7 @@ class AssetAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function cancel( WP_REST_Request $request ) : WP_REST_Response {
-		$id    = intval( $request->get_param( 'id' ) );
-		$asset = new Asset( $id );
+		$asset = new Asset( intval( $request->get_param( 'id' ) ) );
 		if ( $asset->id ) {
 			if ( $asset->delete() ) {
 				return new WP_REST_Response( null, 204 );
@@ -104,9 +101,9 @@ class AssetAPI extends API {
 				$asset->$key = $value;
 			}
 		}
-		$id = $asset->update();
-		if ( $id ) {
-			return new WP_REST_Response( [ 'id' => $id ] );
+		$asset_id = $asset->update();
+		if ( $asset_id ) {
+			return new WP_REST_Response( [ 'id' => $asset_id ] );
 		}
 		return new WP_REST_Response( null, 400 );
 	}

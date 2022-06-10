@@ -104,13 +104,13 @@ class ConfigDisplay {
 	 */
 	private function text_parameters( string $destination, array $parameters ) : void {
 		$current = "current_$destination";
-		foreach ( $parameters as $id => $parameter ) {
+		foreach ( $parameters as $parameter_id => $parameter ) {
 			?>
 			<tr >
-				<th scope="row"><label for="<?php echo esc_attr( $id ); ?>"><?php echo esc_html( $parameter ); ?></label></th>
+				<th scope="row"><label for="<?php echo esc_attr( $parameter_id ); ?>"><?php echo esc_html( $parameter ); ?></label></th>
 				<td>
-					<input type="text" name="<?php echo esc_attr( "wpacc-$destination[$id]" ); ?>" id="<?php echo esc_attr( $id ); ?>" class="regular-text"
-						value="<?php echo esc_attr( $this->$current[ $id ] ); ?>" />
+					<input type="text" name="<?php echo esc_attr( "wpacc-$destination[$parameter_id]" ); ?>" id="<?php echo esc_attr( $parameter_id ); ?>" class="regular-text"
+						value="<?php echo esc_attr( $this->$current[ $parameter_id ] ); ?>" />
 				</td>
 			</tr>
 			<?php
@@ -126,12 +126,12 @@ class ConfigDisplay {
 	 */
 	private function list_parameters( string $destination, array $parameters ) : void {
 		$current = "current_$destination";
-		foreach ( $parameters as $id => $parameter ) {
+		foreach ( $parameters as $parameter_id => $parameter ) {
 			$json_fields = wp_json_encode( $parameter['fields'] );
 			if ( is_string( $json_fields ) ) {
 				?>
 	<tr><th scope="row"><?php echo esc_html( $parameter['title'] ); ?></th><td>
-		<table class="form-table" id="<?php echo esc_attr( "wpacc_list_$id" ); ?>">
+		<table class="form-table" id="<?php echo esc_attr( "wpacc_list_$parameter_id" ); ?>">
 			<thead>
 				<tr>
 					<th scope="row"><?php esc_html_e( 'Name', 'wpacc' ); ?></th>
@@ -142,16 +142,16 @@ class ConfigDisplay {
 			</thead>
 			<tbody>
 				<?php
-				foreach ( $this->$current[ $id ] ?? [] as $index => $option ) :
+				foreach ( $this->$current[ $parameter_id ] ?? [] as $index => $option ) :
 					?>
 				<tr>
 					<td><!--suppress HtmlFormInputWithoutLabel -->
-						<input type="text" class="regular-text" name="<?php echo esc_attr( "wpacc-$destination[$id][$index][name]" ); ?>" value="<?php echo esc_attr( $option['name'] ); ?>" /></td>
+						<input type="text" class="regular-text" name="<?php echo esc_attr( "wpacc-$destination[$parameter_id][$index][name]" ); ?>" value="<?php echo esc_attr( $option['name'] ); ?>" /></td>
 					<?php foreach ( $parameter['fields'] as $field ) : ?>
 					<td><!--suppress HtmlFormInputWithoutLabel -->
-						<input <?php echo $field['field']; // phpcs:ignore ?>  class="small-text <?php echo esc_attr( $field['class'] ?? '' ); ?>" name="<?php echo esc_attr( "wpacc-opties[$id][$index][{$field['name']}]" ); ?>" value="<?php echo esc_attr( $option[ $field['name'] ] ); ?>" /></td>
+						<input <?php echo $field['field']; // phpcs:ignore ?>  class="small-text <?php echo esc_attr( $field['class'] ?? '' ); ?>" name="<?php echo esc_attr( "wpacc-opties[$parameter_id][$index][{$field['name']}]" ); ?>" value="<?php echo esc_attr( $option[ $field['name'] ] ); ?>" /></td>
 					<?php endforeach; ?>
-					<td><span id="wpacc_remove_<?php echo esc_attr( $id . '_' . $index ); ?>" class="dashicons dashicons-trash" style="cursor: pointer;"></span></td>
+					<td><span id="wpacc_remove_<?php echo esc_attr( $parameter_id . '_' . $index ); ?>" class="dashicons dashicons-trash" style="cursor: pointer;"></span></td>
 				</tr>
 					<?php
 			endforeach;
@@ -161,7 +161,7 @@ class ConfigDisplay {
 				<tr>
 					<th scope="row"><?php echo esc_html( $parameter['title'] ); ?><?php esc_html_e( 'add', 'wpacc' ); ?></th>
 					<td>
-						<button id="wpacc_add_<?php echo esc_attr( $id ); ?>" type="button" class="list_add" data-key="<?php echo esc_attr( $id ); ?>" data-parameters='<?php echo $json_fields; // phpcs:ignore ?>'>
+						<button id="wpacc_add_<?php echo esc_attr( $parameter_id ); ?>" type="button" class="list_add" data-key="<?php echo esc_attr( $parameter_id ); ?>" data-parameters='<?php echo $json_fields; // phpcs:ignore ?>'>
 							<span class="dashicons dashicons-plus"></span>
 						</button>
 					</td>
@@ -183,18 +183,18 @@ class ConfigDisplay {
 	 */
 	private function switch_parameters( string $destination, array $parameters ) : void {
 		$current = "current_$destination";
-		foreach ( $parameters as $id => $parameter ) {
+		foreach ( $parameters as $parameter_id => $parameter ) {
 			?>
 			<tr>
 				<th scope="row"><?php echo esc_html( $parameter ); ?></th>
 				<td>
 					<label>
-						<input type="radio" name="<?php echo esc_attr( "wpacc-{$destination}[$id]" ); ?>"
-							value="0" <?php checked( 0, $this->$current[ $id ] ); ?>/><?php esc_html_e( 'No', 'wpacc' ); ?>
+						<input type="radio" name="<?php echo esc_attr( "wpacc-{$destination}[$parameter_id]" ); ?>"
+							value="0" <?php checked( 0, $this->$current[ $parameter_id ] ); ?>/><?php esc_html_e( 'No', 'wpacc' ); ?>
 					</label>
 					<label style="margin-left: 50px">
-						<input type="radio" name="<?php echo esc_attr( "wpacc-{$destination}[$id]" ); ?>"
-							value="1" <?php checked( 1, $this->$current[ $id ] ); ?>/><?php esc_html_e( 'Yes', 'wpacc' ); ?>
+						<input type="radio" name="<?php echo esc_attr( "wpacc-{$destination}[$parameter_id]" ); ?>"
+							value="1" <?php checked( 1, $this->$current[ $parameter_id ] ); ?>/><?php esc_html_e( 'Yes', 'wpacc' ); ?>
 					</label>
 				</td>
 			</tr>
@@ -211,18 +211,18 @@ class ConfigDisplay {
 	 */
 	private function numeric_parameters( string $destination, array $parameters ) : void {
 		$current = "current_$destination";
-		foreach ( $parameters as $id => $parameter ) :
+		foreach ( $parameters as $parameter_id => $parameter ) :
 			?>
 			<tr >
 				<th scope="row">
-					<label for="<?php echo esc_attr( $id ); ?>">
+					<label for="<?php echo esc_attr( $parameter_id ); ?>">
 						<?php echo esc_html( $parameter['label'] ); ?>
 					</label>
 				</th>
 				<td>
 					<input type="number" min="<?php echo esc_attr( $parameter['min'] ); ?>"
-						max="<?php echo esc_attr( $parameter['max'] ); ?>" name="<?php echo esc_attr( "wpacc-{$destination}[$id]" ); ?>" id="<?php echo esc_attr( $id ); ?>" class="small-text"
-						value="<?php echo esc_attr( $this->$current[ $id ] ); ?>" />
+						max="<?php echo esc_attr( $parameter['max'] ); ?>" name="<?php echo esc_attr( "wpacc-{$destination}[$parameter_id]" ); ?>" id="<?php echo esc_attr( $parameter_id ); ?>" class="small-text"
+						value="<?php echo esc_attr( $this->$current[ $parameter_id ] ); ?>" />
 				</td>
 			</tr>
 			<?php
