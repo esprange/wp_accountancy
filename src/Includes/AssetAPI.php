@@ -23,11 +23,9 @@ class AssetAPI extends API {
 	/**
 	 * List function
 	 *
-	 * @param WP_REST_Request $request The request.
-	 *
 	 * @return WP_REST_Response
 	 */
-	public function list( WP_REST_Request $request ) : WP_REST_Response {
+	public function list() : WP_REST_Response {
 		$assets = ( new AssetQuery() )->get_results();
 		return new WP_REST_Response( array_walk( $assets, 'get_object_vars' ) );
 	}

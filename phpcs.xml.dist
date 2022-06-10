@@ -7,7 +7,7 @@
 		<exclude name="WordPress.PHP.DisallowShortTernary"/>
 		<exclude name="WordPress.DateTime.RestrictedFunctions.date_date"/>
 		<exclude name="WordPress.DB.PreparedSQL.InterpolatedNotPrepared"/>
-		<exclude name="WordPress.Files.Filename"/>
+		<exclude name="WordPress.Files.FileName"/>
 	</rule>
 	<rule ref="WordPress-Docs" />
 	<rule ref="WordPress-Extra">

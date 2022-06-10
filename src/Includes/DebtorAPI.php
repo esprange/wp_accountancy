@@ -23,11 +23,9 @@ class DebtorAPI extends API {
 	/**
 	 * List function
 	 *
-	 * @param WP_REST_Request $request The request.
-	 *
 	 * @return WP_REST_Response
 	 */
-	public function list( WP_REST_Request $request ) : WP_REST_Response {
+	public function list() : WP_REST_Response {
 		$debtors = ( new DebtorQuery() )->get_results();
 		return new WP_REST_Response( array_walk( $debtors, 'get_object_vars' ) );
 	}

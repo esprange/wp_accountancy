@@ -23,11 +23,9 @@ class TransactionAPI extends API {
 	/**
 	 * List function
 	 *
-	 * @param WP_REST_Request $request The request.
-	 *
 	 * @return WP_REST_Response
 	 */
-	public function list( WP_REST_Request $request ) : WP_REST_Response {
+	public function list() : WP_REST_Response {
 		$transactions = ( new TransactionQuery() )->get_results();
 		return new WP_REST_Response( array_walk( $transactions, 'get_object_vars' ) );
 	}
@@ -80,7 +78,7 @@ class TransactionAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function cancel( WP_REST_Request $request ) : WP_REST_Response {
-		$transaction = new Transaction(intval( $request->get_param( 'id' ) ) );
+		$transaction = new Transaction( intval( $request->get_param( 'id' ) ) );
 		if ( $transaction->id ) {
 			if ( $transaction->delete() ) {
 				return new WP_REST_Response( null, 204 );
