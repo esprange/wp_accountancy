@@ -1,18 +1,17 @@
 # Copyright (C) 2022 Eric Sprangers
 # This file is distributed under the GPL-3.0+.
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: WP-Accountancy 1.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp_accountancy\n"
-"POT-Creation-Date: 2022-06-09 12:57+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.1\n"
+"POT-Creation-Date: 2022-06-10T16:43:51+02:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: wpacc\n"
 
 #. Plugin Name of the plugin
@@ -35,7 +34,8 @@ msgstr ""
 msgid "http://URI_Of_The_Plugin_Author"
 msgstr ""
 
-#: src/Admin/Actions.php:57 src/Admin/Actions.php:58
+#: src/Admin/Actions.php:57
+#: src/Admin/Actions.php:58
 msgid "Configuration"
 msgstr ""
 
@@ -43,11 +43,17 @@ msgstr ""
 msgid "Allow accounting for multiple bsuinesses"
 msgstr ""
 
-#: src/Admin/ConfigDisplay.php:137 src/Public/AssetDisplay.php:94
-#: src/Public/AssetDisplay.php:130 src/Public/BankcashDisplay.php:178
-#: src/Public/BusinessDisplay.php:75 src/Public/BusinessDisplay.php:111
-#: src/Public/CreditorDisplay.php:87 src/Public/CreditorDisplay.php:154
-#: src/Public/DebtorDisplay.php:88 src/Public/DebtorDisplay.php:153
+#: src/Admin/ConfigDisplay.php:137
+#: src/Public/AssetDisplay.php:94
+#: src/Public/AssetDisplay.php:130
+#: src/Public/BankcashDisplay.php:122
+#: src/Public/BankcashDisplay.php:178
+#: src/Public/BusinessDisplay.php:75
+#: src/Public/BusinessDisplay.php:111
+#: src/Public/CreditorDisplay.php:87
+#: src/Public/CreditorDisplay.php:154
+#: src/Public/DebtorDisplay.php:88
+#: src/Public/DebtorDisplay.php:153
 msgid "Name"
 msgstr ""
 
@@ -63,7 +69,8 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: src/Admin/ConfigHandler.php:25 src/Admin/ConfigHandler.php:29
+#: src/Admin/ConfigHandler.php:25
+#: src/Admin/ConfigHandler.php:29
 msgid "Options"
 msgstr ""
 
@@ -71,21 +78,29 @@ msgstr ""
 msgid "Setup"
 msgstr ""
 
-#: src/Public/Actions.php:51 src/Public/BusinessDisplay.php:125
+#: src/Public/Actions.php:51
+#: src/Public/BusinessDisplay.php:125
 msgid "Create"
 msgstr ""
 
-#: src/Public/Actions.php:52 src/Public/BankcashDisplay.php:156
-#: src/Public/CreditorDisplay.php:132 src/Public/DebtorDisplay.php:131
+#: src/Public/Actions.php:52
+#: src/Public/BankcashDisplay.php:156
+#: src/Public/CreditorDisplay.php:132
+#: src/Public/DebtorDisplay.php:131
 #: src/Public/SalesDisplay.php:193
 msgid "Delete"
 msgstr ""
 
-#: src/Public/Actions.php:53 src/Public/AssetDisplay.php:146
-#: src/Public/CreditnoteDisplay.php:37 src/Public/DepreciationDisplay.php:37
-#: src/Public/InteraccountDisplay.php:37 src/Public/JournalDisplay.php:37
-#: src/Public/PurchaseDisplay.php:37 src/Public/ReportDisplay.php:37
-#: src/Public/SettingDisplay.php:37 src/Public/SummaryDisplay.php:76
+#: src/Public/Actions.php:53
+#: src/Public/AssetDisplay.php:146
+#: src/Public/CreditnoteDisplay.php:37
+#: src/Public/DepreciationDisplay.php:37
+#: src/Public/InteraccountDisplay.php:37
+#: src/Public/JournalDisplay.php:37
+#: src/Public/PurchaseDisplay.php:37
+#: src/Public/ReportDisplay.php:37
+#: src/Public/SettingDisplay.php:37
+#: src/Public/SummaryDisplay.php:76
 msgid "Change"
 msgstr ""
 
@@ -93,7 +108,8 @@ msgstr ""
 msgid "Security error"
 msgstr ""
 
-#: src/Public/Actions.php:86 src/Public/Actions.php:102
+#: src/Public/Actions.php:86
+#: src/Public/Actions.php:102
 msgid "Something went wrong"
 msgstr ""
 
@@ -101,7 +117,8 @@ msgstr ""
 msgid "Default"
 msgstr ""
 
-#: src/Public/AssetDisplay.php:27 src/Public/SummaryDisplay.php:67
+#: src/Public/AssetDisplay.php:27
+#: src/Public/SummaryDisplay.php:67
 #: src/Public/SummaryDisplay.php:72
 msgid "Assets"
 msgstr ""
@@ -114,13 +131,17 @@ msgstr ""
 msgid "Asset removed"
 msgstr ""
 
-#: src/Public/AssetDisplay.php:80 src/Public/BankcashDisplay.php:91
-#: src/Public/BusinessDisplay.php:170 src/Public/CreditorDisplay.php:69
-#: src/Public/DebtorDisplay.php:70 src/Public/SalesDisplay.php:89
+#: src/Public/AssetDisplay.php:80
+#: src/Public/BankcashDisplay.php:91
+#: src/Public/BusinessDisplay.php:170
+#: src/Public/CreditorDisplay.php:69
+#: src/Public/DebtorDisplay.php:70
+#: src/Public/SalesDisplay.php:89
 msgid "Remove not allowed"
 msgstr ""
 
-#: src/Public/AssetDisplay.php:97 src/Public/SalesDisplay.php:141
+#: src/Public/AssetDisplay.php:97
+#: src/Public/SalesDisplay.php:141
 #: src/Public/SalesDisplay.php:161
 msgid "Description"
 msgstr ""
@@ -137,14 +158,19 @@ msgstr ""
 msgid "Accumulated depreciation"
 msgstr ""
 
-#: src/Public/AssetDisplay.php:109 src/Public/BankcashDisplay.php:139
-#: src/Public/CreditorDisplay.php:118 src/Public/DebtorDisplay.php:121
+#: src/Public/AssetDisplay.php:109
+#: src/Public/BankcashDisplay.php:139
+#: src/Public/CreditorDisplay.php:118
+#: src/Public/DebtorDisplay.php:121
 msgid "Active"
 msgstr ""
 
-#: src/Public/AssetDisplay.php:114 src/Public/BankcashDisplay.php:156
-#: src/Public/BusinessDisplay.php:93 src/Public/CreditorDisplay.php:131
-#: src/Public/DebtorDisplay.php:131 src/Public/SalesDisplay.php:192
+#: src/Public/AssetDisplay.php:114
+#: src/Public/BankcashDisplay.php:156
+#: src/Public/BusinessDisplay.php:93
+#: src/Public/CreditorDisplay.php:131
+#: src/Public/DebtorDisplay.php:131
+#: src/Public/SalesDisplay.php:192
 msgid "Save"
 msgstr ""
 
@@ -166,10 +192,6 @@ msgstr ""
 
 #: src/Public/BankcashDisplay.php:89
 msgid "Cash removed"
-msgstr ""
-
-#: src/Public/BankcashDisplay.php:122
-msgid "Naam"
 msgstr ""
 
 #: src/Public/BankcashDisplay.php:131
@@ -196,7 +218,8 @@ msgstr ""
 msgid "Country"
 msgstr ""
 
-#: src/Public/BusinessDisplay.php:85 src/Public/CreditorDisplay.php:96
+#: src/Public/BusinessDisplay.php:85
+#: src/Public/CreditorDisplay.php:96
 #: src/Public/DebtorDisplay.php:97
 msgid "Address"
 msgstr ""
@@ -217,7 +240,8 @@ msgstr ""
 msgid "Credit notes"
 msgstr ""
 
-#: src/Public/CreditorDisplay.php:27 src/Public/Display.php:172
+#: src/Public/CreditorDisplay.php:27
+#: src/Public/Display.php:172
 msgid "Suppliers"
 msgstr ""
 
@@ -229,7 +253,8 @@ msgstr ""
 msgid "Supplier removed"
 msgstr ""
 
-#: src/Public/CreditorDisplay.php:107 src/Public/DebtorDisplay.php:113
+#: src/Public/CreditorDisplay.php:107
+#: src/Public/DebtorDisplay.php:113
 msgid "Email"
 msgstr ""
 
@@ -237,7 +262,8 @@ msgstr ""
 msgid "New supplier"
 msgstr ""
 
-#: src/Public/DebtorDisplay.php:27 src/Public/Display.php:169
+#: src/Public/DebtorDisplay.php:27
+#: src/Public/Display.php:169
 msgid "Customers"
 msgstr ""
 
@@ -249,7 +275,8 @@ msgstr ""
 msgid "Customer removed"
 msgstr ""
 
-#: src/Public/DebtorDisplay.php:105 src/Public/SalesDisplay.php:134
+#: src/Public/DebtorDisplay.php:105
+#: src/Public/SalesDisplay.php:134
 msgid "Billing address"
 msgstr ""
 
@@ -261,7 +288,8 @@ msgstr ""
 msgid "Asset depreciation"
 msgstr ""
 
-#: src/Public/Display.php:166 src/Public/SummaryDisplay.php:27
+#: src/Public/Display.php:166
+#: src/Public/SummaryDisplay.php:27
 msgid "Summary"
 msgstr ""
 
@@ -273,7 +301,8 @@ msgstr ""
 msgid "Inter Account Transfers"
 msgstr ""
 
-#: src/Public/Display.php:170 src/Public/SalesDisplay.php:33
+#: src/Public/Display.php:170
+#: src/Public/SalesDisplay.php:33
 msgid "Sales Invoices"
 msgstr ""
 
@@ -297,11 +326,13 @@ msgstr ""
 msgid "Journal Entries"
 msgstr ""
 
-#: src/Public/Display.php:177 src/Public/ReportDisplay.php:24
+#: src/Public/Display.php:177
+#: src/Public/ReportDisplay.php:24
 msgid "Reports"
 msgstr ""
 
-#: src/Public/Display.php:178 src/Public/SettingDisplay.php:24
+#: src/Public/Display.php:178
+#: src/Public/SettingDisplay.php:24
 msgid "Settings"
 msgstr ""
 
@@ -317,8 +348,12 @@ msgstr ""
 msgid "Purchases"
 msgstr ""
 
+#: src/Public/SalesDisplay.php:58
+msgid "Y/m/d"
+msgstr ""
+
 #: src/Public/SalesDisplay.php:74
-msgid "Transaction saved"
+msgid "Sales transaction saved"
 msgstr ""
 
 #: src/Public/SalesDisplay.php:87
@@ -329,7 +364,8 @@ msgstr ""
 msgid "Issue date"
 msgstr ""
 
-#: src/Public/SalesDisplay.php:117 src/Public/SalesDisplay.php:225
+#: src/Public/SalesDisplay.php:117
+#: src/Public/SalesDisplay.php:225
 msgid "Customer"
 msgstr ""
 

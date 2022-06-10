@@ -14,7 +14,6 @@ WordPress plugin for Accountancy purposes.
 
 ## Description ##
 
-
 ## Installation ##
 
 Regular WordPress plugin installation.
