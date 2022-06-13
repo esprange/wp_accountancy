@@ -37,7 +37,7 @@ class Table {
 	 * @return string The html text to render the table.
 	 */
 	public function render( array $args ) : string {
-		$args = wp_parse_args(
+		$args = (object) wp_parse_args(
 			$args,
 			[
 				'fields'  => [],
@@ -54,13 +54,13 @@ class Table {
 	/**
 	 * Render buttons, if exist.
 	 *
-	 * @param array $args The table data.
+	 * @param object $args The table data.
 	 * @return string
 	 */
-	private function render_table_buttons( array $args ) : string {
+	private function render_table_buttons( object $args ) : string {
 		$html    = '';
 		$buttons = array_filter(
-			$args['options'],
+			$args->options,
 			function( $key ) {
 				return str_starts_with( $key, 'button' );
 			},
@@ -78,13 +78,13 @@ class Table {
 	/**
 	 * Render the header of the table.
 	 *
-	 * @param array $args The table data.
+	 * @param object $args The table data.
 	 *
 	 * @return string
 	 */
-	private function render_table_head( array $args ) : string {
-		$hide = isset( $args['options']['select'] ) ? '' : 'style="visibility:collapse"';
-		$cols = count( $args['fields'] ) - 1;
+	private function render_table_head( object $args ) : string {
+		$hide = isset( $args->options['select'] ) ? '' : 'style="visibility:collapse"';
+		$cols = count( $args->fields ) - 1;
 		$html = <<<EOT
 			<table class="wpacc" >
 			<colgroup>
@@ -95,7 +95,7 @@ class Table {
 			<tr>
 
 		EOT;
-		foreach ( $args['fields'] as $field ) {
+		foreach ( $args->fields as $field ) {
 			$label = $field['label'] ?? $field['name'];
 			$html .= <<<EOT
 				<th>$label</th>
@@ -113,23 +113,26 @@ class Table {
 	/**
 	 * Render the data rows of the table.
 	 *
-	 * @param array $args The table data.
+	 * @param object $args The table data.
 	 *
 	 * @return string
 	 */
-	private function render_table_body( array $args ) : string {
+	private function render_table_body( object $args ) : string {
 		$html = <<<EOT
 			<tbody>
 		EOT;
-		foreach ( $args['items'] as $item ) {
+		foreach ( $args->items as $key => $item ) {
+			if ( ! $key ) {
+				continue;
+			}
 			$html .= <<<EOT
 				<tr>
 
 			EOT;
-			foreach ( $args['fields'] as $field ) {
+			foreach ( $args->fields as $field ) {
 				$field['value'] = $item->{$field['name']};
 				$field['label'] = '';
-				$field['name'] .= '[]';
+				$field['name'] .= in_array( $field['type'], [ 'radio', 'checkbox' ], true ) ? '' : '[]';
 				$html          .= '<td>' . ( new Field() )->render( $field ) . "</td>\n";
 			}
 			$html .= <<<EOT
@@ -137,15 +140,15 @@ class Table {
 
 			EOT;
 		}
-		if ( 0 === count( $args['items'] ) ) {
+		if ( 0 === count( $args->items ) ) {
 			$html .= <<<EOT
 			<tr>
 
 			EOT;
-			foreach ( $args['fields'] as $field ) {
+			foreach ( $args->fields as $field ) {
 				$field['value'] = '';
 				$field['label'] = '';
-				$field['name']  = '';
+				$field['name'] .= in_array( $field['type'], [ 'radio', 'checkbox' ], true ) ? '' : '[]';
 				$html          .= '<td>' . ( new Field() )->render( $field ) . "</td>\n";
 			}
 			$html .= <<<EOT
@@ -163,14 +166,14 @@ class Table {
 	/**
 	 * Render the footer of the table.
 	 *
-	 * @param array $args The table data.
+	 * @param object $args The table data.
 	 *
 	 * @return string
 	 */
-	private function render_table_foot( array $args ) : string {
+	private function render_table_foot( object $args ) : string {
 		$html = '</table>';
-		if ( isset( $args['options']['addrow'] ) ) {
-			$html .= '<button type="button" class="wpacc-btn" value="addrow" >+</button>';
+		if ( in_array( 'addrow', $args->options, true ) ) {
+			$html .= '<button type="button" class="wpacc-btn wpacc-add-row" value="addrow" >+</button><br/>';
 		}
 		return $html;
 	}

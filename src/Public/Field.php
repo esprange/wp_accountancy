@@ -25,17 +25,19 @@ class Field {
 	public function render( array $args ) : string {
 		static $index = 0;
 
-		$default = [
-			'required' => isset( $args['required'] ) ? 'required' : '',
-			'readonly' => isset( $args['readonly'] ) ? 'readonly' : '',
+		$default        = [
+			'required' => false,
+			'readonly' => false,
 			'type'     => 'text',
 			'label'    => '',
 			'value'    => null,
 			'list'     => [],
 			'tagref'   => '',
 		];
-		$args    = (object) wp_parse_args( $args, $default );
-		$html    = '';
+		$args           = (object) wp_parse_args( $args, $default );
+		$args->required = $args->required ? 'required' : '';
+		$args->readonly = $args->readonly ? 'readonly' : '';
+		$html           = '';
 		if ( $args->label ) {
 			$html         = "<label for=\"wpacc_$index\" >$args->label";
 			$args->tagref = "id=\"wpacc_$index\"";

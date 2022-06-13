@@ -15,8 +15,7 @@ namespace WP_Accountancy\Includes;
  *
  * @property int    id
  * @property int    business_id
- * @property int    debtor_id
- * @property int    creditor_id
+ * @property int    actor_id
  * @property string reference
  * @property string invoice_id
  * @property string address
@@ -45,10 +44,9 @@ class Transaction {
 		$data = [
 			'id'          => 0,
 			'business_id' => $wpacc_business->id,
-			'debtor_id'   => 0,
-			'creditor_id' => 0,
+			'actor_id'    => null,
 			'reference'   => '',
-			'invoice_id'  => 0,
+			'invoice_id'  => '',
 			'address'     => '',
 			'date'        => wp_date( 'Y-m-d' ),
 			'type'        => '',
@@ -82,8 +80,7 @@ class Transaction {
 		$data = [
 			'id'          => $this->id,
 			'business_id' => $wpacc_business->id,
-			'debtor_id'   => $this->debtor_id ?: null,
-			'creditor_id' => $this->creditor_id ?: null,
+			'actor_id'    => $this->actor_id ?: null,
 			'reference'   => $this->reference,
 			'invoice_id'  => $this->invoice_id,
 			'address'     => $this->address,

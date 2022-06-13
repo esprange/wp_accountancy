@@ -11,12 +11,15 @@
 	--head: 3rem;
 }
 
+div.wpacc-container * {
+	font-size: small;
+}
+
 /*
  * The layout.
  */
 div.wpacc-container {
 	display: grid;
-	font-size: small;
 	gap: 1rem 1rem;
 	grid-template-columns: [left] 20% [right] 80%;
 	grid-template-rows: [head] var(--head) [main] auto;
@@ -25,7 +28,7 @@ div.wpacc-container {
 div.wpacc-head {
 	background-color: #555;
 	color: white;
-	font-size: large;
+	/*font-size: large;*/
 	grid-column: right;
 	grid-row: head;
 	text-align: center;
@@ -64,11 +67,23 @@ div.wpacc-menu {
  * Tables
  */
 table.wpacc {
+	border-style: none;
 	table-layout: auto;
+	width: 100%;
 }
 
 table.wpacc a:hover {
 	cursor: pointer;
+}
+
+table.wpacc tbody tr:nth-child(odd) {
+	background-color: #f2f2f2;
+}
+
+table.wpacc td,
+table.wpacc th {
+	border-style: none;
+	font-weight: normal;
 }
 
 /*
@@ -153,8 +168,6 @@ a.wpacc-business:hover {
 form.wpacc-form {
 	background-color: #fff;
 	color: #444;
-	font-size: 16px;
-	font-weight: 300;
 	margin: 0;
 	padding: 0;
 }
@@ -165,6 +178,14 @@ form.wpacc-form label {
 
 form.wpacc-form p {
 	margin: 0;
+}
+
+form.wpacc-form select {
+	max-width: 10em;
+}
+
+form.wpacc-form input[type=number] {
+	width: 5em;
 }
 
 .wpacc-error {
@@ -193,7 +214,7 @@ form.wpacc-form p {
 	color: #666;
 	cursor: pointer;
 	display: inline-block;
-	font-size: medium;
+	/*font-size: medium;*/
 	font-weight: bold;
 	padding: 6px 24px;
 	text-decoration: none;

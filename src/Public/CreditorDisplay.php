@@ -44,7 +44,7 @@ class CreditorDisplay extends Display {
 	public function update() : string {
 		global $wpacc_business;
 		$input                   = filter_input_array( INPUT_POST );
-		$creditor                = new Creditor( intval( $input['creditor_id'] ?? 0 ) );
+		$creditor                = new Creditor( intval( $input['actor_id'] ?? 0 ) );
 		$creditor->name          = sanitize_text_field( $input['name'] ?? '' );
 		$creditor->address       = sanitize_textarea_field( $input['address'] ?? '' );
 		$creditor->email_address = sanitize_email( $input['email_address'] ?? '' );
@@ -60,9 +60,9 @@ class CreditorDisplay extends Display {
 	 * @return string
 	 */
 	public function delete() : string {
-		$creditor_id = filter_input( INPUT_POST, 'creditor_id', FILTER_SANITIZE_NUMBER_INT );
-		if ( $creditor_id ) {
-			$creditor = new Creditor( intval( $creditor_id ) );
+		$actor_id = filter_input( INPUT_POST, 'actor_id', FILTER_SANITIZE_NUMBER_INT );
+		if ( $actor_id ) {
+			$creditor = new Creditor( intval( $actor_id ) );
 			if ( $creditor->delete() ) {
 				return $this->notify( - 1, __( 'Supplier removed', 'wpacc' ) );
 			}
@@ -77,9 +77,8 @@ class CreditorDisplay extends Display {
 	 * @return string
 	 */
 	public function read() : string {
-		$creditor_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
-		$creditor    = new Creditor( intval( $creditor_id ) );
-		$html        =
+		$creditor = new Creditor( intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
+		$html     =
 			$this->field->render(
 				[
 					'name'     => 'name',
@@ -123,7 +122,7 @@ class CreditorDisplay extends Display {
 			) .
 			$this->field->render(
 				[
-					'name'  => 'creditor_id',
+					'name'  => 'actor_id',
 					'type'  => 'hidden',
 					'value' => $creditor->id,
 				]
@@ -144,7 +143,7 @@ class CreditorDisplay extends Display {
 				[
 					'fields'  => [
 						[
-							'name'  => 'creditor_id',
+							'name'  => 'actor_id',
 							'type'  => 'static',
 							'label' => '',
 						],

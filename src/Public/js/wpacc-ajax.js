@@ -112,19 +112,19 @@
 			/**
 			 * Events for the menu sections.
 			 */
-			$( '[data-menu]' ).on(
+			$( 'a[data-menu]' ).on(
 				'click',
 				function() {
 					doAjaxMenu( $( this ).data( 'menu' ) );
 				}
-			)
+			);
 			$( '#wpacc-menu-dropdown' ).on(
 				'click',
 				function( e ) {
 					$( '#wpacc-menu ul' ).slideToggle( 500 );
 					e.preventDefault();
 				}
-			)
+			);
 			$( window ).on(
 				'resize',
 				function() {
@@ -165,14 +165,13 @@
 				'click',
 				'button.wpacc-add-row',
 				function( e ) {
-					const $last_row = $( '.wpacc-table tbody tr:last' ),
-						$new_row    = $last_row.clone();
+					const $new_row = $( 'table.wpacc tbody tr:last' ).clone();
 					$new_row.find( 'td *' ).each(
 						function () {
 							$( this ).val( '' );
 						}
 					)
-					$( '.wpacc-table tbody' ).append( $last_row );
+					$( 'table.wpacc tbody' ).append( $new_row );
 					e.preventDefault();
 				}
 			);

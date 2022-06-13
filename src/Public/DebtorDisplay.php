@@ -44,7 +44,7 @@ class DebtorDisplay extends Display {
 	public function update() : string {
 		global $wpacc_business;
 		$input                   = filter_input_array( INPUT_POST );
-		$debtor                  = new Debtor( intval( $input['debtor_id'] ?? 0 ) );
+		$debtor                  = new Debtor( intval( $input['actor_id'] ?? 0 ) );
 		$debtor->name            = sanitize_text_field( $input['name'] ?? '' );
 		$debtor->address         = sanitize_textarea_field( $input['address'] ?? '' );
 		$debtor->billing_address = sanitize_textarea_field( $input['billing_address'] ?? '' );
@@ -61,9 +61,9 @@ class DebtorDisplay extends Display {
 	 * @return string
 	 */
 	public function delete() : string {
-		$debtor_id = filter_input( INPUT_POST, 'debtor_id', FILTER_SANITIZE_NUMBER_INT );
-		if ( $debtor_id ) {
-			$debtor = new Debtor( intval( $debtor_id ) );
+		$actor_id = filter_input( INPUT_POST, 'actor_id', FILTER_SANITIZE_NUMBER_INT );
+		if ( $actor_id ) {
+			$debtor = new Debtor( intval( $actor_id ) );
 			if ( $debtor->delete() ) {
 				return $this->notify( - 1, __( 'Customer removed', 'wpacc' ) );
 			}
@@ -78,8 +78,7 @@ class DebtorDisplay extends Display {
 	 * @return string
 	 */
 	public function read() : string {
-		$debtor_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
-		$debtor    = new Debtor( intval( $debtor_id ) );
+		$debtor = new Debtor( intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
 		return $this->form(
 			$this->field->render(
 				[
@@ -123,7 +122,7 @@ class DebtorDisplay extends Display {
 			) .
 			$this->field->render(
 				[
-					'name'  => 'debtor_id',
+					'name'  => 'actor_id',
 					'type'  => 'hidden',
 					'value' => $debtor->id,
 				]
@@ -143,7 +142,7 @@ class DebtorDisplay extends Display {
 				[
 					'fields'  => [
 						[
-							'name'  => 'debtor_id',
+							'name'  => 'actor_id',
 							'type'  => 'static',
 							'label' => '',
 						],

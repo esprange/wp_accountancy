@@ -66,7 +66,7 @@ abstract class Display {
 	 */
 	final public function controller() : string {
 		$action = filter_input( INPUT_POST, 'wpacc_action' ) ?: filter_input( INPUT_GET, 'wpacc_action' );
-		$title  = '<span class="wpacc-title" >' . $this->get_title() . '</span>';
+		$title  = '<p class="wpacc-title" >' . $this->get_title() . '</p>';
 		if ( $action && method_exists( $this, $action ) ) {
 			return $title . $this->$action();
 		}

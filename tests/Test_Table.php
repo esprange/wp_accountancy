@@ -124,11 +124,11 @@ class Test_Table extends UnitTestCase {
 					],
 				],
 				'items'  => [
-					(object) [
+					1 => (object) [
 						'id'   => 1,
 						'test' => 'test1',
 					],
-					(object) [
+					3 => (object) [
 						'id'   => 3,
 						'test' => 'test3',
 					],
@@ -161,11 +161,11 @@ class Test_Table extends UnitTestCase {
 					],
 				],
 				'items'  => [
-					(object) [
+					1 => (object) [
 						'id'   => 1,
 						'name' => 'test1',
 					],
-					(object) [
+					3 => (object) [
 						'id'   => 3,
 						'name' => 'test3',
 					],
@@ -242,7 +242,7 @@ class Test_Table extends UnitTestCase {
 					],
 				],
 				'items'  => [
-					(object) [
+					1 => (object) [
 						'id'         => 1,
 						'numbers'    => 123,
 						'floats'     => 123.45,

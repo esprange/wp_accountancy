@@ -99,9 +99,9 @@ class DebtorAPI extends API {
 				$debtor->$key = $value;
 			}
 		}
-		$debtor_id = $debtor->update();
-		if ( $debtor_id ) {
-			return new WP_REST_Response( [ 'id' => $debtor_id ] );
+		$actor_id = $debtor->update();
+		if ( $actor_id ) {
+			return new WP_REST_Response( [ 'id' => $actor_id ] );
 		}
 		return new WP_REST_Response( null, 400 );
 	}

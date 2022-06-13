@@ -35,17 +35,13 @@ class DetailQuery {
 			'transaction_id' => 0,
 			'account_id'     => 0,
 			'taxcode_id'     => 0,
-			'debtor_id'      => 0,
-			'creditor_id'    => 0,
+			'actor_id'       => 0,
 			'id'             => 0,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
 		$this->query_where = 'WHERE 1 = 1';
-		if ( $query_vars['debtor_id'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND debtor_id = %d', $query_vars['debtor_id'] );
-		}
-		if ( $query_vars['creditor_id'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND creditor_id = %d', $query_vars['creditor_id'] );
+		if ( $query_vars['actor_id'] ) {
+			$this->query_where .= $wpdb->prepare( ' AND actor_id = %d', $query_vars['actor_id'] );
 		}
 		if ( $query_vars['transaction_id'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND transaction_id = %d', $query_vars['transaction_id'] );
@@ -67,7 +63,12 @@ class DetailQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		return $wpdb->get_results( "SELECT *, id as detail_id FROM {$wpdb->prefix}wpacc_detail $this->query_where ORDER BY order_number" );
+		return $wpdb->get_results(
+			"SELECT id as detail_id, account_id, description, quantity, unitprice, taxcode_id
+			FROM {$wpdb->prefix}wpacc_detail
+			    $this->query_where ORDER BY order_number",
+			OBJECT_K
+		);
 	}
 
 }

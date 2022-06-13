@@ -12,78 +12,18 @@ namespace WP_Accountancy\Includes;
 
 /**
  * Debtor class.
- *
- * @property int    id
- * @property int    business_id
- * @property string name
- * @property string address
- * @property string billing_address
- * @property string email_address
- * @property bool   active,
  */
-class Debtor {
+class Debtor extends Actor {
+
+	public const TYPE = 'debtor';
 
 	/**
 	 * Constructor
 	 *
-	 * @param int $debtor_id  The debtor id, if specified, the debtor is retrieved from the db.
+	 * @param int $actor_id  The debtor id, if specified, the debtor is retrieved from the db.
 	 */
-	public function __construct( int $debtor_id = 0 ) {
-		global $wpacc_business;
-		$data = [
-			'id'              => $debtor_id,
-			'business_id'     => $wpacc_business->id,
-			'name'            => '',
-			'address'         => '',
-			'billing_address' => '',
-			'email_address'   => '',
-			'active'          => true,
-		];
-		global $wpdb;
-		$result = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}wpacc_debtor where id = %d",
-				$debtor_id
-			)
-		);
-		if ( $result ) {
-			$data = $result;
-		}
-		foreach ( $data as $property => $value ) {
-			$this->$property = $value;
-		}
+	public function __construct( int $actor_id = 0 ) {
+		parent::__construct( $actor_id );
+		$this->type = self::TYPE;
 	}
-
-	/**
-	 * Update the debtor.
-	 *
-	 * @return int The debtor id.
-	 */
-	public function update() : int {
-		global $wpdb;
-		global $wpacc_business;
-		$data = [
-			'id'              => $this->id,
-			'business_id'     => $wpacc_business->id,
-			'name'            => $this->name,
-			'address'         => $this->address,
-			'billing_address' => $this->billing_address,
-			'email_address'   => $this->email_address,
-			'active'          => (int) $this->active,
-		];
-		$wpdb->replace( "{$wpdb->prefix}wpacc_debtor", $data );
-		$this->id = $wpdb->insert_id;
-		return $this->id;
-	}
-
-	/**
-	 * Delete the debtor entry.
-	 *
-	 * @return bool
-	 */
-	public function delete() : bool {
-		global $wpdb;
-		return (bool) $wpdb->delete( "{$wpdb->prefix}wpacc_debtor", [ 'id' => $this->id ] );
-	}
-
 }

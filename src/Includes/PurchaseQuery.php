@@ -13,7 +13,7 @@ namespace WP_Accountancy\Includes;
 /**
  * Account query class.
  */
-class SalesQuery extends InvoiceQuery {
+class PurchaseQuery extends InvoiceQuery {
 
 	/**
 	 * The constructor
@@ -23,7 +23,8 @@ class SalesQuery extends InvoiceQuery {
 	 * @return void
 	 */
 	public function __construct( array $args = [] ) {
-		$args['type'] = Transaction::SALES_INVOICE;
+		$args['type'] = Transaction::PURCHASE_INVOICE;
 		parent::__construct( $args );
 	}
+
 }

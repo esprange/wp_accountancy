@@ -99,9 +99,9 @@ class CreditorAPI extends API {
 				$creditor->$key = $value;
 			}
 		}
-		$creditor_id = $creditor->update();
-		if ( $creditor_id ) {
-			return new WP_REST_Response( [ 'id' => $creditor_id ] );
+		$actor_id = $creditor->update();
+		if ( $actor_id ) {
+			return new WP_REST_Response( [ 'id' => $actor_id ] );
 		}
 		return new WP_REST_Response( null, 400 );
 	}

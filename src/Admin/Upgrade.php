@@ -18,7 +18,7 @@ class Upgrade {
 	/**
 	 * Plugin-database-version
 	 */
-	const DBVERSION = 18;
+	const DBVERSION = 21;
 	/**
 	 * Execute upgrade actions if needed.
 	 *
@@ -129,9 +129,9 @@ class Upgrade {
 			"CREATE TABLE {$wpdb->prefix}wpacc_account (
 			id            INT (10) NOT NULL AUTO_INCREMENT,
 			business_id   INT (10) NOT NULL,
-			taxcode_id    INT (10),
+			taxcode_id    INT (10) NULL,
 			name          VARCHAR (50),
-			group_id      INT (10),
+			group_id      INT (10) NULL,
 			type          TINYTEXT,
 			order_number  INT,
 			active        TINYINT(1) DEFAULT 1,
@@ -144,37 +144,22 @@ class Upgrade {
 		$this->foreign_key( 'account', 'account', 'group_id' );
 
 		/**
-		 * The creditors
+		 * The actors
 		 */
 		dbDelta(
-			"CREATE TABLE {$wpdb->prefix}wpacc_creditor (
+			"CREATE TABLE {$wpdb->prefix}wpacc_actor (
 			id            INT (10) NOT NULL AUTO_INCREMENT,
 			business_id   INT (10) NOT NULL,
 			name          VARCHAR (50),
 			address       TEXT,
+			billing_address TEXT,
 			email_address TINYTEXT,
 			active        TINYINT(1) DEFAULT 1,
+			type          TINYTEXT,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
-		$this->foreign_key( 'creditor', 'business' );
-
-		/**
-		 * The debtors
-		 */
-		dbDelta(
-			"CREATE TABLE {$wpdb->prefix}wpacc_debtor (
-			id              INT (10) NOT NULL AUTO_INCREMENT,
-			business_id     INT (10) NOT NULL,
-			name            VARCHAR (50),
-			address         TEXT,
-			billing_address TEXT,
-			email_address   TINYTEXT,
-			active          TINYINT(1) DEFAULT 1,
-			PRIMARY KEY  (id)
-			) $charset_collate;"
-		);
-		$this->foreign_key( 'debtor', 'business' );
+		$this->foreign_key( 'actor', 'business' );
 
 		/**
 		 * The transactions themselves. This record is used for all types, so including sales, purchases, banking,
@@ -183,10 +168,9 @@ class Upgrade {
 			"CREATE TABLE {$wpdb->prefix}wpacc_transaction (
 			id          INT (10) NOT NULL AUTO_INCREMENT,
 			business_id INT (10) NOT NULL,
-			debtor_id   INT (10),
-			creditor_id INT (10),
+			actor_id    INT (10) NULL,
 			reference   TINYTEXT,
-			invoice_id  TINYTEXT,
+			invoice_id  TINYTEXT NULL,
 			address     TEXT,
 			date        DATE,
 			type        TINYTEXT,
@@ -195,8 +179,7 @@ class Upgrade {
 			) $charset_collate;"
 		);
 		$this->foreign_key( 'transaction', 'business' );
-		$this->foreign_key( 'transaction', 'debtor' );
-		$this->foreign_key( 'transaction', 'creditor' );
+		$this->foreign_key( 'transaction', 'actor' );
 
 		/**
 		 * The transaction details.
@@ -206,9 +189,8 @@ class Upgrade {
 			id             INT (10) NOT NULL AUTO_INCREMENT,
 			transaction_id INT (10) NOT NULL,
 			account_id     INT (10),
-			taxcode_id     INT (10),
-			debtor_id      INT (10),
-			creditor_id    INT (10),
+			taxcode_id     INT (10) NULL,
+			actor_id       INT (10) NULL,
 			quantity       FLOAT,
 			unitprice      DECIMAL (13,4),
 			description    TINYTEXT,
@@ -219,8 +201,7 @@ class Upgrade {
 		$this->foreign_key( 'detail', 'transaction' );
 		$this->foreign_key( 'detail', 'account' );
 		$this->foreign_key( 'detail', 'taxcode' );
-		$this->foreign_key( 'detail', 'debtor' );
-		$this->foreign_key( 'detail', 'creditor' );
+		$this->foreign_key( 'detail', 'actor' );
 	}
 
 	/**

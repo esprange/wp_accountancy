@@ -16,8 +16,7 @@ namespace WP_Accountancy\Includes;
  * @property int    id
  * @property int    transaction_id
  * @property int    account_id
- * @property int    debtor_id
- * @property int    creditor_id
+ * @property int    actor_id
  * @property int    taxcode_id
  * @property float  quantity
  * @property float  unitprice
@@ -36,10 +35,9 @@ class Detail {
 		$data = [
 			'id'             => $detail_id,
 			'transaction_id' => $transaction_id,
-			'account_id'     => 0,
-			'debtor_id'      => 0,
-			'creditor_id'    => 0,
-			'taxcode_id'     => 0,
+			'account_id'     => null,
+			'actor_id'       => null,
+			'taxcode_id'     => null,
 			'quantity'       => 1,
 			'unitprice'      => 0,
 			'description'    => '',
@@ -74,8 +72,7 @@ class Detail {
 				'id'             => $this->id,
 				'transaction_id' => $this->transaction_id,
 				'account_id'     => $this->account_id,
-				'debtor_id'      => $this->debtor_id,
-				'creditor_id'    => $this->creditor_id,
+				'actor_id'       => $this->actor_id,
 				'taxcode_id'     => $this->taxcode_id,
 				'quantity'       => $this->quantity,
 				'unitprice'      => $this->unitprice,
