@@ -28,7 +28,6 @@ div.wpacc-container {
 div.wpacc-head {
 	background-color: #555;
 	color: white;
-	/*font-size: large;*/
 	grid-column: right;
 	grid-row: head;
 	text-align: center;
@@ -214,7 +213,6 @@ form.wpacc-form input[type=number] {
 	color: #666;
 	cursor: pointer;
 	display: inline-block;
-	/*font-size: medium;*/
 	font-weight: bold;
 	padding: 6px 24px;
 	text-decoration: none;
