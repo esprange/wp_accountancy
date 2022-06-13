@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-06-10T16:43:51+02:00\n"
+"POT-Creation-Date: 2022-06-13T22:23:08+02:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.6.0\n"
 "X-Domain: wpacc\n"
@@ -50,10 +50,10 @@ msgstr ""
 #: src/Public/BankcashDisplay.php:178
 #: src/Public/BusinessDisplay.php:75
 #: src/Public/BusinessDisplay.php:111
-#: src/Public/CreditorDisplay.php:87
-#: src/Public/CreditorDisplay.php:154
-#: src/Public/DebtorDisplay.php:88
-#: src/Public/DebtorDisplay.php:153
+#: src/Public/CreditorDisplay.php:86
+#: src/Public/CreditorDisplay.php:153
+#: src/Public/DebtorDisplay.php:87
+#: src/Public/DebtorDisplay.php:152
 msgid "Name"
 msgstr ""
 
@@ -85,9 +85,10 @@ msgstr ""
 
 #: src/Public/Actions.php:52
 #: src/Public/BankcashDisplay.php:156
-#: src/Public/CreditorDisplay.php:132
-#: src/Public/DebtorDisplay.php:131
-#: src/Public/SalesDisplay.php:193
+#: src/Public/CreditorDisplay.php:131
+#: src/Public/DebtorDisplay.php:130
+#: src/Public/PurchaseDisplay.php:191
+#: src/Public/SalesDisplay.php:191
 msgid "Delete"
 msgstr ""
 
@@ -97,7 +98,6 @@ msgstr ""
 #: src/Public/DepreciationDisplay.php:37
 #: src/Public/InteraccountDisplay.php:37
 #: src/Public/JournalDisplay.php:37
-#: src/Public/PurchaseDisplay.php:37
 #: src/Public/ReportDisplay.php:37
 #: src/Public/SettingDisplay.php:37
 #: src/Public/SummaryDisplay.php:76
@@ -136,13 +136,16 @@ msgstr ""
 #: src/Public/BusinessDisplay.php:170
 #: src/Public/CreditorDisplay.php:69
 #: src/Public/DebtorDisplay.php:70
-#: src/Public/SalesDisplay.php:89
+#: src/Public/PurchaseDisplay.php:88
+#: src/Public/SalesDisplay.php:88
 msgid "Remove not allowed"
 msgstr ""
 
 #: src/Public/AssetDisplay.php:97
-#: src/Public/SalesDisplay.php:141
-#: src/Public/SalesDisplay.php:161
+#: src/Public/PurchaseDisplay.php:139
+#: src/Public/PurchaseDisplay.php:159
+#: src/Public/SalesDisplay.php:139
+#: src/Public/SalesDisplay.php:159
 msgid "Description"
 msgstr ""
 
@@ -160,17 +163,18 @@ msgstr ""
 
 #: src/Public/AssetDisplay.php:109
 #: src/Public/BankcashDisplay.php:139
-#: src/Public/CreditorDisplay.php:118
-#: src/Public/DebtorDisplay.php:121
+#: src/Public/CreditorDisplay.php:117
+#: src/Public/DebtorDisplay.php:120
 msgid "Active"
 msgstr ""
 
 #: src/Public/AssetDisplay.php:114
 #: src/Public/BankcashDisplay.php:156
 #: src/Public/BusinessDisplay.php:93
-#: src/Public/CreditorDisplay.php:131
-#: src/Public/DebtorDisplay.php:131
-#: src/Public/SalesDisplay.php:192
+#: src/Public/CreditorDisplay.php:130
+#: src/Public/DebtorDisplay.php:130
+#: src/Public/PurchaseDisplay.php:190
+#: src/Public/SalesDisplay.php:190
 msgid "Save"
 msgstr ""
 
@@ -219,8 +223,9 @@ msgid "Country"
 msgstr ""
 
 #: src/Public/BusinessDisplay.php:85
-#: src/Public/CreditorDisplay.php:96
-#: src/Public/DebtorDisplay.php:97
+#: src/Public/CreditorDisplay.php:95
+#: src/Public/DebtorDisplay.php:96
+#: src/Public/PurchaseDisplay.php:132
 msgid "Address"
 msgstr ""
 
@@ -253,12 +258,12 @@ msgstr ""
 msgid "Supplier removed"
 msgstr ""
 
-#: src/Public/CreditorDisplay.php:107
-#: src/Public/DebtorDisplay.php:113
+#: src/Public/CreditorDisplay.php:106
+#: src/Public/DebtorDisplay.php:112
 msgid "Email"
 msgstr ""
 
-#: src/Public/CreditorDisplay.php:161
+#: src/Public/CreditorDisplay.php:160
 msgid "New supplier"
 msgstr ""
 
@@ -275,12 +280,12 @@ msgstr ""
 msgid "Customer removed"
 msgstr ""
 
-#: src/Public/DebtorDisplay.php:105
-#: src/Public/SalesDisplay.php:134
+#: src/Public/DebtorDisplay.php:104
+#: src/Public/SalesDisplay.php:132
 msgid "Billing address"
 msgstr ""
 
-#: src/Public/DebtorDisplay.php:160
+#: src/Public/DebtorDisplay.php:159
 msgid "New customer"
 msgstr ""
 
@@ -302,7 +307,7 @@ msgid "Inter Account Transfers"
 msgstr ""
 
 #: src/Public/Display.php:170
-#: src/Public/SalesDisplay.php:33
+#: src/Public/SalesDisplay.php:32
 msgid "Sales Invoices"
 msgstr ""
 
@@ -311,6 +316,7 @@ msgid "Credit Notes"
 msgstr ""
 
 #: src/Public/Display.php:173
+#: src/Public/PurchaseDisplay.php:32
 msgid "Purchase Invoices"
 msgstr ""
 
@@ -344,64 +350,87 @@ msgstr ""
 msgid "Journal transactions"
 msgstr ""
 
-#: src/Public/PurchaseDisplay.php:24
-msgid "Purchases"
-msgstr ""
-
-#: src/Public/SalesDisplay.php:58
+#: src/Public/PurchaseDisplay.php:57
+#: src/Public/SalesDisplay.php:57
 msgid "Y/m/d"
 msgstr ""
 
-#: src/Public/SalesDisplay.php:74
-msgid "Sales transaction saved"
+#: src/Public/PurchaseDisplay.php:73
+msgid "Purchase transaction saved"
 msgstr ""
 
-#: src/Public/SalesDisplay.php:87
-msgid "Sales transaction removed"
+#: src/Public/PurchaseDisplay.php:86
+msgid "Purchase transaction removed"
 msgstr ""
 
-#: src/Public/SalesDisplay.php:108
+#: src/Public/PurchaseDisplay.php:106
+#: src/Public/SalesDisplay.php:106
 msgid "Issue date"
 msgstr ""
 
-#: src/Public/SalesDisplay.php:117
-#: src/Public/SalesDisplay.php:225
+#: src/Public/PurchaseDisplay.php:115
+#: src/Public/SalesDisplay.php:115
+#: src/Public/SalesDisplay.php:223
 msgid "Customer"
 msgstr ""
 
-#: src/Public/SalesDisplay.php:126
+#: src/Public/PurchaseDisplay.php:124
+#: src/Public/SalesDisplay.php:124
 msgid "Reference"
 msgstr ""
 
-#: src/Public/SalesDisplay.php:156
+#: src/Public/PurchaseDisplay.php:154
+#: src/Public/SalesDisplay.php:154
 msgid "Account"
 msgstr ""
 
-#: src/Public/SalesDisplay.php:166
+#: src/Public/PurchaseDisplay.php:164
+#: src/Public/SalesDisplay.php:164
 msgid "Amount"
 msgstr ""
 
-#: src/Public/SalesDisplay.php:171
+#: src/Public/PurchaseDisplay.php:169
+#: src/Public/SalesDisplay.php:169
 msgid "Unitprice"
 msgstr ""
 
-#: src/Public/SalesDisplay.php:178
+#: src/Public/PurchaseDisplay.php:176
+#: src/Public/SalesDisplay.php:176
 msgid "Taxcode"
 msgstr ""
 
-#: src/Public/SalesDisplay.php:215
+#: src/Public/PurchaseDisplay.php:213
+#: src/Public/SalesDisplay.php:213
 msgid "Invoice date"
 msgstr ""
 
-#: src/Public/SalesDisplay.php:230
+#: src/Public/PurchaseDisplay.php:223
+msgid "Supplier"
+msgstr ""
+
+#: src/Public/PurchaseDisplay.php:228
+#: src/Public/SalesDisplay.php:228
 msgid "Invoice total"
 msgstr ""
 
-#: src/Public/SalesDisplay.php:235
+#: src/Public/PurchaseDisplay.php:233
+#: src/Public/SalesDisplay.php:233
 msgid "Balance due"
 msgstr ""
 
-#: src/Public/SalesDisplay.php:240
+#: src/Public/PurchaseDisplay.php:238
+msgid "New purchase invoice"
+msgstr ""
+
+#: src/Public/SalesDisplay.php:73
+msgid "Sales transaction saved"
+msgstr ""
+
+#: src/Public/SalesDisplay.php:86
+msgid "Sales transaction removed"
+msgstr ""
+
+#: src/Public/SalesDisplay.php:238
 msgid "New sales invoice"
 msgstr ""
 

@@ -87,12 +87,12 @@ module.exports = function( grunt ) {
 			const pkg  = grunt.file.readJSON( 'package.json' );
 			let readme = grunt.file.read( 'readme.txt' );
 			let plugin = grunt.file.read( pkg.name + '.php' );
-			grunt.file.write( 'README.txt', readme.replace( /Stable tag:.*\s/gm, 'Stable tag: ' + pkg.version + "\n" ) );
-			grunt.file.write( 'wp-Accountancy.php', plugin.replace( /Version:.*\s/gm, 'Version:           ' + pkg.version + "\n" ) );
+			grunt.file.write( 'README.txt', readme.replace( /Stable tag:.*\s/g, 'Stable tag: ' + pkg.version + "\n" ) );
+			grunt.file.write( 'wp-Accountancy.php', plugin.replace( /Version:.*\s/g, 'Version:           ' + pkg.version + "\n" ) );
 		}
 	);
 	grunt.registerTask(
-		'oplevering',
+		'default',
 		[
 			'versie_check',
 			'wp_readme_to_markdown',
@@ -102,7 +102,7 @@ module.exports = function( grunt ) {
 			'composer:update:no-autoloader:no-dev:verbose',
 			'composer:dump-autoload:optimize',
 			'zip',
-			'shell:do_ftp',
+			// 'shell:do_ftp',
 			'composer:update'
 		]
 	);
