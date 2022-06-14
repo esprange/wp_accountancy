@@ -66,11 +66,11 @@ class SalesDisplay extends Display {
 			$detail->quantity       = floatval( $input['quantity'][ $index ] ?? 1.0 );
 			$detail->unitprice      = floatval( $input['unitprice'][ $index ] ?? 0.0 );
 			$detail->description    = sanitize_text_field( $input['description'][ $index ] ?? '' );
-			$detail->taxcode_id     = intval( $input['taxcode_id'][ $index ] ?? null );
+			$detail->taxcode_id     = $input['taxcode_id'][ $index ] ?? null;
 			$detail->order_number   = $index;
 			$detail->update();
 		}
-		return $this->notify( -1, __( 'Sales transaction saved', 'wpacc' ) );
+		return $this->notify( 1, __( 'Sales transaction saved', 'wpacc' ) );
 	}
 
 	/**

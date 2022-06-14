@@ -22,71 +22,26 @@ namespace WP_Accountancy\Includes;
  * @property string type
  * @property bool   active,
  */
-class Actor {
+class Actor extends Entity {
 
 	/**
 	 * Constructor
 	 *
 	 * @param int $actor_id  The actor id, if specified, the actor is retrieved from the db.
 	 */
-	public function __construct( int $actor_id ) {
+	public function __construct( int $actor_id = 0 ) {
 		global $wpacc_business;
-		$data = [
-			'id'              => $actor_id,
-			'business_id'     => $wpacc_business->id,
-			'name'            => '',
-			'address'         => '',
-			'billing_address' => '',
-			'email_address'   => '',
-			'active'          => true,
-			'type'            => '',
-		];
-		global $wpdb;
-		$result = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}wpacc_actor where id = %d",
-				$actor_id
-			)
+		$this->fetch(
+			[
+				'id'              => $actor_id,
+				'business_id'     => $wpacc_business->id,
+				'name'            => '',
+				'address'         => '',
+				'billing_address' => '',
+				'email_address'   => '',
+				'active'          => true,
+				'type'            => '',
+			]
 		);
-		if ( $result ) {
-			$data = $result;
-		}
-		foreach ( $data as $property => $value ) {
-			$this->$property = $value;
-		}
 	}
-
-	/**
-	 * Update the actor.
-	 *
-	 * @return int The actor id.
-	 */
-	public function update() : int {
-		global $wpdb;
-		global $wpacc_business;
-		$data = [
-			'id'              => $this->id,
-			'business_id'     => $wpacc_business->id,
-			'name'            => $this->name,
-			'address'         => $this->address,
-			'billing_address' => $this->billing_address,
-			'email_address'   => $this->email_address,
-			'active'          => (int) $this->active,
-			'type'            => $this->type,
-		];
-		$wpdb->replace( "{$wpdb->prefix}wpacc_actor", $data );
-		$this->id = $wpdb->insert_id;
-		return $this->id;
-	}
-
-	/**
-	 * Delete the actor entry.
-	 *
-	 * @return bool
-	 */
-	public function delete() : bool {
-		global $wpdb;
-		return (bool) $wpdb->delete( "{$wpdb->prefix}wpacc_actor", [ 'id' => $this->id ] );
-	}
-
 }

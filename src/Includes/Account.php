@@ -23,7 +23,7 @@ namespace WP_Accountancy\Includes;
  * @property int    order_number
  * @property float  initial_value
  */
-class Account {
+class Account extends Entity {
 	public const ASSETS_ITEM    = 'assets';
 	public const LIABILITY_ITEM = 'liability';
 	public const EQUITY_ITEM    = 'equity';
@@ -41,64 +41,19 @@ class Account {
 	 */
 	public function __construct( int $account_id = 0 ) {
 		global $wpacc_business;
-		$data = [
-			'id'            => $account_id,
-			'business_id'   => $wpacc_business->id,
-			'taxcode_id'    => null,
-			'group_id'      => null,
-			'name'          => '',
-			'active'        => true,
-			'order_number'  => 0,
-			'type'          => '',
-			'initial_value' => 0.0,
-		];
-		global $wpdb;
-		$result = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}wpacc_account where id = %d",
-				$account_id
-			)
+		$this->fetch(
+			[
+				'id'            => $account_id,
+				'business_id'   => $wpacc_business->id,
+				'taxcode_id'    => null,
+				'group_id'      => null,
+				'name'          => '',
+				'active'        => true,
+				'order_number'  => 0,
+				'type'          => '',
+				'initial_value' => 0.0,
+			]
 		);
-		if ( $result ) {
-			$data = $result;
-		}
-		foreach ( $data as $property => $value ) {
-			$this->$property = $value;
-		}
-	}
-
-	/**
-	 * Update the account.
-	 *
-	 * @return int The account id.
-	 */
-	public function update() : int {
-		global $wpdb;
-		global $wpacc_business;
-		$data = [
-			'id'            => $this->id,
-			'business_id'   => $wpacc_business->id,
-			'name'          => $this->name,
-			'taxcode_id'    => $this->taxcode_id,
-			'group_id'      => $this->group_id,
-			'order_number'  => $this->order_number,
-			'active'        => $this->active,
-			'type'          => $this->type,
-			'initial_value' => $this->initial_value,
-		];
-		$wpdb->replace( "{$wpdb->prefix}wpacc_account", $data );
-		$this->id = $wpdb->insert_id;
-		return $this->id;
-	}
-
-	/**
-	 * Delete the account entry.
-	 *
-	 * @return bool
-	 */
-	public function delete() : bool {
-		global $wpdb;
-		return (bool) $wpdb->delete( "{$wpdb->prefix}wpacc_account", [ 'id' => $this->id ] );
 	}
 
 }

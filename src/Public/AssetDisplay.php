@@ -62,7 +62,7 @@ class AssetDisplay extends Display {
 		$asset->active      = $input['active'];
 		$asset->business_id = $wpacc_business->id;
 		$asset->update();
-		return $this->notify( -1, __( 'Asset saved', 'wpacc' ) );
+		return $this->notify( 1, __( 'Asset saved', 'wpacc' ) );
 	}
 
 	/**

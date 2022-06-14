@@ -18,7 +18,7 @@ class Upgrade {
 	/**
 	 * Plugin-database-version
 	 */
-	const DBVERSION = 21;
+	const DBVERSION = 25;
 	/**
 	 * Execute upgrade actions if needed.
 	 *
@@ -98,11 +98,11 @@ class Upgrade {
 			business_id  INT (10) NOT NULL,
 			name         VARCHAR (50) NOT NULL,
 			rate         FLOAT,
-			active       TINYINT(1) DEFAULT 1,
+			active       BOOL DEFAULT TRUE,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
-		$this->foreign_key( 'taxcode', 'business' );
+		$this->foreign_key( 'taxcode', 'business', 'CASCADE' );
 
 		/**
 		 * Taxcodes, can be different for each business.
@@ -114,12 +114,12 @@ class Upgrade {
 			name         VARCHAR (50) NOT NULL,
 			description  TEXT,
 			rate         FLOAT,
-			cost        DECIMAL (13,4),
+			cost         DECIMAL (13,4),
 			provision    DECIMAL (13,4),
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
-		$this->foreign_key( 'asset', 'business' );
+		$this->foreign_key( 'asset', 'business', 'CASCADE' );
 
 		/**
 		 * The accounts of the general ledger. The COA exists for each business. A record can be a group, a group total or a regular account
@@ -134,32 +134,32 @@ class Upgrade {
 			group_id      INT (10) NULL,
 			type          TINYTEXT,
 			order_number  INT,
-			active        TINYINT(1) DEFAULT 1,
+			active        BOOL DEFAULT TRUE,
 			initial_value DECIMAL(13,4) DEFAULT 0.0,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
-		$this->foreign_key( 'account', 'business' );
+		$this->foreign_key( 'account', 'business', 'CASCADE' );
 		$this->foreign_key( 'account', 'taxcode' );
-		$this->foreign_key( 'account', 'account', 'group_id' );
+		$this->foreign_key( 'account', 'account', 'CASCADE', 'group_id' );
 
 		/**
 		 * The actors
 		 */
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_actor (
-			id            INT (10) NOT NULL AUTO_INCREMENT,
-			business_id   INT (10) NOT NULL,
-			name          VARCHAR (50),
-			address       TEXT,
+			id              INT (10) NOT NULL AUTO_INCREMENT,
+			business_id     INT (10) NOT NULL,
+			name            VARCHAR (50),
+			address         TEXT,
 			billing_address TEXT,
-			email_address TINYTEXT,
-			active        TINYINT(1) DEFAULT 1,
-			type          TINYTEXT,
+			email_address   TINYTEXT,
+			active          BOOL DEFAULT TRUE,
+			type            TINYTEXT,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
-		$this->foreign_key( 'actor', 'business' );
+		$this->foreign_key( 'actor', 'business', 'CASCADE' );
 
 		/**
 		 * The transactions themselves. This record is used for all types, so including sales, purchases, banking,
@@ -178,7 +178,7 @@ class Upgrade {
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
-		$this->foreign_key( 'transaction', 'business' );
+		$this->foreign_key( 'transaction', 'business', 'CASCADE' );
 		$this->foreign_key( 'transaction', 'actor' );
 
 		/**
@@ -198,7 +198,7 @@ class Upgrade {
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
-		$this->foreign_key( 'detail', 'transaction' );
+		$this->foreign_key( 'detail', 'transaction', 'CASCADE' );
 		$this->foreign_key( 'detail', 'account' );
 		$this->foreign_key( 'detail', 'taxcode' );
 		$this->foreign_key( 'detail', 'actor' );
@@ -209,11 +209,12 @@ class Upgrade {
 	 *
 	 * @param string $table   The table for which the constraint is required.
 	 * @param string $parent  The parent table to which the foreign key refers.
+	 * @param string $action  Can be Cascade or Restrict or..
 	 * @param string $foreign The foreign key, optional.
 	 *
 	 * @return void
 	 */
-	private function foreign_key( string $table, string $parent, string $foreign = '' ): void {
+	private function foreign_key( string $table, string $parent, string $action = 'RESTRICT', string $foreign = '' ): void {
 		if ( defined( 'WPACC_TEST' ) ) {
 			return; // Phpunit creates temporary tables which don't allow foreign key constraints.
 		}
@@ -228,11 +229,9 @@ class Upgrade {
 			        CONSTRAINT_NAME   = 'fk_{$parent}_$table' AND
 			        CONSTRAINT_TYPE   = 'FOREIGN KEY'"
 			) ) {
-			$query = "ALTER TABLE {$wpdb->prefix}wpacc_$table
-				ADD CONSTRAINT fk_{$parent}_$table FOREIGN KEY ($foreign) REFERENCES {$wpdb->prefix}wpacc_$parent(id)";
-			echo $query;
 			$wpdb->query( "ALTER TABLE {$wpdb->prefix}wpacc_$table
-				ADD CONSTRAINT fk_{$parent}_$table FOREIGN KEY ($foreign) REFERENCES {$wpdb->prefix}wpacc_$parent(id)"
+				ADD CONSTRAINT fk_{$parent}_$table FOREIGN KEY ($foreign) REFERENCES {$wpdb->prefix}wpacc_$parent(id)
+				ON DELETE $action ON UPDATE $action"
 			);
 		}
 		// phpcs:enable

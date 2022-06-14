@@ -23,7 +23,7 @@ namespace WP_Accountancy\Includes;
  * @property string description
  * @property int    order_number
  */
-class Detail {
+class Detail extends Entity {
 
 	/**
 	 * Constructor
@@ -32,58 +32,18 @@ class Detail {
 	 * @param int $detail_id      The transaction detail_id, if specified, the transactiondetail is retrieved from the db.
 	 */
 	public function __construct( int $transaction_id, int $detail_id = 0 ) {
-		$data = [
-			'id'             => $detail_id,
-			'transaction_id' => $transaction_id,
-			'account_id'     => null,
-			'actor_id'       => null,
-			'taxcode_id'     => null,
-			'quantity'       => 1,
-			'unitprice'      => 0,
-			'description'    => '',
-			'order_number'   => 0,
-		];
-		if ( $transaction_id ) {
-			global $wpdb;
-			$result = $wpdb->get_row(
-				$wpdb->prepare(
-					"SELECT * FROM {$wpdb->prefix}wpacc_detail where id = %d",
-					$detail_id
-				)
-			);
-			if ( $result ) {
-				$data = $result;
-			}
-		}
-		foreach ( $data as $property => $value ) {
-			$this->$property = $value;
-		}
+		$this->fetch(
+			[
+				'id'             => $detail_id,
+				'transaction_id' => $transaction_id,
+				'account_id'     => null,
+				'actor_id'       => null,
+				'taxcode_id'     => null,
+				'quantity'       => 1,
+				'unitprice'      => 0,
+				'description'    => '',
+				'order_number'   => 0,
+			]
+		);
 	}
-
-	/**
-	 * Update the transactiondetail.
-	 *
-	 * @return int The transaction id.
-	 */
-	public function update() : int {
-		if ( $this->transaction_id ) {
-			global $wpdb;
-			$data = [
-				'id'             => $this->id,
-				'transaction_id' => $this->transaction_id,
-				'account_id'     => $this->account_id,
-				'actor_id'       => $this->actor_id,
-				'taxcode_id'     => $this->taxcode_id,
-				'quantity'       => $this->quantity,
-				'unitprice'      => $this->unitprice,
-				'description'    => $this->description,
-				'order_number'   => $this->order_number,
-			];
-			$wpdb->replace( "{$wpdb->prefix}wpacc_detail", $data );
-			$this->id = $wpdb->insert_id;
-			return $this->id;
-		}
-		return 0;
-	}
-
 }

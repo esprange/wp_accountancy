@@ -148,7 +148,7 @@ class BusinessDisplay extends Display {
 		$business->logo    = $input['logo'];
 		$business->update();
 		do_action( 'wpacc_business_select', $business->id );
-		return $this->notify( -1, __( 'Business saved', 'wpacc' ) );
+		return $this->notify( 1, __( 'Business saved', 'wpacc' ) );
 	}
 
 	/**

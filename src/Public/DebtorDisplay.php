@@ -52,7 +52,7 @@ class DebtorDisplay extends Display {
 		$debtor->active          = boolval( $input['active'] ?? false );
 		$debtor->business_id     = $wpacc_business->id;
 		$debtor->update();
-		return $this->notify( -1, __( 'Customer saved', 'wpacc' ) );
+		return $this->notify( 1, __( 'Customer saved', 'wpacc' ) );
 	}
 
 	/**

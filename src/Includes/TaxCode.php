@@ -19,7 +19,7 @@ namespace WP_Accountancy\Includes;
  * @property float  rate
  * @property bool   active,
  */
-class TaxCode {
+class TaxCode extends Entity {
 
 	/**
 	 * Constructor
@@ -28,45 +28,14 @@ class TaxCode {
 	 */
 	public function __construct( int $taxcode_id = 0 ) {
 		global $wpacc_business;
-		$data = [
-			'id'          => $taxcode_id,
-			'business_id' => $wpacc_business->id,
-			'name'        => '',
-			'rate'        => 0.0,
-			'active'      => true,
-		];
-		global $wpdb;
-		$result = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}wpacc_taxcode where id = %d",
-				$taxcode_id
-			)
+		$this->fetch(
+			[
+				'id'          => $taxcode_id,
+				'business_id' => $wpacc_business->id,
+				'name'        => '',
+				'rate'        => 0.0,
+				'active'      => true,
+			]
 		);
-		if ( $result ) {
-			$data = $result;
-		}
-		foreach ( $data as $property => $value ) {
-			$this->$property = $value;
-		}
 	}
-
-	/**
-	 * Update the taxcode.
-	 *
-	 * @return int The taxcode id.
-	 */
-	public function update() : int {
-		global $wpdb;
-		$data = [
-			'id'          => $this->id,
-			'business_id' => $this->business_id,
-			'name'        => $this->name,
-			'rate'        => $this->rate,
-			'active'      => $this->active,
-		];
-		$wpdb->replace( "{$wpdb->prefix}wpacc_taxcode", $data );
-		$this->id = $wpdb->insert_id;
-		return $this->id;
-	}
-
 }

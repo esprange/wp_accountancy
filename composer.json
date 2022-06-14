@@ -24,7 +24,7 @@
         "yoast/phpunit-polyfills": "*"
     },
     "require": {
-        "setasign/fpdf": "^1",
+        "setasign/fpdf": ">=1",
         "ext-gd": "*",
         "ext-xml": "*",
         "ext-dom": "*"

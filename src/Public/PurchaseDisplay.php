@@ -70,7 +70,7 @@ class PurchaseDisplay extends Display {
 			$detail->order_number   = $index;
 			$detail->update();
 		}
-		return $this->notify( -1, __( 'Purchase transaction saved', 'wpacc' ) );
+		return $this->notify( 1, __( 'Purchase transaction saved', 'wpacc' ) );
 	}
 
 	/**

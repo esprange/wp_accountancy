@@ -51,7 +51,7 @@ class CreditorDisplay extends Display {
 		$creditor->active        = boolval( $input['active'] ?? false );
 		$creditor->business_id   = $wpacc_business->id;
 		$creditor->update();
-		return $this->notify( -1, __( 'Supplier saved', 'wpacc' ) );
+		return $this->notify( 1, __( 'Supplier saved', 'wpacc' ) );
 	}
 
 	/**

@@ -73,7 +73,7 @@ class BankcashDisplay extends Display {
 		$account->business_id   = $wpacc_business->id;
 		$account->initial_value = $input['initial_value'];
 		$account->update();
-		return $this->notify( -1, 'bank' === $account->type ? __( 'Bank saved', 'wpacc' ) : __( 'Cash saved', 'wpacc' ) );
+		return $this->notify( 1, 'bank' === $account->type ? __( 'Bank saved', 'wpacc' ) : __( 'Cash saved', 'wpacc' ) );
 	}
 
 	/**
