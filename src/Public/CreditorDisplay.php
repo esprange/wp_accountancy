@@ -48,7 +48,7 @@ class CreditorDisplay extends Display {
 		$creditor->name          = sanitize_text_field( $input['name'] ?? '' );
 		$creditor->address       = sanitize_textarea_field( $input['address'] ?? '' );
 		$creditor->email_address = sanitize_email( $input['email_address'] ?? '' );
-		$creditor->active        = boolval( $input['active'] ?? false );
+		$creditor->active        = boolval( $input['active'] ?? true );
 		$creditor->business_id   = $wpacc_business->id;
 		$creditor->update();
 		return $this->notify( 1, __( 'Supplier saved', 'wpacc' ) );

@@ -39,12 +39,6 @@ class BusinessQuery {
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
 		$this->query_where = ' 1 = 1';
-		if ( $query_vars['active'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND active_id = %d', (int) $query_vars['active'] );
-		}
-		if ( $query_vars['id'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND id = %d', $query_vars['id'] );
-		}
 		if ( $query_vars['name'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND lower(name) = lower(%s)', $query_vars['name'] );
 		}

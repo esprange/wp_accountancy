@@ -41,10 +41,7 @@ class AccountQuery {
 		$query_vars        = wp_parse_args( $args, $defaults );
 		$this->query_where = $wpdb->prepare( ' business_id = %d', $wpacc_business->id );
 		if ( $query_vars['active'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND active = %d', (int) $query_vars['active'] );
-		}
-		if ( $query_vars['id'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND id = %d', $query_vars['id'] );
+			$this->query_where .= ' AND active';
 		}
 		if ( $query_vars['type'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND name = %s', $query_vars['type'] );

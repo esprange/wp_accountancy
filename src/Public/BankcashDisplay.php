@@ -69,7 +69,7 @@ class BankcashDisplay extends Display {
 		$account                = new Account( $input['bankcash_id'] );
 		$account->name          = $input['name'];
 		$account->type          = $input['type'];
-		$account->active        = $input['active'];
+		$account->active        = boolval( $input['active'] ?? true );
 		$account->business_id   = $wpacc_business->id;
 		$account->initial_value = $input['initial_value'];
 		$account->update();

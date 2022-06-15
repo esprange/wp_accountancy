@@ -49,7 +49,7 @@ class DebtorDisplay extends Display {
 		$debtor->address         = sanitize_textarea_field( $input['address'] ?? '' );
 		$debtor->billing_address = sanitize_textarea_field( $input['billing_address'] ?? '' );
 		$debtor->email_address   = sanitize_email( $input['email_address'] ?? '' );
-		$debtor->active          = boolval( $input['active'] ?? false );
+		$debtor->active          = boolval( $input['active'] ?? true );
 		$debtor->business_id     = $wpacc_business->id;
 		$debtor->update();
 		return $this->notify( 1, __( 'Customer saved', 'wpacc' ) );
