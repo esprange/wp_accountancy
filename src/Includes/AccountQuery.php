@@ -39,7 +39,7 @@ class AccountQuery {
 			'id'          => 0,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
-		$this->query_where = $wpdb->prepare( 'WHERE business_id = %d', $wpacc_business->id );
+		$this->query_where = $wpdb->prepare( ' business_id = %d', $wpacc_business->id );
 		if ( $query_vars['active'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND active = %d', (int) $query_vars['active'] );
 		}
@@ -61,8 +61,9 @@ class AccountQuery {
 	public function get_results() : array {
 		global $wpdb;
 		return $wpdb->get_results(
-			"SELECT id as account_id, name, business_id, taxcode_id, group_id, type, active, order_number
-			FROM {$wpdb->prefix}wpacc_account $this->query_where
+			"SELECT id AS account_id, name, business_id, taxcode_id, group_id, type, active, order_number
+			FROM {$wpdb->prefix}wpacc_account
+			WHERE $this->query_where
 			ORDER BY order_number",
 			OBJECT_K
 		);

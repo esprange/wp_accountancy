@@ -260,4 +260,37 @@ class Test_Table extends UnitTestCase {
 		$this->assertValidHtml( $html, 'Invalid html inputs' );
 	}
 
+	/**
+	 * Test Table addrow option.
+	 *
+	 * @return void
+	 */
+	public function test_addrow() : void {
+		$table = new Table();
+		$html  = $table->render(
+			[
+				'fields'  => [
+					[
+						'name'  => 'id',
+						'type'  => 'static',
+						'label' => '',
+					],
+					[
+						'name'  => 'texts',
+						'type'  => 'text',
+						'label' => 'Test',
+					],
+				],
+				'items'   => [
+					1 => (object) [
+						'id'    => 1,
+						'texts' => 'abcdef',
+					],
+				],
+				'options' => [ 'addrow' ],
+			],
+		);
+		$this->assertValidHtml( $html, 'Invalid html addrow' );
+		$this->assertEquals( 1, substr_count( $html, '<button' ), 'Add row fails' );
+	}
 }

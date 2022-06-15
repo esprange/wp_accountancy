@@ -7,9 +7,11 @@
 
 namespace WP_Accountancy\Tests;
 
+use WP_Accountancy\Admin\Upgrade;
 use PHPUnit\Framework\Constraint\Constraint;
 use WP_UnitTestCase;
 use WP_Accountancy\Includes\Accountancy;
+use WP_Accountancy\Includes\Business;
 
 /**
  * Mock filter input array function
@@ -57,13 +59,21 @@ function filter_input( int $type, string $var_name, int $filter = FILTER_DEFAULT
 abstract class UnitTestCase extends WP_UnitTestCase {
 
 	/**
-	 * Activate the plugin which includes the kleistad specific tables if not present.
+	 * Activate the plugin which includes the WP_Accountancy specific tables if not present.
+	 * Create also an initial business.
 	 */
 	public function setUp(): void {
 		parent::setUp();
 		new Accountancy();
 		$_GET  = [];
 		$_POST = [];
+
+		( new Upgrade() )->run();
+
+		global $wpacc_business;
+		$wpacc_business       = new Business();
+		$wpacc_business->name = 'Test';
+		$wpacc_business->update();
 	}
 
 	/**

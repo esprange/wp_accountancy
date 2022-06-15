@@ -38,7 +38,7 @@ class BusinessQuery {
 			'slug'   => '',
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
-		$this->query_where = 'WHERE 1 = 1';
+		$this->query_where = ' 1 = 1';
 		if ( $query_vars['active'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND active_id = %d', (int) $query_vars['active'] );
 		}
@@ -62,7 +62,12 @@ class BusinessQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		return $wpdb->get_results( "SELECT *, id as business_id FROM {$wpdb->prefix}wpacc_business $this->query_where ORDER BY name" );
+		return $wpdb->get_results(
+			"SELECT *, id AS business_id
+				FROM {$wpdb->prefix}wpacc_business
+                WHERE $this->query_where
+                ORDER BY name"
+		);
 	}
 
 }

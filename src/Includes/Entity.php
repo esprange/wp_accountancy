@@ -40,13 +40,20 @@ abstract class Entity extends stdClass {
 	protected array $default = [];
 
 	/**
+	 * Return the table name string, excluding the prefix.
+	 *
+	 * @return string
+	 */
+	abstract public function tablename() : string;
+
+	/**
 	 * Remove the record from the table.
 	 *
 	 * @return bool
 	 */
 	final public function delete() : bool {
 		global $wpdb;
-		return (bool) $wpdb->delete( $this->tablename(), [ 'id' => $this->id ] );
+		return (bool) $wpdb->delete( $wpdb->prefix . $this->tablename(), [ 'id' => $this->id ] );
 	}
 
 	/**
@@ -57,8 +64,8 @@ abstract class Entity extends stdClass {
 	final public function update() : int {
 		global $wpdb;
 		$wpdb->replace(
-			$this->tablename(),
-			$this->original ? iterator_to_array( $this->compare() ) : $this->data
+			$wpdb->prefix . $this->tablename(),
+			iterator_to_array( $this->get_changes() )
 		);
 		$this->id = $wpdb->insert_id;
 		return $this->id;
@@ -76,9 +83,12 @@ abstract class Entity extends stdClass {
 		$this->default = $default;
 		if ( $this->default['id'] ) {
 			$this->original = $wpdb->get_row(
-				'SELECT * FROM ' . $this->tablename() . ' WHERE id = ' . $this->default['id'], // phpcs:ignore
+				"SELECT * FROM $wpdb->prefix" . $this->tablename() . " WHERE id = {$this->default['id']}", // phpcs:ignore
 				ARRAY_A
 			);
+			if ( ! $this->original ) {
+				$this->default['id'] = 0;
+			}
 		}
 		/**
 		 * This object is derived from stdClass, the properties are created dynamically. Typecasting is done using the default as template.
@@ -95,25 +105,16 @@ abstract class Entity extends stdClass {
 	 *
 	 * @return Generator
 	 */
-	private function compare(): Generator {
+	private function get_changes(): Generator {
 		foreach ( array_keys( $this->default ) as $property ) {
-			if ( ! $this->original ||
-				$this->original[ $property ] !== $this->$property ||
-				( 'id' === $property && $this->$property )
-			) {
-				yield $property => $this->$property;
+			if ( $this->original ) {
+				if ( 'id' === $property || $this->original[ $property ] !== $this->$property ) {
+					yield $property => $this->$property;
+				}
+				continue;
 			}
+			yield $property => $this->$property;
 		}
 	}
 
-	/**
-	 * Deduct the table name from the class.
-	 *
-	 * @return string
-	 */
-	private function tablename() : string {
-		global $wpdb;
-		$classname = get_class( $this );
-		return "{$wpdb->prefix}wpacc_" . strtolower( substr( $classname, strrpos( $classname, '\\' ) + 1 ) );
-	}
 }

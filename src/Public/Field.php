@@ -23,8 +23,6 @@ class Field {
 	 * @return string
 	 */
 	public function render( array $args ) : string {
-		static $index = 0;
-
 		$default        = [
 			'required' => false,
 			'readonly' => false,
@@ -32,15 +30,13 @@ class Field {
 			'label'    => '',
 			'value'    => null,
 			'list'     => [],
-			'tagref'   => '',
 		];
 		$args           = (object) wp_parse_args( $args, $default );
 		$args->required = $args->required ? 'required' : '';
 		$args->readonly = $args->readonly ? 'readonly' : '';
 		$html           = '';
 		if ( $args->label ) {
-			$html         = "<label for=\"wpacc_$index\" >$args->label";
-			$args->tagref = "id=\"wpacc_$index\"";
+			$html = "<label >$args->label";
 		}
 		$html .= match ( $args->type ) {
 			'static'    => $this->render_static( $args ),
@@ -57,7 +53,6 @@ class Field {
 			'checkbox', => $this->render_check( $args ),
 			'zoom',     => $this->render_zoom( $args ),
 		};
-		$index++;
 		$html .= $args->label ? '</label>' : '';
 		return $html;
 	}
@@ -70,9 +65,7 @@ class Field {
 	 * @return string
 	 */
 	private function render_static( object $args ) : string {
-		return <<<EOT
-		<span $args->tagref >$args->value</span>
-		EOT;
+		return $args->value;
 	}
 
 	/**
@@ -84,7 +77,7 @@ class Field {
 	 */
 	private function render_input( object $args ) : string {
 		return <<<EOT
-		<input name="$args->name" type="$args->type" $args->tagref value="$args->value" $args->required $args->readonly >
+		<input name="$args->name" type="$args->type" value="$args->value" $args->required $args->readonly >
 		EOT;
 	}
 
@@ -98,7 +91,7 @@ class Field {
 	private function render_float( object $args ) : string {
 		$step = in_array( $args->type, [ 'float', 'currency' ], true ) ? 'step="0.01"' : '';
 		return <<<EOT
-		<input name="$args->name" type="number" $args->tagref value="$args->value" $step $args->required $args->readonly >
+		<input name="$args->name" type="number" value="$args->value" $step $args->required $args->readonly >
 		EOT;
 	}
 
@@ -111,13 +104,12 @@ class Field {
 	 */
 	private function render_select( object $args ) : string {
 		$html = <<<EOT
-		<select name="$args->name" $args->tagref $args->required $args->readonly >
+		<select name="$args->name" $args->required $args->readonly >
 		EOT;
 		foreach ( $args->list as $option_id => $option ) {
 			$selected = selected( $args->value, $option_id, false );
 			$html    .= <<<EOT
 			<option value="$option_id" $selected >$option->name</option>
-
 		EOT;
 		}
 		$html .= <<<EOT
@@ -135,7 +127,7 @@ class Field {
 	 */
 	private function render_textarea( object $args ) : string {
 		return <<<EOT
-		<textarea name="$args->name" $args->tagref $args->required $args->readonly >$args->value</textarea>
+		<textarea name="$args->name" $args->required $args->readonly >$args->value</textarea>
 		EOT;
 	}
 
@@ -149,7 +141,7 @@ class Field {
 	private function render_check( object $args ) : string {
 		$checked = checked( $args->value, true, false );
 		return <<<EOT
-		<input name="$args->name" type="$args->type" $args->tagref value="$args->value" $checked $args->required $args->readonly >
+		<input name="$args->name" type="$args->type" value="$args->value" $checked $args->required $args->readonly >
 		EOT;
 	}
 
@@ -162,7 +154,7 @@ class Field {
 	 */
 	private function render_zoom( object $args ) : string {
 		return <<<EOT
-		<a class="wpacc-zoom" $args->tagref>$args->value</a>
+		<a class="wpacc-zoom" >$args->value</a>
 		EOT;
 	}
 

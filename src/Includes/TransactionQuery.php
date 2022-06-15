@@ -48,7 +48,7 @@ class TransactionQuery {
 			'order_by' => '',
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
-		$this->query_where = $wpdb->prepare( 'WHERE transaction.business_id = %d', $wpacc_business->id );
+		$this->query_where = $wpdb->prepare( ' transaction.business_id = %d', $wpacc_business->id );
 		if ( $query_vars['from'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND transaction.date >= %s', $query_vars['from'] );
 		}
@@ -83,7 +83,8 @@ class TransactionQuery {
 		global $wpdb;
 		return $wpdb->get_results(
 			"SELECT id as transaction_id, business_id, actor_id, reference, invoice_id, address, date, type, description
-			FROM {$wpdb->prefix}wpacc_transaction AS transaction $this->query_where
+			FROM {$wpdb->prefix}wpacc_transaction AS transaction
+			WHERE $this->query_where
 			$this->query_order",
 			OBJECT_K
 		);

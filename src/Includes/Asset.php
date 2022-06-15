@@ -41,8 +41,17 @@ class Asset extends Entity {
 				'rate'        => 0.0,
 				'cost'        => 0.0,
 				'provision'   => 0.0,
-				'active'      => true,
 			]
 		);
 	}
+
+	/**
+	 * Return the table name
+	 *
+	 * @return string
+	 */
+	public function tablename(): string {
+		return 'wpacc_asset';
+	}
+
 }

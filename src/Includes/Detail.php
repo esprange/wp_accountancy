@@ -39,11 +39,21 @@ class Detail extends Entity {
 				'account_id'     => null,
 				'actor_id'       => null,
 				'taxcode_id'     => null,
-				'quantity'       => 1,
-				'unitprice'      => 0,
+				'quantity'       => 1.0,
+				'unitprice'      => 0.0,
 				'description'    => '',
 				'order_number'   => 0,
 			]
 		);
 	}
+
+	/**
+	 * Return the table name
+	 *
+	 * @return string
+	 */
+	public function tablename(): string {
+		return 'wpacc_detail';
+	}
+
 }

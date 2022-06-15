@@ -28,9 +28,9 @@ class InvoiceQuery extends TransactionQuery {
 		return $wpdb->get_results(
 			"SELECT
 				transaction.id AS transaction_id,
-				transaction.date as date,
+				transaction.date AS date,
 				transaction.invoice_id AS invoice_id,
-				actor.name as name,
+				actor.name AS name,
        			FORMAT( SUM( detail.unitprice * detail.quantity * ( 1.0 + COALESCE( taxcode.rate, 0.0 ) ) ), 2, '$locale' ) AS invoice_total,
        			FORMAT( 0.0, 2, '$locale' ) AS balance_due
 			FROM
@@ -44,7 +44,7 @@ class InvoiceQuery extends TransactionQuery {
 			LEFT JOIN
 				{$wpdb->prefix}wpacc_taxcode AS taxcode
 			ON detail.taxcode_id = taxcode.id
-			$this->query_where",
+			WHERE $this->query_where",
 			OBJECT_K
 		);
 	}

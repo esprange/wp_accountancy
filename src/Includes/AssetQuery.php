@@ -39,7 +39,7 @@ class AssetQuery {
 			'id'          => 0,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
-		$this->query_where = $wpdb->prepare( 'WHERE business_id = %d', $wpacc_business->id );
+		$this->query_where = $wpdb->prepare( ' business_id = %d', $wpacc_business->id );
 		if ( $query_vars['active'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND active_id = %d', (int) $query_vars['active'] );
 		}
@@ -60,7 +60,12 @@ class AssetQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		return $wpdb->get_results( "SELECT *, id as asset_id FROM {$wpdb->prefix}wpacc_asset $this->query_where ORDER BY name" );
+		return $wpdb->get_results(
+			"SELECT *, id AS asset_id
+			FROM {$wpdb->prefix}wpacc_asset
+			WHERE $this->query_where
+			ORDER BY name"
+		);
 	}
 
 }

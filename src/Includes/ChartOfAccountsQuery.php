@@ -39,7 +39,7 @@ class ChartOfAccountsQuery {
 			'id'          => 0,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
-		$this->query_where = 'WHERE 1 = 1';
+		$this->query_where = '1 = 1';
 		if ( $query_vars['active'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND active = %d', (int) $query_vars['active'] );
 		}
@@ -63,8 +63,10 @@ class ChartOfAccountsQuery {
 		global $wpacc_business;
 		return $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT sum( d.quantity * d.unitprice ) as value, a.type as type, a.name as name, a.id as id FROM {$wpdb->prefix}wpacc_account AS a
-				LEFT JOIN {$wpdb->prefix}wpacc_detail as d ON a.id=d.account_id AND a.business_id=%d GROUP BY a.type",
+				"SELECT sum( d.quantity * d.unitprice ) AS value, a.type AS type, a.name AS name, a.id AS id
+				FROM {$wpdb->prefix}wpacc_account AS a
+				LEFT JOIN {$wpdb->prefix}wpacc_detail AS d ON a.id=d.account_id AND a.business_id=%d
+				GROUP BY a.type",
 				$wpacc_business->id
 			)
 		);

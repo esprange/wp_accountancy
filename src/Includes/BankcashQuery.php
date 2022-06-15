@@ -24,12 +24,16 @@ class BankcashQuery extends AccountQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		$this->query_where .= $wpdb->prepare( ' AND type = %s OR type = %s', Account::BANK_ITEM, Account::CASH_ITEM );
+		$this->query_where .= $wpdb->prepare( ' AND type IN ( %s, %s )', Account::CASH_ITEM, Account::BANK_ITEM );
 		$locale             = get_locale();
 		return $wpdb->get_results(
-			"SELECT a.id AS bankcash_id, a.name AS name, FORMAT( COALESCE( SUM( d.unitprice ), 0 ) + a.initial_value, 2, '$locale' ) AS actual_balance
-			FROM {$wpdb->prefix}wpacc_account AS a LEFT JOIN {$wpdb->prefix}wpacc_detail AS d ON a.id = d.account_id $this->query_where GROUP BY d.account_id
-			ORDER BY a.name",
+			"SELECT id AS bankcash_id, name AS name, FORMAT( COALESCE( total, 0 ) + initial_value, 2, '$locale' ) AS actual_balance
+			FROM {$wpdb->prefix}wpacc_account
+			    LEFT JOIN
+			    ( SELECT SUM( unitprice) AS total, account_id FROM {$wpdb->prefix}wpacc_detail ) detail
+			    ON id = detail.account_id
+			WHERE $this->query_where
+			ORDER BY name",
 			OBJECT_K
 		);
 	}

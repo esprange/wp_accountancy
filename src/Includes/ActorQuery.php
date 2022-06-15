@@ -40,7 +40,7 @@ class ActorQuery {
 			'type'        => '',
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
-		$this->query_where = $wpdb->prepare( 'WHERE business_id = %d', $wpacc_business->id );
+		$this->query_where = $wpdb->prepare( ' business_id = %d', $wpacc_business->id );
 		if ( $query_vars['active'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND active_id = %d', (int) $query_vars['active'] );
 		}
@@ -65,8 +65,9 @@ class ActorQuery {
 	public function get_results() : array {
 		global $wpdb;
 		return $wpdb->get_results(
-			"SELECT id as actor_id, name, type, business_id, address, billing_address, email_address, active
-			FROM {$wpdb->prefix}wpacc_actor $this->query_where
+			"SELECT id AS actor_id, name, type, business_id, address, billing_address, email_address, active
+			FROM {$wpdb->prefix}wpacc_actor
+			WHERE $this->query_where
 			ORDER BY name",
 			OBJECT_K
 		);

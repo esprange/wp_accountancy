@@ -39,7 +39,7 @@ class DetailQuery {
 			'id'             => 0,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
-		$this->query_where = 'WHERE 1 = 1';
+		$this->query_where = ' 1 = 1';
 		if ( $query_vars['actor_id'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND actor_id = %d', $query_vars['actor_id'] );
 		}
@@ -64,9 +64,10 @@ class DetailQuery {
 	public function get_results() : array {
 		global $wpdb;
 		return $wpdb->get_results(
-			"SELECT id as detail_id, account_id, description, quantity, unitprice, taxcode_id
+			"SELECT id AS detail_id, account_id, description, quantity, unitprice, taxcode_id
 			FROM {$wpdb->prefix}wpacc_detail
-			    $this->query_where ORDER BY order_number",
+			WHERE $this->query_where
+			ORDER BY order_number",
 			OBJECT_K
 		);
 	}

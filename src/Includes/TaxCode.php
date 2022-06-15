@@ -38,4 +38,14 @@ class TaxCode extends Entity {
 			]
 		);
 	}
+
+	/**
+	 * Return the table name
+	 *
+	 * @return string
+	 */
+	public function tablename(): string {
+		return 'wpacc_taxcode';
+	}
+
 }
