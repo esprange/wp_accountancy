@@ -56,11 +56,13 @@ class BusinessQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
+		global $wpacc_business;
 		return $wpdb->get_results(
-			"SELECT *, id AS business_id
+			"SELECT id AS business_id, name, country, logo, address, slug, CONCAT( id, IF(id = $wpacc_business->id, '|checked', '|' ) ) AS selected
 				FROM {$wpdb->prefix}wpacc_business
                 WHERE $this->query_where
-                ORDER BY name"
+                ORDER BY name",
+			OBJECT_K
 		);
 	}
 

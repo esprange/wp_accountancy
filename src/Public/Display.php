@@ -151,7 +151,7 @@ abstract class Display {
 		global $wpacc_business;
 		$businessdisplay = BusinessDisplay::Class;
 		$html            = <<<EOT
-		<a data-menu="$businessdisplay" class="wpacc-business">$wpacc_business->name</a>
+		<a data-menu="$businessdisplay" id="wpacc-business" class="wpacc-business">$wpacc_business->name</a>
 		EOT;
 		return apply_filters( 'wpacc_head', $html );
 	}

@@ -35,8 +35,6 @@ class AssetQuery {
 		$defaults          = [
 			'business_id' => $wpacc_business->id,
 			'name'        => '',
-			'active'      => 0,
-			'id'          => 0,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
 		$this->query_where = $wpdb->prepare( ' business_id = %d', $wpacc_business->id );
@@ -55,10 +53,11 @@ class AssetQuery {
 	public function get_results() : array {
 		global $wpdb;
 		return $wpdb->get_results(
-			"SELECT *, id AS asset_id
+			"SELECT id AS asset_id, name, description, rate, cost, provision
 			FROM {$wpdb->prefix}wpacc_asset
 			WHERE $this->query_where
-			ORDER BY name"
+			ORDER BY name",
+			OBJECT_K
 		);
 	}
 

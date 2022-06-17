@@ -149,10 +149,7 @@ class DebtorDisplay extends Display {
 						[
 							'name'  => 'name',
 							'type'  => 'zoom',
-							'label' => __(
-								'Name',
-								'wpacc'
-							),
+							'label' => __( 'Name', 'wpacc' ),
 						],
 					],
 					'items'   => ( new DebtorQuery() )->get_results(),

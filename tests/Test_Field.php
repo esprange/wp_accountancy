@@ -51,6 +51,7 @@ class Test_Field extends UnitTestCase {
 				'date'     => '2022-02-01',
 				'email'    => 'test@test.tst',
 				'hidden'   => 'test',
+				'image'    => '',
 			] as $type => $value ) {
 			$html .= $field->render(
 				[

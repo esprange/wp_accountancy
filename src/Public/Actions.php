@@ -12,6 +12,7 @@ namespace WP_Accountancy\Public;
 
 use WP_Accountancy\Includes\Business;
 use WP_Accountancy\Includes\BusinessQuery;
+use WP_Accountancy\Includes\ChartOfAccounts;
 use function WP_Accountancy\Includes\version;
 
 /**
@@ -73,12 +74,18 @@ class Actions {
 	 * @internal Action for wp_ajax_wpacc_formhandler
 	 */
 	public function formhandler(): void {
+		global $wpacc_business;
 		$display_class = filter_input( INPUT_POST, 'display', FILTER_UNSAFE_RAW );
 		if ( $display_class ) {
 			if ( class_exists( $display_class ) ) {
 				$display = new $display_class();
 				if ( $display->check_nonce() ) {
-					wp_send_json_success( $display->controller() );
+					wp_send_json_success(
+						[
+							'main'     => $display->controller(),
+							'business' => $wpacc_business->name,
+						]
+					);
 				}
 				wp_send_json_error( __( 'Security error', 'wpacc' ) );
 			}
@@ -92,11 +99,17 @@ class Actions {
 	 * @internal Action for wp_ajax_wpacc_menuhandler
 	 */
 	public function menuhandler(): void {
+		global $wpacc_business;
 		$display_class = filter_input( INPUT_GET, 'menu', FILTER_UNSAFE_RAW );
 		if ( $display_class ) {
 			if ( class_exists( $display_class ) ) {
 				$display = new $display_class();
-				wp_send_json_success( $display->controller() );
+				wp_send_json_success(
+					[
+						'main'     => $display->controller(),
+						'business' => $wpacc_business->name,
+					]
+				);
 			}
 		}
 		wp_send_json_error( __( 'Something went wrong', 'wpacc' ) );
@@ -116,28 +129,28 @@ class Actions {
 	}
 
 	/**
-	 * Determine the business the user will work with
+	 * Determine the business the user will work with.
+	 * - from previous session, as stored in usermeta.
+	 * - the first business in the list, if no history exists.
+	 * - a default business.
 	 *
 	 * @internal Action for init
 	 */
 	public function init_business(): void {
 		global $wpacc_business;
-		$business_id = get_user_meta( get_current_user_id(), WPACC_BUSINESS, true );
-		if ( $business_id ) {
-			$wpacc_business = new Business( $business_id );
-			if ( $wpacc_business->id ) {
-				return;
-			}
+		$wpacc_business = new Business( intval( get_user_meta( get_current_user_id(), WPACC_BUSINESS, true ) ) );
+		if ( $wpacc_business->id ) {
+			return;
 		}
 		$businesses = ( new BusinessQuery() )->get_results();
 		if ( count( $businesses ) ) {
-			do_action( 'wpacc_business_select', $businesses[0]->id );
+			$wpacc_business = new Business( ( reset( $businesses ) )->business_id );
 			return;
 		}
-		$business       = new Business();
-		$business->name = __( 'Default', 'wpacc' );
-		$business->slug = 'default';
-		$business->update();
-		do_action( 'wpacc_business_select', $business->id );
+		$wpacc_business->name = __( 'Default business', 'wpacc' );
+		$wpacc_business->slug = 'default';
+		$wpacc_business->update();
+		$coa = new ChartOfAccounts();
+		$coa->import( WPACC_PLUGIN_PATH . 'templates\\' . Business::COUNTRIES[ $wpacc_business->country ]['template'] );
 	}
 }

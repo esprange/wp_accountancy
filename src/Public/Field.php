@@ -47,11 +47,12 @@ class Field {
 			'email',
 			'hidden',
 			'text'      => $this->render_input( $args ),
-			'select',   => $this->render_select( $args ),
-			'textarea', => $this->render_textarea( $args ),
+			'select'    => $this->render_select( $args ),
+			'textarea'  => $this->render_textarea( $args ),
 			'radio',
-			'checkbox', => $this->render_check( $args ),
-			'zoom',     => $this->render_zoom( $args ),
+			'checkbox'  => $this->render_check( $args ),
+			'zoom'      => $this->render_zoom( $args ),
+			'image'     => $this->render_image( $args ),
 		};
 		$html .= $args->label ? '</label>' : '';
 		return $html;
@@ -158,4 +159,20 @@ class Field {
 		EOT;
 	}
 
+	/**
+	 * Render an image element
+	 *
+	 * @param object $args Field definition.
+	 *
+	 * @return string
+	 */
+	private function render_image( object $args ) : string {
+		$alt    = __( 'Your image', 'wpacc' );
+		$img    = $args->value ?: plugin_dir_url( __FILE__ ) . '/../images/1x1-transparant.png';
+		$img_id = 'wpacc_img_' . wp_rand();
+		return <<<EOT
+		<input name="$args->name" type="file" class="wpacc-image" accept="image/png, image/jpeg" $args->required $args->readonly >
+		<img src="$img" id="{$img_id}img" alt="$alt" width="100" height="100" />
+		EOT;
+	}
 }

@@ -56,24 +56,15 @@ class BankcashDisplay extends Display {
 	 */
 	public function update() : string {
 		global $wpacc_business;
-		$input                  = filter_input_array(
-			INPUT_POST,
-			[
-				'bankcash_id'   => FILTER_SANITIZE_NUMBER_INT,
-				'name'          => FILTER_UNSAFE_RAW,
-				'type'          => FILTER_UNSAFE_RAW,
-				'initial_value' => FILTER_SANITIZE_NUMBER_FLOAT,
-				'active'        => FILTER_SANITIZE_NUMBER_INT,
-			]
-		);
-		$account                = new Account( $input['bankcash_id'] );
-		$account->name          = $input['name'];
-		$account->type          = $input['type'];
+		$input                  = filter_input_array( INPUT_POST );
+		$account                = new Account( intval( $input['bankcash_id'] ?? 0 ) );
+		$account->name          = sanitize_text_field( $input['name'] ?? '' );
+		$account->type          = sanitize_text_field( $input['type'] ?? '' );
 		$account->active        = boolval( $input['active'] ?? true );
 		$account->business_id   = $wpacc_business->id;
-		$account->initial_value = $input['initial_value'];
+		$account->initial_value = floatval( sanitize_text_field( $input['initial_value'] ?? 0.0 ) );
 		$account->update();
-		return $this->notify( 1, 'bank' === $account->type ? __( 'Bank saved', 'wpacc' ) : __( 'Cash saved', 'wpacc' ) );
+		return $this->notify( 1, 'bank' === $account->type ? __( 'Bank saved', 'wpacc' ) : __( 'Cash account saved', 'wpacc' ) );
 	}
 
 	/**
@@ -82,11 +73,11 @@ class BankcashDisplay extends Display {
 	 * @return string
 	 */
 	public function delete() : string {
-		$account_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
+		$account_id = filter_input( INPUT_POST, 'bankcash_id', FILTER_SANITIZE_NUMBER_INT );
 		if ( $account_id ) {
 			$account = new Account( $account_id );
 			if ( $account->delete() ) {
-				return $this->notify( - 1, Account::BANK_ITEM === $account->type ? __( 'Bank removed', 'wpacc' ) : __( 'Cash removed', 'wpacc' ) );
+				return $this->notify( - 1, Account::BANK_ITEM === $account->type ? __( 'Bank removed', 'wpacc' ) : __( 'Cash account removed', 'wpacc' ) );
 			}
 			return $this->notify( 0, __( 'Remove not allowed', 'wpacc' ) );
 		}
@@ -99,12 +90,8 @@ class BankcashDisplay extends Display {
 	 * @return string
 	 */
 	public function read() : string {
-		$account_id = filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT );
-		if ( $account_id ) {
-			$account = new Account( $account_id );
-			return $this->details( $account );
-		}
-		return $this->notify( 0, __( 'Internal error' ) );
+		$account = new Account( intval( filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
+		return $this->details( $account );
 	}
 
 	/**
@@ -117,17 +104,17 @@ class BankcashDisplay extends Display {
 		return $this->form(
 			$this->field->render(
 				[
-					'name'  => 'name',
-					'type'  => 'text',
-					'label' => __( 'Name', 'wpacc' ),
-					'value' => $account->name,
+					'name'     => 'name',
+					'value'    => $account->name,
+					'label'    => __( 'Name', 'wpacc' ),
+					'required' => true,
 				]
 			) .
 			$this->field->render(
 				[
 					'name'  => 'initial_value',
+					'value' => $account->initial_value,
 					'type'  => 'currency',
-					'value' => $account->active,
 					'label' => __( 'Start balance', 'wpacc' ),
 				]
 			) .

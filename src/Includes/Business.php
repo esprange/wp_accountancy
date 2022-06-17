@@ -23,6 +23,25 @@ namespace WP_Accountancy\Includes;
  */
 class Business extends Entity {
 
+	const COUNTRIES = [
+		'United Kingdom' => [
+			'language' => 'English',
+			'template' => 'english.json',
+		],
+		'United States'  => [
+			'language' => 'English',
+			'template' => 'english.json',
+		],
+		'Nederland'      => [
+			'language' => 'Nederlands',
+			'template' => 'dutch.json',
+		],
+		'Belgium'        => [
+			'language' => 'Nederlands',
+			'template' => 'dutch.json',
+		],
+	];
+
 	/**
 	 * Constructor
 	 *

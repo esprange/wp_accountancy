@@ -36,7 +36,6 @@ class ActorQuery {
 			'business_id' => $wpacc_business->id,
 			'name'        => '',
 			'active'      => 0,
-			'id'          => 0,
 			'type'        => '',
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );

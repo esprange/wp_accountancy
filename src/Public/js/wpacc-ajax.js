@@ -63,7 +63,8 @@
 		).done(
 			function ( response ) {
 				if ( '' !== response.data ) {
-					$( '#wpacc-main' ).html( response.data );
+					$( '#wpacc-main' ).html( response.data.main );
+					$( '#wpacc-business' ).html( response.data.business );
 				}
 			}
 		).fail(
@@ -90,7 +91,8 @@
 			}
 		).done(
 			function ( response ) {
-				$( '#wpacc-main' ).html( response.data );
+				$( '#wpacc-main' ).html( response.data.main );
+				$( '#wpacc-business' ).html( response.data.business );
 			}
 		);
 	}
@@ -173,6 +175,21 @@
 					)
 					$( 'table.wpacc tbody' ).append( $new_row );
 					e.preventDefault();
+				}
+			)
+			.on(
+				'change',
+				'input.wpacc-image',
+				function() {
+					let file   = $( this ).get( 0 ).files[0],
+						reader = new FileReader(),
+						ident  = this.id + 'img';
+					if ( file ) {
+						reader.onload = function() {
+							$( ident ).attr( 'src', reader.result );
+						}
+						reader.readAsDataURL( file );
+					}
 				}
 			);
 		}
