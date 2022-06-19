@@ -10,6 +10,8 @@
 
 namespace WP_Accountancy\Includes;
 
+use Generator;
+
 /**
  * Business class.
  *
@@ -50,12 +52,13 @@ class Business extends Entity {
 	public function __construct( int $business_id = 0 ) {
 		$this->fetch(
 			[
-				'id'      => $business_id,
-				'name'    => '',
-				'slug'    => '',
-				'address' => '',
-				'country' => '',
-				'logo'    => '',
+				'id'       => $business_id,
+				'name'     => '',
+				'slug'     => '',
+				'address'  => '',
+				'country'  => '',
+				'logo'     => '',
+				'logo_url' => '',
 			]
 		);
 	}
@@ -65,8 +68,18 @@ class Business extends Entity {
 	 *
 	 * @return string
 	 */
-	public function tablename(): string {
+	public function tablename() : string {
 		return 'wpacc_business';
 	}
 
+	/**
+	 * Return the countries
+	 *
+	 * @return Generator
+	 */
+	public function countries() : Generator {
+		foreach ( self::COUNTRIES as $country => $details ) {
+			yield  strtolower( $country ) => (object) [ 'name' => $country ];
+		}
+	}
 }

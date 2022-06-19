@@ -18,11 +18,10 @@ class Upgrade {
 	/**
 	 * Plugin-database-version
 	 */
-	const DBVERSION = 25;
+	const DBVERSION = 32;
+
 	/**
 	 * Execute upgrade actions if needed.
-	 *
-	 * @since 1.0.0
 	 */
 	public function run(): void {
 		$data = get_plugin_data( WPACC_PLUGIN_PATH . 'wp-accountancy.php', false, false );
@@ -37,7 +36,7 @@ class Upgrade {
 	}
 
 	/**
-	 * Converteer opties.
+	 * Convert options.
 	 */
 	private function convert_options(): void {
 		$default_options = [
@@ -60,38 +59,50 @@ class Upgrade {
 				$setup[ $key ] = $current_options[ $key ];
 			}
 		}
-		update_option( 'wpacc-opties', wp_parse_args( $options, $default_options ) );
+		update_option( 'wpacc-options', wp_parse_args( $options, $default_options ) );
 		update_option( 'wpacc-setup', wp_parse_args( $setup, $default_setup ) );
 	}
 
 	/**
 	 * Convert database. A long method but no reason to split it up into smaller segments.
-	 *
-	 * @suppressWarnings(PHPMD.ExcessiveMethodLength)
 	 */
 	public function convert_database(): void {
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		$this->convert_business();
+		$this->convert_taxcode();
+		$this->convert_asset();
+		$this->convert_account();
+		$this->convert_actor();
+		$this->convert_transaction();
+		$this->convert_detail();
+	}
+
+	/**
+	 * Business table.
+	 */
+	private function convert_business() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-
-		/**
-		 * Business table.
-		 */
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_business (
-			id      INT (10) NOT NULL AUTO_INCREMENT,
-			slug    TINYTEXT,
-			name    TINYTEXT,
-			address TEXT,
-			country TINYTEXT,
-			logo    TINYTEXT,
+			id       INT (10) NOT NULL AUTO_INCREMENT,
+			slug     TINYTEXT,
+			name     TINYTEXT,
+			address  TEXT,
+			country  TINYTEXT,
+			logo_url TINYTEXT,
+			logo     TINYTEXT,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
+	}
 
-		/**
-		 * Taxcodes, can be different for each business.
-		 */
+	/**
+	 * Taxcodes, can be different for each business.
+	 */
+	private function convert_taxcode() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_taxcode (
 			id           INT (10) NOT NULL AUTO_INCREMENT,
@@ -102,11 +113,15 @@ class Upgrade {
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
-		$this->foreign_key( 'taxcode', 'business', 'CASCADE' );
+		$this->foreign_key( 'taxcode', 'business' );
+	}
 
-		/**
-		 * Taxcodes, can be different for each business.
-		 */
+	/**
+	 * Taxcodes, can be different for each business.
+	 */
+	private function convert_asset() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_asset (
 			id           INT (10) NOT NULL AUTO_INCREMENT,
@@ -119,12 +134,16 @@ class Upgrade {
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
-		$this->foreign_key( 'asset', 'business', 'CASCADE' );
+		$this->foreign_key( 'asset', 'business' );
+	}
 
-		/**
-		 * The accounts of the general ledger. The COA exists for each business. A record can be a group, a group total or a regular account
-		 * Regular accounts refer to the group using the group_id reference.
-		 */
+	/**
+	 * The accounts of the general ledger. The COA exists for each business. A record can be a group, a group total or a regular account
+	 * Regular accounts refer to the group using the group_id reference.
+	 */
+	private function convert_account() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_account (
 			id            INT (10) NOT NULL AUTO_INCREMENT,
@@ -139,13 +158,18 @@ class Upgrade {
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
-		$this->foreign_key( 'account', 'business', 'CASCADE' );
+		$this->foreign_key( 'account', 'business' );
 		$this->foreign_key( 'account', 'taxcode' );
-		$this->foreign_key( 'account', 'account', 'CASCADE', 'group_id' );
+		$this->foreign_key( 'account', 'account', 'group_id' );
+		$this->foreign_key( 'account', 'business' );
+	}
 
-		/**
-		 * The actors
-		 */
+	/**
+	 * The actors
+	 */
+	private function convert_actor() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_actor (
 			id              INT (10) NOT NULL AUTO_INCREMENT,
@@ -159,11 +183,15 @@ class Upgrade {
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
-		$this->foreign_key( 'actor', 'business', 'CASCADE' );
+		$this->foreign_key( 'actor', 'business' );
+	}
 
-		/**
-		 * The transactions themselves. This record is used for all types, so including sales, purchases, banking,
-		 */
+	/**
+	 * The transactions themselves. This record is used for all types, so including sales, purchases, banking,
+	 */
+	private function convert_transaction() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_transaction (
 			id          INT (10) NOT NULL AUTO_INCREMENT,
@@ -178,12 +206,16 @@ class Upgrade {
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
-		$this->foreign_key( 'transaction', 'business', 'CASCADE' );
+		$this->foreign_key( 'transaction', 'business' );
 		$this->foreign_key( 'transaction', 'actor' );
+	}
 
-		/**
-		 * The transaction details.
-		 */
+	/**
+	 * The transaction details.
+	 */
+	private function convert_detail() {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_detail (
 			id             INT (10) NOT NULL AUTO_INCREMENT,
@@ -198,7 +230,7 @@ class Upgrade {
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
-		$this->foreign_key( 'detail', 'transaction', 'CASCADE' );
+		$this->foreign_key( 'detail', 'transaction' );
 		$this->foreign_key( 'detail', 'account' );
 		$this->foreign_key( 'detail', 'taxcode' );
 		$this->foreign_key( 'detail', 'actor' );
@@ -209,12 +241,12 @@ class Upgrade {
 	 *
 	 * @param string $table   The table for which the constraint is required.
 	 * @param string $parent  The parent table to which the foreign key refers.
-	 * @param string $action  Can be Cascade or Restrict or..
 	 * @param string $foreign The foreign key, optional.
+	 * @param string $action  Can be Cascade or Restrict or..
 	 *
 	 * @return void
 	 */
-	private function foreign_key( string $table, string $parent, string $action = 'RESTRICT', string $foreign = '' ): void {
+	private function foreign_key( string $table, string $parent, string $foreign = '', string $action = 'CASCADE' ): void {
 		if ( defined( 'WPACC_TEST' ) ) {
 			return; // Phpunit creates temporary tables which don't allow foreign key constraints.
 		}
@@ -225,9 +257,9 @@ class Upgrade {
 			"SELECT COUNT(*)
 			    FROM information_schema.TABLE_CONSTRAINTS
 			    WHERE
-			        CONSTRAINT_SCHEMA = DATABASE() AND
-			        CONSTRAINT_NAME   = 'fk_{$parent}_$table' AND
-			        CONSTRAINT_TYPE   = 'FOREIGN KEY'"
+			        information_schema.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'FOREIGN KEY' AND
+			      	information_schema.TABLE_CONSTRAINTS.TABLE_SCHEMA = '$wpdb->dbname' AND
+			      	information_schema.TABLE_CONSTRAINTS.CONSTRAINT_NAME = 'fk_{$parent}_$table'"
 			) ) {
 			$wpdb->query( "ALTER TABLE {$wpdb->prefix}wpacc_$table
 				ADD CONSTRAINT fk_{$parent}_$table FOREIGN KEY ($foreign) REFERENCES {$wpdb->prefix}wpacc_$parent(id)

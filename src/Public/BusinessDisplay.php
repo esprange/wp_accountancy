@@ -60,13 +60,20 @@ class BusinessDisplay extends Display {
 	 */
 	public function update() : string {
 		$input             = filter_input_array( INPUT_POST );
-		$business          = new Business( $input['id'] ?? 0 );
+		$business          = new Business( intval( $input['id'] ?? 0 ) );
 		$import            = ! $business->id;
 		$business->name    = sanitize_text_field( $input['name'] ?? '' );
 		$business->address = sanitize_textarea_field( $input['address'] ?? '' );
-		$business->country = sanitize_text_field( $input['country'] );
-		$business->logo    = sanitize_text_field( $input['logo'] );
+		$business->country = sanitize_text_field( $input['country'] ?? '' );
 		$business->slug    = sanitize_title( $input['name'] ?? '' );
+		$logo              = $this->upload_logo();
+		if ( $logo ) {
+			if ( isset( $logo['error'] ) ) {
+				return $this->notify( 0, $logo['error'] );
+			}
+			$business->logo     = $logo['file'];
+			$business->logo_url = $logo['url'];
+		}
 		$business->update();
 		do_action( 'wpacc_business_select', $business->id );
 		if ( $import ) {
@@ -103,9 +110,7 @@ class BusinessDisplay extends Display {
 	 * @return string
 	 */
 	public function read() : string {
-		$business      = new Business( intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
-		$country_names = array_keys( Business::COUNTRIES );
-		sort( $country_names );
+		$business = new Business( intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
 		return $this->form(
 			$this->field->render(
 				[
@@ -120,12 +125,12 @@ class BusinessDisplay extends Display {
 					'value' => $business->country,
 					'label' => __( 'Country', 'wpacc' ),
 					'type'  => 'select',
-					'list'  => $country_names,
+					'list'  => iterator_to_array( $business->countries() ),
 				]
 			) . $this->field->render(
 				[
 					'name'  => 'logo',
-					'value' => $business->logo,
+					'value' => $business->logo_url,
 					'type'  => 'image',
 					'label' => __( 'Logo', 'wpacc' ),
 				]
@@ -184,4 +189,32 @@ class BusinessDisplay extends Display {
 		);
 	}
 
+	/**
+	 * Upload the logo file
+	 *
+	 * @return array
+	 */
+	private function upload_logo() : array {
+		/**
+		 * Include voor image file upload.
+		 */
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		$logo = $_FILES['logo'];
+		if ( empty( $logo ) || 4 === $logo['error'] ) {
+			return [];
+		}
+		if ( $logo['error'] ) {
+			return [ 'error' => $logo['error'] ];
+		}
+		if ( $logo['size'] > wp_max_upload_size() ) {
+			return [ 'error' => __( 'Logo file size is too large', 'wpacc' ) ];
+		}
+		if ( ! in_array( mime_content_type( $logo['tmp_name'] ), get_allowed_mime_types(), true ) ) {
+			return [ 'error' => __( 'WordPress doesn\'t allow this type of uploads.', 'wpacc' ) ];
+		}
+		return wp_handle_upload(
+			$logo,
+			[ 'test_form' => false ]
+		);
+	}
 }
