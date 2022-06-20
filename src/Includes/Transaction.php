@@ -52,7 +52,18 @@ class Transaction extends Entity {
 				'date'        => wp_date( 'Y-m-d' ),
 				'type'        => '',
 				'description' => '',
-			]
+			],
+			[
+				'id'          => 'int',
+				'business_id' => 'int',
+				'actor_id'    => 'int',
+				'reference'   => 'string',
+				'invoice_id'  => 'string',
+				'address'     => 'string',
+				'date'        => 'string',
+				'type'        => 'string',
+				'description' => 'string',
+			],
 		);
 	}
 

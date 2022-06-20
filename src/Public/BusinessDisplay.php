@@ -78,7 +78,7 @@ class BusinessDisplay extends Display {
 		do_action( 'wpacc_business_select', $business->id );
 		if ( $import ) {
 			$coa = new ChartOfAccounts();
-			$coa->import( WPACC_PLUGIN_PATH . 'templates\\' . Business::COUNTRIES[ $business->country ]['template'] );
+			$coa->import( WPACC_PLUGIN_PATH . 'Templates\\' . Business::COUNTRIES[ $business->country ]['template'] );
 		}
 		return $this->notify( 1, __( 'Business saved', 'wpacc' ) );
 	}

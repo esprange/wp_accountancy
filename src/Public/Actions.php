@@ -151,6 +151,6 @@ class Actions {
 		$wpacc_business->slug = 'default';
 		$wpacc_business->update();
 		$coa = new ChartOfAccounts();
-		$coa->import( WPACC_PLUGIN_PATH . 'templates\\' . Business::COUNTRIES[ $wpacc_business->country ]['template'] );
+		$coa->import( WPACC_PLUGIN_PATH . 'Templates\\' . Business::COUNTRIES[ $wpacc_business->country ]['template'] );
 	}
 }

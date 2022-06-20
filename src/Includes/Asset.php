@@ -41,6 +41,15 @@ class Asset extends Entity {
 				'rate'        => 0.0,
 				'cost'        => 0.0,
 				'provision'   => 0.0,
+			],
+			[
+				'id'          => 'int',
+				'business_id' => 'int',
+				'name'        => 'string',
+				'description' => 'string',
+				'rate'        => 'float',
+				'cost'        => 'float',
+				'provision'   => 'float',
 			]
 		);
 	}

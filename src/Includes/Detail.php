@@ -43,6 +43,17 @@ class Detail extends Entity {
 				'unitprice'      => 0.0,
 				'description'    => '',
 				'order_number'   => 0,
+			],
+			[
+				'id'             => 'int',
+				'transaction_id' => 'int',
+				'account_id'     => 'int',
+				'actor_id'       => 'int',
+				'taxcode_id'     => 'int',
+				'quantity'       => 'float',
+				'unitprice'      => 'float',
+				'description'    => 'string',
+				'order_number'   => 'int',
 			]
 		);
 	}

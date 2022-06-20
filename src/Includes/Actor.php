@@ -41,6 +41,16 @@ class Actor extends Entity {
 				'email_address'   => '',
 				'active'          => true,
 				'type'            => '',
+			],
+			[
+				'id'              => 'int',
+				'business_id'     => 'int',
+				'name'            => 'string',
+				'address'         => 'string',
+				'billing_address' => 'string',
+				'email_address'   => 'string',
+				'active'          => 'bool',
+				'type'            => 'string',
 			]
 		);
 	}

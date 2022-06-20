@@ -53,12 +53,23 @@ class Business extends Entity {
 		$this->fetch(
 			[
 				'id'       => $business_id,
-				'name'     => '',
+				'name'     => null,
 				'slug'     => '',
 				'address'  => '',
 				'country'  => '',
+				'language' => '',
 				'logo'     => '',
 				'logo_url' => '',
+			],
+			[
+				'id'       => 'int',
+				'name'     => 'string',
+				'slug'     => 'string',
+				'address'  => 'string',
+				'country'  => 'string',
+				'language' => 'string',
+				'logo'     => 'string',
+				'logo_url' => 'string',
 			]
 		);
 	}
@@ -79,7 +90,7 @@ class Business extends Entity {
 	 */
 	public function countries() : Generator {
 		foreach ( self::COUNTRIES as $country => $details ) {
-			yield  strtolower( $country ) => (object) [ 'name' => $country ];
+			yield  $country => (object) [ 'name' => $country ];
 		}
 	}
 }

@@ -52,6 +52,17 @@ class Account extends Entity {
 				'order_number'  => 0,
 				'type'          => '',
 				'initial_value' => 0.0,
+			],
+			[
+				'id'            => 'int',
+				'business_id'   => 'int',
+				'taxcode_id'    => 'int',
+				'group_id'      => 'int',
+				'name'          => 'string',
+				'active'        => 'bool',
+				'order_number'  => 'int',
+				'type'          => 'string',
+				'initial_value' => 'float',
 			]
 		);
 	}

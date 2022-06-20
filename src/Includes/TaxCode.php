@@ -35,6 +35,13 @@ class TaxCode extends Entity {
 				'name'        => '',
 				'rate'        => 0.0,
 				'active'      => true,
+			],
+			[
+				'id'          => 'int',
+				'business_id' => 'int',
+				'name'        => 'string',
+				'rate'        => 'float',
+				'active'      => 'bool',
 			]
 		);
 	}

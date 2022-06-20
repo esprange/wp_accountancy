@@ -10,6 +10,8 @@
 
 namespace WP_Accountancy\Admin;
 
+use WP_Accountancy\Includes\Country;
+
 /**
  * Upgrades of data or database at new versions of the plugin.
  */
@@ -18,10 +20,12 @@ class Upgrade {
 	/**
 	 * Plugin-database-version
 	 */
-	const DBVERSION = 32;
+	const DBVERSION = 44;
 
 	/**
 	 * Execute upgrade actions if needed.
+	 *
+	 * @return void
 	 */
 	public function run(): void {
 		$data = get_plugin_data( WPACC_PLUGIN_PATH . 'wp-accountancy.php', false, false );
@@ -31,12 +35,15 @@ class Upgrade {
 			$this->convert_options();
 			$this->convert_database();
 			$this->convert_data();
+			$this->load_data();
 			update_option( 'wpacc-database-version', self::DBVERSION );
 		}
 	}
 
 	/**
 	 * Convert options.
+	 *
+	 * @return void
 	 */
 	private function convert_options(): void {
 		$default_options = [
@@ -65,9 +72,12 @@ class Upgrade {
 
 	/**
 	 * Convert database. A long method but no reason to split it up into smaller segments.
+	 *
+	 * @return void
 	 */
 	public function convert_database(): void {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		$this->convert_country();
 		$this->convert_business();
 		$this->convert_taxcode();
 		$this->convert_asset();
@@ -79,19 +89,40 @@ class Upgrade {
 
 	/**
 	 * Business table.
+	 *
+	 * @return void
 	 */
-	private function convert_business() {
+	private function convert_country(): void {
+		global $wpdb;
+		$charset_collate = $wpdb->get_charset_collate();
+		dbDelta(
+			"CREATE TABLE {$wpdb->prefix}wpacc_country (
+			name      TINYTEXT NOT NULL,
+			language  TINYTEXT NOT NULL,
+			file      TINYTEXT,
+			UNIQUE KEY name_lang_idx ( name, language )
+			) $charset_collate;"
+		);
+	}
+
+	/**
+	 * Business table.
+	 *
+	 * @return void
+	 */
+	private function convert_business(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_business (
-			id       INT (10) NOT NULL AUTO_INCREMENT,
-			slug     TINYTEXT,
-			name     TINYTEXT,
-			address  TEXT,
-			country  TINYTEXT,
-			logo_url TINYTEXT,
-			logo     TINYTEXT,
+			id         INT (10) NOT NULL AUTO_INCREMENT,
+			slug       TINYTEXT,
+			name       TINYTEXT NOT NULL,
+			address    TEXT,
+			country    TINYTEXT NOT NULL,
+			language   TINYTEXT NOT NULL,
+			logo_url   TINYTEXT,
+			logo       TINYTEXT,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
@@ -99,8 +130,10 @@ class Upgrade {
 
 	/**
 	 * Taxcodes, can be different for each business.
+	 *
+	 * @return void
 	 */
-	private function convert_taxcode() {
+	private function convert_taxcode(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -118,8 +151,10 @@ class Upgrade {
 
 	/**
 	 * Taxcodes, can be different for each business.
+	 *
+	 * @return void
 	 */
-	private function convert_asset() {
+	private function convert_asset(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -140,8 +175,10 @@ class Upgrade {
 	/**
 	 * The accounts of the general ledger. The COA exists for each business. A record can be a group, a group total or a regular account
 	 * Regular accounts refer to the group using the group_id reference.
+	 *
+	 * @return void
 	 */
-	private function convert_account() {
+	private function convert_account(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -166,15 +203,17 @@ class Upgrade {
 
 	/**
 	 * The actors
+	 *
+	 * @return void
 	 */
-	private function convert_actor() {
+	private function convert_actor(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_actor (
 			id              INT (10) NOT NULL AUTO_INCREMENT,
 			business_id     INT (10) NOT NULL,
-			name            VARCHAR (50),
+			name            VARCHAR (50) NOT NULL,
 			address         TEXT,
 			billing_address TEXT,
 			email_address   TINYTEXT,
@@ -187,9 +226,11 @@ class Upgrade {
 	}
 
 	/**
-	 * The transactions themselves. This record is used for all types, so including sales, purchases, banking,
+	 * The transactions themselves. This record is used for all types, so including sales, purchases, banking.
+	 *
+	 * @return void
 	 */
-	private function convert_transaction() {
+	private function convert_transaction(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -212,8 +253,10 @@ class Upgrade {
 
 	/**
 	 * The transaction details.
+	 *
+	 * @return void
 	 */
-	private function convert_detail() {
+	private function convert_detail(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -252,21 +295,43 @@ class Upgrade {
 		}
 		global $wpdb;
 		$foreign = $foreign ?: "{$parent}_id";
+		$db_name = DB_NAME;
 		// phpcs:disable -- next line cannot be used with prepare.
-		if ( ! $wpdb->get_var(
+		if ( $wpdb->get_var(
 			"SELECT COUNT(*)
 			    FROM information_schema.TABLE_CONSTRAINTS
 			    WHERE
 			        information_schema.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'FOREIGN KEY' AND
-			      	information_schema.TABLE_CONSTRAINTS.TABLE_SCHEMA = '$wpdb->dbname' AND
+			      	information_schema.TABLE_CONSTRAINTS.TABLE_SCHEMA = '$db_name' AND
 			      	information_schema.TABLE_CONSTRAINTS.CONSTRAINT_NAME = 'fk_{$parent}_$table'"
 			) ) {
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}wpacc_$table
-				ADD CONSTRAINT fk_{$parent}_$table FOREIGN KEY ($foreign) REFERENCES {$wpdb->prefix}wpacc_$parent(id)
-				ON DELETE $action ON UPDATE $action"
-			);
+			$wpdb->query( "ALTER TABLE {$wpdb->prefix}wpacc_$table DROP FOREIGN KEY fk_{$parent}_$table" );
 		}
+		$wpdb->query( "ALTER TABLE {$wpdb->prefix}wpacc_$table
+			ADD CONSTRAINT fk_{$parent}_$table FOREIGN KEY ($foreign) REFERENCES {$wpdb->prefix}wpacc_$parent(id)
+			ON DELETE $action ON UPDATE $action"
+		);
 		// phpcs:enable
+	}
+
+	/**
+	 * Load data
+	 *
+	 * @return void
+	 */
+	private function load_data(): void {
+		$countries_file = wp_remote_get( plugins_url( '..\Templates\\\countries.json', __FILE__ ) );
+		if ( is_wp_error( $countries_file ) ) {
+			fout( $countries_file->get_error_message() );
+		}
+		$countries = json_decode( $countries_file['body'] );
+		if ( $countries ) {
+			foreach ( $countries as $item ) {
+				$country       = new Country( $item->country, $item->language );
+				$country->file = $item->file;
+				$country->insert();
+			}
+		}
 	}
 
 	/**

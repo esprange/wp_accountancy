@@ -1,0 +1,27 @@
+[
+  {
+    "country": "United Kingdom",
+    "language": "english",
+    "file": "UK-english"
+  },
+  {
+    "country": "United States",
+    "language": "english",
+    "file": "US-english"
+  },
+  {
+    "country": "Nederland",
+    "language": "dutch",
+    "file": "NL-dutch"
+  },
+  {
+    "country": "Belgium",
+    "language": "dutch",
+    "file": "BE-dutch"
+  },
+  {
+    "country": "Belgium",
+    "language": "french",
+    "file": "BE-french"
+  }
+]

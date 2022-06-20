@@ -65,7 +65,7 @@ abstract class Entity extends stdClass {
 		global $wpdb;
 		$wpdb->replace(
 			$wpdb->prefix . $this->tablename(),
-			iterator_to_array( $this->get_changes() )
+			iterator_to_array( $this->get_values() )
 		);
 		$this->id = $wpdb->insert_id;
 		return $this->id;
@@ -75,15 +75,17 @@ abstract class Entity extends stdClass {
 	 * Fetch the record from the database
 	 *
 	 * @param array $default Default data.
+	 * @param array $types   The field types, default = text.
 	 *
 	 * @return void
 	 */
-	final protected function fetch( array $default ) : void {
+	final protected function fetch( array $default, array $types ) : void {
 		global $wpdb;
 		$this->default = $default;
 		if ( $this->default['id'] ) {
+			$tablename      = $this->tablename();
 			$this->original = $wpdb->get_row(
-				"SELECT * FROM $wpdb->prefix" . $this->tablename() . " WHERE id = {$this->default['id']}", // phpcs:ignore
+				"SELECT * FROM $wpdb->prefix$tablename WHERE id = {$this->default['id']}", // phpcs:ignore
 				ARRAY_A
 			);
 			if ( ! $this->original ) {
@@ -91,11 +93,11 @@ abstract class Entity extends stdClass {
 			}
 		}
 		/**
-		 * This object is derived from stdClass, the properties are created dynamically. Typecasting is done using the default as template.
+		 * This object is derived from stdClass, the properties are created dynamically.
 		 */
 		foreach ( $this->original ?: $this->default as $property => $value ) {
 			$this->$property = $value;
-			settype( $this->$property, gettype( $this->default[ $property ] ) );
+			settype( $this->$property, $types[ $property ] );
 		}
 	}
 
@@ -105,14 +107,8 @@ abstract class Entity extends stdClass {
 	 *
 	 * @return Generator
 	 */
-	private function get_changes(): Generator {
+	private function get_values(): Generator {
 		foreach ( array_keys( $this->default ) as $property ) {
-			if ( $this->original ) {
-				if ( 'id' === $property || $this->original[ $property ] !== $this->$property ) {
-					yield $property => $this->$property;
-				}
-				continue;
-			}
 			yield $property => $this->$property;
 		}
 	}
