@@ -7,9 +7,7 @@
 
 namespace WP_Accountancy\Tests;
 
-use WP_Accountancy\Admin\Upgrade;
 use WP_Accountancy\Includes\Country;
-use WP_Accountancy\Includes\CountryQuery;
 
 /**
  * Country test cases.

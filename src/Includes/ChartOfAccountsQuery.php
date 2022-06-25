@@ -25,21 +25,19 @@ class ChartOfAccountsQuery {
 	/**
 	 * The constructor
 	 *
-	 * @param array $args The query arguments.
+	 * @param Business $business The business.
+	 * @param array    $args     The query arguments.
 	 *
 	 * @return void
 	 */
-	public function __construct( array $args = [] ) {
+	public function __construct( Business $business, array $args = [] ) {
 		global $wpdb;
-		global $wpacc_business;
 		$defaults          = [
-			'business_id' => $wpacc_business->id,
-			'type'        => '',
-			'active'      => 0,
-			'id'          => 0,
+			'type'   => '',
+			'active' => false,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
-		$this->query_where = '1 = 1';
+		$this->query_where = $wpdb->prepare( 'business_id = %d', $business->id );
 		if ( $query_vars['active'] ) {
 			$this->query_where .= ' AND active';
 		}
@@ -57,15 +55,12 @@ class ChartOfAccountsQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		global $wpacc_business;
 		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT sum( d.quantity * d.unitprice ) AS value, a.type AS type, a.name AS name, a.id AS id
-				FROM {$wpdb->prefix}wpacc_account AS a
-				LEFT JOIN {$wpdb->prefix}wpacc_detail AS d ON a.id=d.account_id AND a.business_id=%d
-				GROUP BY a.type",
-				$wpacc_business->id
-			)
+			"SELECT sum( d.quantity * d.unitprice ) AS value, a.type AS type, a.name AS name, a.id AS id
+			FROM {$wpdb->prefix}wpacc_account AS a
+			LEFT JOIN {$wpdb->prefix}wpacc_detail AS d ON a.id=d.account_id
+			WHERE $this->query_where
+			GROUP BY a.type"
 		);
 	}
 

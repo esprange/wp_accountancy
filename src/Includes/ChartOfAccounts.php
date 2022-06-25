@@ -26,9 +26,11 @@ class ChartOfAccounts {
 
 	/**
 	 * The constructor
+	 *
+	 * @param Business $business The business.
 	 */
-	public function __construct() {
-		$this->accounts = ( new AccountQuery( [ 'active' => 1 ] ) )->get_results();
+	public function __construct( Business $business ) {
+		$this->accounts = ( new AccountQuery( $business, [ 'active' => 1 ] ) )->get_results();
 	}
 
 	/**
@@ -55,27 +57,6 @@ class ChartOfAccounts {
 		$index = $this->find( $account->id );
 		if ( false !== $index ) {
 			unset( $this->accounts[ $index ] );
-		}
-	}
-
-	/**
-	 * Import a chart of accounts.
-	 *
-	 * @param string $jsonfile An json file defining the COA.
-	 *
-	 * @return void
-	 */
-	public function import( string $jsonfile ): void {
-		$json = file_get_contents( $jsonfile, true ); // phpcs:ignore
-		$coa  = json_decode( $json, true )['coa'] ?? [];
-		foreach ( $coa as $account_item ) {
-			if ( isset( $account_item['name'] ) && isset( $account_item['type'] ) && in_array( $account_item['type'], Account::COA_ITEMS, true ) ) {
-				$account       = new Account();
-				$account->name = $account_item['name'];
-				$account->type = $account_item['type'];
-				$account->update();
-				$this->add( $account );
-			}
 		}
 	}
 

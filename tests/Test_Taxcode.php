@@ -21,12 +21,12 @@ class Test_Taxcode extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_create() : void {
-		$taxcode1       = new Taxcode();
+		$taxcode1       = new Taxcode( $this->business );
 		$taxcode1->name = 'test-taxcode';
 		$taxcode1->rate = 0.21;
 		$taxcode_id     = $taxcode1->update();
 
-		$taxcode2 = new Taxcode( $taxcode_id );
+		$taxcode2 = new Taxcode( $this->business, $taxcode_id );
 		$this->assertEquals( get_object_vars( $taxcode1 ), get_object_vars( $taxcode2 ), 'taxcode store incorrect' );
 	}
 
@@ -36,16 +36,16 @@ class Test_Taxcode extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_update() : void {
-		$taxcode1       = new Taxcode();
+		$taxcode1       = new Taxcode( $this->business );
 		$taxcode1->name = 'test-taxcode';
 		$taxcode1->rate = 0.2;
 		$taxcode_id     = $taxcode1->update();
 
-		$taxcode2         = new taxcode( $taxcode_id );
+		$taxcode2         = new Taxcode( $this->business, $taxcode_id );
 		$taxcode2->active = false;
 		$taxcode2->update();
 
-		$taxcode3 = new Taxcode( $taxcode_id );
+		$taxcode3 = new Taxcode( $this->business, $taxcode_id );
 		$this->assertFalse( $taxcode3->active, 'taxcode update incorrect' );
 	}
 
@@ -55,15 +55,15 @@ class Test_Taxcode extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_delete() : void {
-		$taxcode1       = new Taxcode();
+		$taxcode1       = new Taxcode( $this->business );
 		$taxcode1->name = 'test-taxcode';
 		$taxcode1->rate = 0.2;
 		$taxcode_id     = $taxcode1->update();
 
-		$taxcode2 = new Taxcode( $taxcode_id );
+		$taxcode2 = new Taxcode( $this->business, $taxcode_id );
 		$taxcode2->delete();
 
-		$taxcode3 = new Taxcode( $taxcode_id );
+		$taxcode3 = new Taxcode( $this->business, $taxcode_id );
 		$this->assertEquals( 0, $taxcode3->id, 'taxcode delete incorrect' );
 	}
 
@@ -75,11 +75,11 @@ class Test_Taxcode extends UnitTestCase {
 	public function test_query() : void {
 		$amount = 5;
 		for ( $index = 0; $index < $amount; $index++ ) {
-			$taxcode       = new Taxcode();
+			$taxcode       = new Taxcode( $this->business );
 			$taxcode->name = "test-taxcode_$index";
 			$taxcode->update();
 		}
-		$query = ( new TaxcodeQuery() )->get_results();
+		$query = ( new TaxcodeQuery( $this->business ) )->get_results();
 		$this->assertEquals( $amount, count( $query ), 'taxcode query count incorrect' );
 	}
 }

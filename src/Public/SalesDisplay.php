@@ -47,9 +47,8 @@ class SalesDisplay extends Display {
 	 * @return string
 	 */
 	public function update() : string {
-		global $wpacc_business;
 		$input              = filter_input_array( INPUT_POST );
-		$sales              = new Transaction( intval( $input['id'] ?? 0 ) );
+		$sales              = new Transaction( $this->business, intval( $input['id'] ?? 0 ) );
 		$sales->actor_id    = intval( $input['actor_id'] ?? null );
 		$sales->reference   = sanitize_text_field( $input['reference'] ?? '' );
 		$sales->address     = sanitize_text_field( $input['address'] ?? '' );
@@ -57,17 +56,15 @@ class SalesDisplay extends Display {
 		$sales->date        = sanitize_text_field( $input['date'] ?? wp_date( __( 'Y/m/d', 'wpacc' ) ) );
 		$sales->description = sanitize_text_field( $input['description'] ?? '' );
 		$sales->type        = Transaction::SALES_INVOICE;
-		$sales->business_id = $wpacc_business->id;
 		$sales->update();
 		foreach ( $input['detail_id'] ?? [] as $index => $detail_id ) {
-			$detail                 = new Detail( intval( $detail_id ) );
-			$detail->transaction_id = $sales->id;
-			$detail->account_id     = intval( $input['account_id'][ $index ] ?? null );
-			$detail->quantity       = floatval( $input['quantity'][ $index ] ?? 1.0 );
-			$detail->unitprice      = floatval( $input['unitprice'][ $index ] ?? 0.0 );
-			$detail->description    = sanitize_text_field( $input['description'][ $index ] ?? '' );
-			$detail->taxcode_id     = $input['taxcode_id'][ $index ] ?? null;
-			$detail->order_number   = $index;
+			$detail               = new Detail( $sales, intval( $detail_id ) );
+			$detail->account_id   = intval( $input['detail.account_id'][ $index ] ?? null );
+			$detail->quantity     = floatval( $input['detail.quantity'][ $index ] ?? 1.0 );
+			$detail->unitprice    = floatval( $input['detail.unitprice'][ $index ] ?? 0.0 );
+			$detail->description  = sanitize_text_field( $input['detail.description'][ $index ] ?? '' );
+			$detail->taxcode_id   = $input['detail.taxcode_id'][ $index ] ?? null;
+			$detail->order_number = $index;
 			$detail->update();
 		}
 		return $this->notify( 1, __( 'Sales transaction saved', 'wpacc' ) );
@@ -81,7 +78,7 @@ class SalesDisplay extends Display {
 	public function delete() : string {
 		$sales_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
 		if ( $sales_id ) {
-			$sales = new Transaction( intval( $sales_id ) );
+			$sales = new Transaction( $this->business, intval( $sales_id ) );
 			if ( $sales->delete() ) {
 				return $this->notify( - 1, __( 'Sales transaction removed', 'wpacc' ) );
 			}
@@ -96,7 +93,7 @@ class SalesDisplay extends Display {
 	 * @return string
 	 */
 	public function read() : string {
-		$sales = new Transaction( intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
+		$sales = new Transaction( $this->business, intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
 		return $this->form(
 			$this->field->render(
 				[
@@ -114,7 +111,7 @@ class SalesDisplay extends Display {
 					'value'    => $sales->actor_id,
 					'label'    => __( 'Customer', 'wpacc' ),
 					'required' => true,
-					'list'     => ( new DebtorQuery() )->get_results(),
+					'list'     => ( new DebtorQuery( $this->business ) )->get_results(),
 				]
 			) .
 			$this->field->render(
@@ -147,36 +144,36 @@ class SalesDisplay extends Display {
 							'type' => 'hidden',
 						],
 						[
-							'name'     => 'account_id',
+							'name'     => 'detail.account_id',
 							'type'     => 'select',
-							'list'     => ( new AccountQuery() )->get_results(),
+							'list'     => ( new AccountQuery( $this->business ) )->get_results(),
 							'required' => true,
 							'label'    => __( 'Account', 'wpacc' ),
 						],
 						[
-							'name'  => 'description',
+							'name'  => 'detail.description',
 							'type'  => 'text',
 							'label' => __( 'Description', 'wpacc' ),
 						],
 						[
-							'name'  => 'quantity',
+							'name'  => 'detail.quantity',
 							'type'  => 'float',
 							'label' => __( 'Amount', 'wpacc' ),
 						],
 						[
-							'name'     => 'unitprice',
+							'name'     => 'detail.unitprice',
 							'type'     => 'currency',
 							'label'    => __( 'Unitprice', 'wpacc' ),
 							'required' => true,
 						],
 						[
-							'name'  => 'taxcode_id',
+							'name'  => 'detail.taxcode_id',
 							'type'  => 'select',
-							'list'  => ( new TaxCodeQuery() )->get_results(),
+							'list'  => ( new TaxCodeQuery( $this->business ) )->get_results(),
 							'label' => __( 'Taxcode', 'wpacc' ),
 						],
 					],
-					'items'   => ( new DetailQuery( [ 'transaction_id' => $sales->id ] ) )->get_results(),
+					'items'   => ( new DetailQuery( $this->business, [ 'transaction_id' => $sales->id ] ) )->get_results(),
 					'options' => [ 'addrow' ],
 				]
 			) .
@@ -198,7 +195,7 @@ class SalesDisplay extends Display {
 	 * @return string
 	 */
 	public function overview() : string {
-		$sales = new SalesQuery();
+		$sales = new SalesQuery( $this->business );
 		return $this->form(
 			$this->table->render(
 				[

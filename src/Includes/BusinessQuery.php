@@ -25,17 +25,15 @@ class BusinessQuery {
 	/**
 	 * The constructor
 	 *
-	 * @param array $args The query arguments.
+	 * @param array $args        The query arguments.
 	 *
 	 * @return void
 	 */
 	public function __construct( array $args = [] ) {
 		global $wpdb;
 		$defaults          = [
-			'active' => 0,
-			'name'   => 0,
-			'id'     => 0,
-			'slug'   => '',
+			'name' => 0,
+			'slug' => '',
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
 		$this->query_where = ' 1 = 1';
@@ -56,9 +54,8 @@ class BusinessQuery {
 	 */
 	public function get_results() : array {
 		global $wpdb;
-		global $wpacc_business;
 		return $wpdb->get_results(
-			"SELECT id AS business_id, name, country, logo, address, slug, CONCAT( id, IF(id = $wpacc_business->id, '|checked', '|' ) ) AS selected
+			"SELECT id AS business_id, name, country, logo, address, slug AS selected
 				FROM {$wpdb->prefix}wpacc_business
                 WHERE $this->query_where
                 ORDER BY name",

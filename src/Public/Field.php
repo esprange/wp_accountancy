@@ -30,6 +30,7 @@ class Field {
 			'label'    => '',
 			'value'    => null,
 			'list'     => [],
+			'optgroup' => false,
 		];
 		$args           = (object) wp_parse_args( $args, $default );
 		$args->required = $args->required ? 'required' : '';
@@ -104,13 +105,35 @@ class Field {
 	 * @return string
 	 */
 	private function render_select( object $args ) : string {
-		$html = <<<EOT
+		$optgroup = '';
+		$html     = <<<EOT
 		<select name="$args->name" $args->required $args->readonly >
 		EOT;
 		foreach ( $args->list as $option_id => $option ) {
 			$selected = selected( $args->value, $option_id, false );
-			$html    .= <<<EOT
-			<option value="$option_id" $selected >$option->name</option>
+			$name     = $option->name;
+			if ( $args->optgroup ) {
+				$group = strtok( $option_id, '|' );
+				$name  = strtok( '|' );
+				if ( $group !== $optgroup ) {
+					if ( $optgroup ) {
+						$html .= <<<EOT
+			</optgroup>
+		EOT;
+					}
+					$optgroup = $group;
+					$html    .= <<<EOT
+			<optgroup label = "$group">
+		EOT;
+				}
+			}
+			$html .= <<<EOT
+			<option value="$option_id" $selected >$name</option>
+		EOT;
+		}
+		if ( $args->optgroup ) {
+			$html .= <<<EOT
+			</optgroup>
 		EOT;
 		}
 		$html .= <<<EOT

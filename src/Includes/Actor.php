@@ -27,14 +27,14 @@ class Actor extends Entity {
 	/**
 	 * Constructor
 	 *
-	 * @param int $actor_id  The actor id, if specified, the actor is retrieved from the db.
+	 * @param Business $business The business.
+	 * @param int      $actor_id The actor id, if specified, the actor is retrieved from the db.
 	 */
-	public function __construct( int $actor_id = 0 ) {
-		global $wpacc_business;
+	public function __construct( Business $business, int $actor_id = 0 ) {
 		$this->fetch(
 			[
 				'id'              => $actor_id,
-				'business_id'     => $wpacc_business->id,
+				'business_id'     => $business->id,
 				'name'            => '',
 				'address'         => '',
 				'billing_address' => '',

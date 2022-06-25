@@ -24,14 +24,14 @@ class TaxCode extends Entity {
 	/**
 	 * Constructor
 	 *
-	 * @param int $taxcode_id  The taxtcode id, if specified, the taxcode is retrieved from the db.
+	 * @param Business $business   The business.
+	 * @param int      $taxcode_id The taxtcode id, if specified, the taxcode is retrieved from the db.
 	 */
-	public function __construct( int $taxcode_id = 0 ) {
-		global $wpacc_business;
+	public function __construct( Business $business, int $taxcode_id = 0 ) {
 		$this->fetch(
 			[
 				'id'          => $taxcode_id,
-				'business_id' => $wpacc_business->id,
+				'business_id' => $business->id,
 				'name'        => '',
 				'rate'        => 0.0,
 				'active'      => true,

@@ -28,14 +28,14 @@ class Asset extends Entity {
 	/**
 	 * Constructor
 	 *
-	 * @param int $asset_id  The asset id, if specified, the asset is retrieved from the db.
+	 * @param Business $business The business.
+	 * @param int      $asset_id The asset id, if specified, the asset is retrieved from the db.
 	 */
-	public function __construct( int $asset_id = 0 ) {
-		global $wpacc_business;
+	public function __construct( Business $business, int $asset_id = 0 ) {
 		$this->fetch(
 			[
 				'id'          => $asset_id,
-				'business_id' => $wpacc_business->id,
+				'business_id' => $business->id,
 				'name'        => '',
 				'description' => '',
 				'rate'        => 0.0,

@@ -27,7 +27,7 @@ if ( false !== getenv( 'WP_PLUGIN_DIR' ) ) {
 
 if ( false !== getenv( 'WP_DEVELOP_DIR' ) ) {
 	/**
-	 * Suppress de phpstorm foutmelding
+	 * Suppress de phpstorm error msg
 	 *
 	 * @noinspection PhpIncludeInspection
 	 */

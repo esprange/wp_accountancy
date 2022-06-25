@@ -23,10 +23,12 @@ class TransactionAPI extends API {
 	/**
 	 * List function
 	 *
+	 * @param WP_REST_Request $request The request.
 	 * @return WP_REST_Response
 	 */
-	public function list() : WP_REST_Response {
-		$transactions = ( new TransactionQuery() )->get_results();
+	public function list( WP_REST_Request $request ) : WP_REST_Response {
+		$business_id  = intval( $request->get_param( 'business_id' ) );
+		$transactions = ( new TransactionQuery( new Business( $business_id ) ) )->get_results();
 		return new WP_REST_Response( array_walk( $transactions, 'get_object_vars' ) );
 	}
 
@@ -38,10 +40,11 @@ class TransactionAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function get( WP_REST_Request $request ) : WP_REST_Response {
-		$transaction = new Transaction( intval( $request->get_param( 'id' ) ) );
+		$business_id = intval( $request->get_param( 'business_id' ) );
+		$transaction = new Transaction( new Business( $business_id ), intval( $request->get_param( 'id' ) ) );
 		if ( $transaction->id ) {
 			$data           = get_object_vars( $transaction );
-			$details        = ( new DetailQuery( [ 'transaction_id' => $transaction->id ] ) )->get_results();
+			$details        = ( new DetailQuery( new Business( $business_id ), [ 'transaction_id' => $transaction->id ] ) )->get_results();
 			$data['detail'] = array_walk( $details, 'get_object_vars' );
 			return new WP_REST_Response( $data );
 		}
@@ -56,7 +59,8 @@ class TransactionAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function update( WP_REST_Request $request ) : WP_REST_Response {
-		$transaction = new Transaction( intval( $request->get_param( 'id' ) ) );
+		$business_id = intval( $request->get_param( 'business_id' ) );
+		$transaction = new Transaction( new Business( $business_id ), intval( $request->get_param( 'id' ) ) );
 		if ( $transaction->id ) {
 			$update = $request->get_body_params();
 			foreach ( $update as $key => $value ) {
@@ -78,7 +82,8 @@ class TransactionAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function cancel( WP_REST_Request $request ) : WP_REST_Response {
-		$transaction = new Transaction( intval( $request->get_param( 'id' ) ) );
+		$business_id = intval( $request->get_param( 'business_id' ) );
+		$transaction = new Transaction( new Business( $business_id ), intval( $request->get_param( 'id' ) ) );
 		if ( $transaction->id ) {
 			if ( $transaction->delete() ) {
 				return new WP_REST_Response( null, 204 );
@@ -96,7 +101,8 @@ class TransactionAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function create( WP_REST_Request $request ) : WP_REST_Response {
-		$transaction = new Transaction();
+		$business_id = intval( $request->get_param( 'business_id' ) );
+		$transaction = new Transaction( new Business( $business_id ) );
 		foreach ( $request->get_body_params() as $key => $value ) {
 			if ( property_exists( $transaction, $key ) && gettype( $transaction->$key ) === gettype( $value ) ) {
 				$transaction->$key = $value;

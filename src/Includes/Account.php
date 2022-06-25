@@ -37,14 +37,14 @@ class Account extends Entity {
 	/**
 	 * Constructor
 	 *
-	 * @param int $account_id  The account id, if specified, the account is retrieved from the db.
+	 * @param Business $business   The business id.
+	 * @param int      $account_id The account id, if specified, the account is retrieved from the db.
 	 */
-	public function __construct( int $account_id = 0 ) {
-		global $wpacc_business;
+	public function __construct( Business $business, int $account_id = 0 ) {
 		$this->fetch(
 			[
 				'id'            => $account_id,
-				'business_id'   => $wpacc_business->id,
+				'business_id'   => $business->id,
 				'taxcode_id'    => null,
 				'group_id'      => null,
 				'name'          => '',

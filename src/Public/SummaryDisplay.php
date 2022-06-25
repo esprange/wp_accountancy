@@ -55,6 +55,7 @@ class SummaryDisplay extends Display {
 	 */
 	public function overview() : string {
 		$this->summary = ( new ChartOfAccountsQuery(
+			$this->business,
 			[
 				'from'  => $this->from,
 				'until' => $this->until,

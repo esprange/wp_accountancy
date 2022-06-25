@@ -32,23 +32,22 @@ class TransactionQuery {
 	/**
 	 * The constructor
 	 *
-	 * @param array $args        The query arguments.
+	 * @param Business $business The business.
+	 * @param array    $args     The query arguments.
 	 *
 	 * @return void
 	 */
-	public function __construct( array $args = [] ) {
+	public function __construct( Business $business, array $args = [] ) {
 		global $wpdb;
-		global $wpacc_business;
 		$defaults          = [
 			'from'     => '',
 			'until'    => '',
 			'actor_id' => 0,
-			'id'       => 0,
 			'type'     => '',
 			'order_by' => '',
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
-		$this->query_where = $wpdb->prepare( ' transaction.business_id = %d', $wpacc_business->id );
+		$this->query_where = $wpdb->prepare( ' transaction.business_id = %d', $business->id );
 		if ( $query_vars['from'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND transaction.date >= %s', $query_vars['from'] );
 		}
@@ -57,9 +56,6 @@ class TransactionQuery {
 		}
 		if ( $query_vars['actor_id'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND transaction.actor_id = %d', $query_vars['actor_id'] );
-		}
-		if ( $query_vars['id'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND transaction.id = %d', $query_vars['id'] );
 		}
 		if ( $query_vars['type'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND transaction.type = %s', $query_vars['type'] );

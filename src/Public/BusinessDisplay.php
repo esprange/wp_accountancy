@@ -10,9 +10,12 @@
 
 namespace WP_Accountancy\Public;
 
+use WP_Accountancy\Includes\Account;
 use WP_Accountancy\Includes\Business;
 use WP_Accountancy\Includes\BusinessQuery;
 use WP_Accountancy\Includes\ChartOfAccounts;
+use WP_Accountancy\Includes\Country;
+use WP_Accountancy\Includes\CountryQuery;
 
 /**
  * The Public filters.
@@ -59,14 +62,15 @@ class BusinessDisplay extends Display {
 	 * @return string
 	 */
 	public function update() : string {
-		$input             = filter_input_array( INPUT_POST );
-		$business          = new Business( intval( $input['id'] ?? 0 ) );
-		$import            = ! $business->id;
-		$business->name    = sanitize_text_field( $input['name'] ?? '' );
-		$business->address = sanitize_textarea_field( $input['address'] ?? '' );
-		$business->country = sanitize_text_field( $input['country'] ?? '' );
-		$business->slug    = sanitize_title( $input['name'] ?? '' );
-		$logo              = $this->upload_logo();
+		$input              = filter_input_array( INPUT_POST );
+		$business           = new Business( intval( $input['id'] ?? 0 ) );
+		$import             = ! $business->id;
+		$business->name     = sanitize_text_field( $input['name'] ?? '' );
+		$business->address  = sanitize_textarea_field( $input['address'] ?? '' );
+		$business->country  = strtok( sanitize_text_field( $input['language'] ?? '' ), '|' );
+		$business->language = strtok( '|' );
+		$business->slug     = sanitize_title( $input['name'] ?? '' );
+		$logo               = $this->upload_logo();
 		if ( $logo ) {
 			if ( isset( $logo['error'] ) ) {
 				return $this->notify( 0, $logo['error'] );
@@ -77,8 +81,7 @@ class BusinessDisplay extends Display {
 		$business->update();
 		do_action( 'wpacc_business_select', $business->id );
 		if ( $import ) {
-			$coa = new ChartOfAccounts();
-			$coa->import( WPACC_PLUGIN_PATH . 'Templates\\' . Business::COUNTRIES[ $business->country ]['template'] );
+			$this->import();
 		}
 		return $this->notify( 1, __( 'Business saved', 'wpacc' ) );
 	}
@@ -89,12 +92,12 @@ class BusinessDisplay extends Display {
 	 * @return string
 	 */
 	public function delete() : string {
-		global $wpacc_business;
-		$business_id = filter_input( INPUT_GET, 'business_id', FILTER_SANITIZE_NUMBER_INT );
+		$business_id = filter_input( INPUT_POST, 'business_id', FILTER_SANITIZE_NUMBER_INT );
+
 		if ( $business_id ) {
 			$business = new Business( $business_id );
 			if ( $business->delete() ) {
-				if ( $wpacc_business->id === $business_id ) {
+				if ( $this->business->id === $business_id ) {
 					do_action( 'wpacc_business_select', 0 );
 				}
 				return $this->notify( - 1, __( 'Business removed', 'wpacc' ) );
@@ -110,7 +113,8 @@ class BusinessDisplay extends Display {
 	 * @return string
 	 */
 	public function read() : string {
-		$business = new Business( intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
+		$business  = new Business( intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
+		$countries = new CountryQuery();
 		return $this->form(
 			$this->field->render(
 				[
@@ -121,11 +125,12 @@ class BusinessDisplay extends Display {
 				]
 			) . $this->field->render(
 				[
-					'name'  => 'country',
-					'value' => $business->country,
-					'label' => __( 'Country', 'wpacc' ),
-					'type'  => 'select',
-					'list'  => iterator_to_array( $business->countries() ),
+					'name'     => 'language',
+					'value'    => $business->country . '|' . $business->language,
+					'label'    => __( 'Country', 'wpacc' ),
+					'type'     => 'select',
+					'list'     => $countries->get_results(),
+					'optgroup' => true,
 				]
 			) . $this->field->render(
 				[
@@ -143,7 +148,7 @@ class BusinessDisplay extends Display {
 				]
 			) . $this->field->render(
 				[
-					'name'  => 'id',
+					'name'  => 'business_id',
 					'value' => $business->id,
 					'label' => '',
 					'type'  => 'hidden',
@@ -217,4 +222,30 @@ class BusinessDisplay extends Display {
 			[ 'test_form' => false ]
 		);
 	}
+
+	/**
+	 * Import a chart of accounts.
+	 *
+	 * @return void
+	 */
+	private function import(): void {
+		$country  = new Country( $this->business->country, $this->business->language );
+		$coa_data = file_get_contents( __DIR__ . "\..\Templates\\$country->file.json" ); // phpcs:ignore
+		if ( false === $coa_data ) {
+			trigger_error( "Error loading coa, file $country->file cannot be opened", E_USER_ERROR ); // phpcs:ignore
+		}
+		$account_items = json_decode( $coa_data );
+		if ( $account_items ) {
+			foreach ( $account_items as $item ) {
+				$account       = new Account( $this->business );
+				$account->name = $item->name;
+				$account->type = $item->type;
+				$account->update();
+			}
+			return;
+		}
+		trigger_error( "Error loading coa, file $country->file, no data", E_USER_ERROR ); // phpcs:ignore
+	}
+
+
 }

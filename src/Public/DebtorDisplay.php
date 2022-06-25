@@ -42,15 +42,13 @@ class DebtorDisplay extends Display {
 	 * @return string
 	 */
 	public function update() : string {
-		global $wpacc_business;
 		$input                   = filter_input_array( INPUT_POST );
-		$debtor                  = new Debtor( intval( $input['actor_id'] ?? 0 ) );
+		$debtor                  = new Debtor( $this->business, intval( $input['actor_id'] ?? 0 ) );
 		$debtor->name            = sanitize_text_field( $input['name'] ?? '' );
 		$debtor->address         = sanitize_textarea_field( $input['address'] ?? '' );
 		$debtor->billing_address = sanitize_textarea_field( $input['billing_address'] ?? '' );
 		$debtor->email_address   = sanitize_email( $input['email_address'] ?? '' );
 		$debtor->active          = boolval( $input['active'] ?? true );
-		$debtor->business_id     = $wpacc_business->id;
 		$debtor->update();
 		return $this->notify( 1, __( 'Customer saved', 'wpacc' ) );
 	}
@@ -63,7 +61,7 @@ class DebtorDisplay extends Display {
 	public function delete() : string {
 		$actor_id = filter_input( INPUT_POST, 'actor_id', FILTER_SANITIZE_NUMBER_INT );
 		if ( $actor_id ) {
-			$debtor = new Debtor( intval( $actor_id ) );
+			$debtor = new Debtor( $this->business, intval( $actor_id ) );
 			if ( $debtor->delete() ) {
 				return $this->notify( - 1, __( 'Customer removed', 'wpacc' ) );
 			}
@@ -78,7 +76,7 @@ class DebtorDisplay extends Display {
 	 * @return string
 	 */
 	public function read() : string {
-		$debtor = new Debtor( intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
+		$debtor = new Debtor( $this->business, intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
 		return $this->form(
 			$this->field->render(
 				[
@@ -152,7 +150,7 @@ class DebtorDisplay extends Display {
 							'label' => __( 'Name', 'wpacc' ),
 						],
 					],
-					'items'   => ( new DebtorQuery() )->get_results(),
+					'items'   => ( new DebtorQuery( $this->business ) )->get_results(),
 					'options' => [ 'button_create' => __( 'New customer', 'wpacc' ) ],
 				]
 			)

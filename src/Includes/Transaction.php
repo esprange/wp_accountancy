@@ -37,14 +37,14 @@ class Transaction extends Entity {
 	/**
 	 * Constructor
 	 *
-	 * @param int $transaction_id The transaction_id, if specified, the transaction is retrieved from the db.
+	 * @param Business $business       The business.
+	 * @param int      $transaction_id The transaction_id, if specified, the transaction is retrieved from the db.
 	 */
-	public function __construct( int $transaction_id = 0 ) {
-		global $wpacc_business;
+	public function __construct( Business $business, int $transaction_id = 0 ) {
 		$this->fetch(
 			[
 				'id'          => $transaction_id,
-				'business_id' => $wpacc_business->id,
+				'business_id' => $business->id,
 				'actor_id'    => null,
 				'reference'   => '',
 				'invoice_id'  => '',

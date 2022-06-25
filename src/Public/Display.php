@@ -10,6 +10,8 @@
 
 namespace WP_Accountancy\Public;
 
+use WP_Accountancy\Includes\Business;
+
 /**
  * The Display class.
  */
@@ -34,29 +36,39 @@ abstract class Display {
 	 *
 	 * @var Button To render a button.
 	 */
-	public Button $button;
+	protected Button $button;
 
 	/**
 	 * Table object
 	 *
 	 * @var Table To render a table.
 	 */
-	public Table $table;
+	protected Table $table;
 
 	/**
 	 * Field object
 	 *
 	 * @var Field To render a field.
 	 */
-	public Field $field;
+	protected Field $field;
+
+	/**
+	 * The selected business
+	 *
+	 * @var Business
+	 */
+	protected Business $business;
 
 	/**
 	 * Constructor
+	 *
+	 * @param Business $business The active business.
 	 */
-	public function __construct() {
-		$this->button = new Button();
-		$this->table  = new Table();
-		$this->field  = new Field();
+	final public function __construct( Business $business ) {
+		$this->button   = new Button();
+		$this->table    = new Table();
+		$this->field    = new Field();
+		$this->business = $business;
 	}
 
 	/**
@@ -144,14 +156,11 @@ abstract class Display {
 	 * Prepare the top row
 	 *
 	 * @return string
-	 *
-	 * @todo For the multi business option, the business name should be a button.
 	 */
 	private function head() : string {
-		global $wpacc_business;
 		$businessdisplay = BusinessDisplay::Class;
 		$html            = <<<EOT
-		<a data-menu="$businessdisplay" id="wpacc-business" class="wpacc-business">$wpacc_business->name</a>
+		<a data-menu="$businessdisplay" id="wpacc-business" class="wpacc-business">{$this->business->name}</a>
 		EOT;
 		return apply_filters( 'wpacc_head', $html );
 	}

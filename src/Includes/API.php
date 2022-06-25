@@ -21,9 +21,10 @@ abstract class API {
 	/**
 	 * List function
 	 *
+	 * @param  WP_REST_Request $request The request.
 	 * @return WP_REST_Response
 	 */
-	abstract public function list() : WP_REST_Response;
+	abstract public function list( WP_REST_Request $request ) : WP_REST_Response;
 
 	/**
 	 * Get function

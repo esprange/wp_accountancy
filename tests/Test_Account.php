@@ -21,13 +21,13 @@ class Test_Account extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_create() : void {
-		$account1                = new Account();
+		$account1                = new Account( $this->business );
 		$account1->name          = 'test-account';
 		$account1->type          = 'test';
 		$account1->initial_value = 123.4;
 		$account_id              = $account1->update();
 
-		$account2 = new Account( $account_id );
+		$account2 = new Account( $this->business, $account_id );
 		$this->assertEquals( get_object_vars( $account1 ), get_object_vars( $account2 ), 'Account store incorrect' );
 	}
 
@@ -37,17 +37,17 @@ class Test_Account extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_update() : void {
-		$account1                = new Account();
+		$account1                = new Account( $this->business );
 		$account1->name          = 'test-account';
 		$account1->type          = 'test';
 		$account1->initial_value = 123.4;
 		$account_id              = $account1->update();
 
-		$account2         = new Account( $account_id );
+		$account2         = new Account( $this->business, $account_id );
 		$account2->active = false;
 		$account2->update();
 
-		$account3 = new Account( $account_id );
+		$account3 = new Account( $this->business, $account_id );
 		$this->assertFalse( $account3->active, 'Account update incorrect' );
 	}
 
@@ -57,16 +57,16 @@ class Test_Account extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_delete() : void {
-		$account1                = new Account();
+		$account1                = new Account( $this->business );
 		$account1->name          = 'test-account';
 		$account1->type          = 'test';
 		$account1->initial_value = 123.4;
 		$account_id              = $account1->update();
 
-		$account2 = new Account( $account_id );
+		$account2 = new Account( $this->business, $account_id );
 		$account2->delete();
 
-		$account3 = new Account( $account_id );
+		$account3 = new Account( $this->business, $account_id );
 		$this->assertEquals( 0, $account3->id, 'Account delete incorrect' );
 	}
 
@@ -78,12 +78,12 @@ class Test_Account extends UnitTestCase {
 	public function test_query() : void {
 		$amount = 5;
 		for ( $index = 0; $index < $amount; $index++ ) {
-			$account       = new Account();
+			$account       = new Account( $this->business );
 			$account->name = "test-account_$index";
 			$account->type = 'test';
 			$account->update();
 		}
-		$query = ( new AccountQuery() )->get_results();
+		$query = ( new AccountQuery( $this->business ) )->get_results();
 		$this->assertEquals( $amount, count( $query ), 'Account query count incorrect' );
 	}
 }

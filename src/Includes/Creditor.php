@@ -20,10 +20,11 @@ class Creditor extends Actor {
 	/**
 	 * Constructor
 	 *
-	 * @param int $actor_id  The creditor id, if specified, the creditor is retrieved from the db.
+	 * @param Business $business The business.
+	 * @param int      $actor_id The creditor id, if specified, the creditor is retrieved from the db.
 	 */
-	public function __construct( int $actor_id = 0 ) {
-		parent::__construct( $actor_id );
+	public function __construct( Business $business, int $actor_id = 0 ) {
+		parent::__construct( $business, $actor_id );
 		$this->type = self::TYPE;
 	}
 }

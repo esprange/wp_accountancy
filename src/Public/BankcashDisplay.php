@@ -33,7 +33,7 @@ class BankcashDisplay extends Display {
 	 * @return string
 	 */
 	public function create_bank() : string {
-		$account       = new Account();
+		$account       = new Account( $this->business );
 		$account->type = Account::BANK_ITEM;
 		return $this->details( $account );
 	}
@@ -44,7 +44,7 @@ class BankcashDisplay extends Display {
 	 * @return string
 	 */
 	public function create_cash() : string {
-		$account       = new Account();
+		$account       = new Account( $this->business );
 		$account->type = Account::CASH_ITEM;
 		return $this->details( $account );
 	}
@@ -55,13 +55,11 @@ class BankcashDisplay extends Display {
 	 * @return string
 	 */
 	public function update() : string {
-		global $wpacc_business;
 		$input                  = filter_input_array( INPUT_POST );
-		$account                = new Account( intval( $input['bankcash_id'] ?? 0 ) );
+		$account                = new Account( $this->business, intval( $input['bankcash_id'] ?? 0 ) );
 		$account->name          = sanitize_text_field( $input['name'] ?? '' );
 		$account->type          = sanitize_text_field( $input['type'] ?? '' );
 		$account->active        = boolval( $input['active'] ?? true );
-		$account->business_id   = $wpacc_business->id;
 		$account->initial_value = floatval( sanitize_text_field( $input['initial_value'] ?? 0.0 ) );
 		$account->update();
 		return $this->notify( 1, 'bank' === $account->type ? __( 'Bank saved', 'wpacc' ) : __( 'Cash account saved', 'wpacc' ) );
@@ -90,7 +88,7 @@ class BankcashDisplay extends Display {
 	 * @return string
 	 */
 	public function read() : string {
-		$account = new Account( intval( filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
+		$account = new Account( $this->business, intval( filter_input( INPUT_GET, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
 		return $this->details( $account );
 	}
 
@@ -170,7 +168,7 @@ class BankcashDisplay extends Display {
 							'label' => __( 'Balance', 'wpacc' ),
 						],
 					],
-					'items'   => ( new BankcashQuery() )->get_results(),
+					'items'   => ( new BankcashQuery( $this->business ) )->get_results(),
 					'options' => [
 						'button_create_bank' => __( 'New bank account', 'wpacc' ),
 						'button_create_cash' => __( 'New cash account', 'wpacc' ),

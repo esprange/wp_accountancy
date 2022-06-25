@@ -25,19 +25,18 @@ class AssetQuery {
 	/**
 	 * The constructor
 	 *
-	 * @param array $args The query arguments.
+	 * @param Business $business The business.
+	 * @param array    $args     The query arguments.
 	 *
 	 * @return void
 	 */
-	public function __construct( array $args = [] ) {
+	public function __construct( Business $business, array $args = [] ) {
 		global $wpdb;
-		global $wpacc_business;
 		$defaults          = [
-			'business_id' => $wpacc_business->id,
-			'name'        => '',
+			'name' => '',
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
-		$this->query_where = $wpdb->prepare( ' business_id = %d', $wpacc_business->id );
+		$this->query_where = $wpdb->prepare( ' business_id = %d', $business->id );
 		if ( $query_vars['name'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND name = %s', $query_vars['name'] );
 		}

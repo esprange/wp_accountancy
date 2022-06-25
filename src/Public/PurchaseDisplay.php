@@ -47,27 +47,24 @@ class PurchaseDisplay extends Display {
 	 * @return string
 	 */
 	public function update() : string {
-		global $wpacc_business;
-		$input              = filter_input_array( INPUT_POST );
-		$sales              = new Transaction( intval( $input['id'] ?? 0 ) );
-		$sales->actor_id    = intval( $input['actor_id'] ?? null );
-		$sales->reference   = sanitize_text_field( $input['reference'] ?? '' );
-		$sales->address     = sanitize_text_field( $input['address'] ?? '' );
-		$sales->invoice_id  = sanitize_text_field( $input['invoice_id'] ?? '' );
-		$sales->date        = sanitize_text_field( $input['date'] ?? wp_date( __( 'Y/m/d', 'wpacc' ) ) );
-		$sales->description = sanitize_text_field( $input['description'] ?? '' );
-		$sales->type        = Transaction::PURCHASE_INVOICE;
-		$sales->business_id = $wpacc_business->id;
-		$sales->update();
+		$input                 = filter_input_array( INPUT_POST );
+		$purchase              = new Transaction( $this->business, intval( $input['id'] ?? 0 ) );
+		$purchase->actor_id    = intval( $input['actor_id'] ?? null );
+		$purchase->reference   = sanitize_text_field( $input['reference'] ?? '' );
+		$purchase->address     = sanitize_text_field( $input['address'] ?? '' );
+		$purchase->invoice_id  = sanitize_text_field( $input['invoice_id'] ?? '' );
+		$purchase->date        = sanitize_text_field( $input['date'] ?? wp_date( __( 'Y/m/d', 'wpacc' ) ) );
+		$purchase->description = sanitize_text_field( $input['description'] ?? '' );
+		$purchase->type        = Transaction::PURCHASE_INVOICE;
+		$purchase->update();
 		foreach ( $input['detail_id'] ?? [] as $index => $detail_id ) {
-			$detail                 = new Detail( intval( $detail_id ) );
-			$detail->transaction_id = $sales->id;
-			$detail->account_id     = intval( $input['detail.account_id'][ $index ] );
-			$detail->quantity       = floatval( $input['detail.quantity'][ $index ] );
-			$detail->unitprice      = floatval( $input['detail.unitprice'][ $index ] );
-			$detail->description    = sanitize_text_field( $input['detail.description'][ $index ] );
-			$detail->taxcode_id     = intval( $input['detail.description'][ $index ] );
-			$detail->order_number   = $index;
+			$detail               = new Detail( $purchase, intval( $detail_id ) );
+			$detail->account_id   = intval( $input['detail.account_id'][ $index ] );
+			$detail->quantity     = floatval( $input['detail.quantity'][ $index ] );
+			$detail->unitprice    = floatval( $input['detail.unitprice'][ $index ] );
+			$detail->description  = sanitize_text_field( $input['detail.description'][ $index ] );
+			$detail->taxcode_id   = intval( $input['detail.description'][ $index ] );
+			$detail->order_number = $index;
 			$detail->update();
 		}
 		return $this->notify( 1, __( 'Purchase transaction saved', 'wpacc' ) );
@@ -81,7 +78,7 @@ class PurchaseDisplay extends Display {
 	public function delete() : string {
 		$purchase_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
 		if ( $purchase_id ) {
-			$purchase = new Transaction( intval( $purchase_id ) );
+			$purchase = new Transaction( $this->business, intval( $purchase_id ) );
 			if ( $purchase->delete() ) {
 				return $this->notify( - 1, __( 'Purchase transaction removed', 'wpacc' ) );
 			}
@@ -96,7 +93,7 @@ class PurchaseDisplay extends Display {
 	 * @return string
 	 */
 	public function read() : string {
-		$purchase = new Transaction( intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
+		$purchase = new Transaction( $this->business, intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
 		return $this->form(
 			$this->field->render(
 				[
@@ -112,9 +109,9 @@ class PurchaseDisplay extends Display {
 					'name'     => 'actor_id',
 					'type'     => 'select',
 					'value'    => $purchase->actor_id,
-					'label'    => __( 'Customer', 'wpacc' ),
+					'label'    => __( 'Supplier', 'wpacc' ),
 					'required' => true,
-					'list'     => ( new CreditorQuery() )->get_results(),
+					'list'     => ( new CreditorQuery( $this->business ) )->get_results(),
 				]
 			) .
 			$this->field->render(
@@ -149,7 +146,7 @@ class PurchaseDisplay extends Display {
 						[
 							'name'     => 'account_id',
 							'type'     => 'select',
-							'list'     => ( new AccountQuery() )->get_results(),
+							'list'     => ( new AccountQuery( $this->business ) )->get_results(),
 							'required' => true,
 							'label'    => __( 'Account', 'wpacc' ),
 						],
@@ -159,7 +156,7 @@ class PurchaseDisplay extends Display {
 							'label' => __( 'Description', 'wpacc' ),
 						],
 						[
-							'name'  => 'amount',
+							'name'  => 'quantity',
 							'type'  => 'float',
 							'label' => __( 'Amount', 'wpacc' ),
 						],
@@ -172,11 +169,11 @@ class PurchaseDisplay extends Display {
 						[
 							'name'  => 'taxcode_id',
 							'type'  => 'select',
-							'list'  => ( new TaxCodeQuery() )->get_results(),
+							'list'  => ( new TaxCodeQuery( $this->business ) )->get_results(),
 							'label' => __( 'Taxcode', 'wpacc' ),
 						],
 					],
-					'items'   => ( new DetailQuery( [ 'transaction_id' => $purchase->id ] ) )->get_results(),
+					'items'   => ( new DetailQuery( $this->business, [ 'transaction_id' => $purchase->id ] ) )->get_results(),
 					'options' => [ 'addrow' ],
 				]
 			) .
@@ -188,7 +185,7 @@ class PurchaseDisplay extends Display {
 				]
 			) .
 			$this->button->save( __( 'Save', 'wpacc' ) ) .
-			$purchase->id ? $this->button->delete( __( 'Delete', 'wpacc' ) ) : ''
+			( $purchase->id ? $this->button->delete( __( 'Delete', 'wpacc' ) ) : '' )
 		);
 	}
 
@@ -198,7 +195,7 @@ class PurchaseDisplay extends Display {
 	 * @return string
 	 */
 	public function overview() : string {
-		$purchases = new PurchaseQuery();
+		$purchases = new PurchaseQuery( $this->business );
 		return $this->form(
 			$this->table->render(
 				[

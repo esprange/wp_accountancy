@@ -89,6 +89,30 @@ class Test_Field extends UnitTestCase {
 	}
 
 	/**
+	 * Test a select optgroup field
+	 *
+	 * @return void
+	 */
+	public function test_select_optgroup_field() : void {
+		$field = new Field();
+		$html  = $field->render(
+			[
+				'name'     => 'test',
+				'type'     => 'select',
+				'label'    => 'Test_select',
+				'value'    => 'option_2',
+				'list'     => [
+					'group_1|option_1' => (object) [ 'name' => 'test_1' ],
+					'group_1|option_2' => (object) [ 'name' => 'test_2' ],
+					'group_2|option_3' => (object) [ 'name' => 'test_3' ],
+				],
+				'optgroup' => true,
+			]
+		);
+		$this->assertValidHtml( $html, 'Invalid html select' );
+	}
+
+	/**
 	 * Test a textarea field
 	 *
 	 * @return void

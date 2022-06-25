@@ -18,12 +18,13 @@ class SalesQuery extends InvoiceQuery {
 	/**
 	 * The constructor
 	 *
-	 * @param array $args The query arguments.
+	 * @param Business $business The business.
+	 * @param array    $args     The query arguments.
 	 *
 	 * @return void
 	 */
-	public function __construct( array $args = [] ) {
+	public function __construct( Business $business, array $args = [] ) {
 		$args['type'] = Transaction::SALES_INVOICE;
-		parent::__construct( $args );
+		parent::__construct( $business, $args );
 	}
 }

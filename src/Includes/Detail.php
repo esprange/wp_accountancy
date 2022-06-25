@@ -28,14 +28,14 @@ class Detail extends Entity {
 	/**
 	 * Constructor
 	 *
-	 * @param int $transaction_id The transaction_id, if specified, the transaction is retrieved from the db.
-	 * @param int $detail_id      The transaction detail_id, if specified, the transactiondetail is retrieved from the db.
+	 * @param Transaction $transaction The transaction, the transaction is retrieved from the db.
+	 * @param int         $detail_id   The transaction detail_id, if specified, the transactiondetail is retrieved from the db.
 	 */
-	public function __construct( int $transaction_id, int $detail_id = 0 ) {
+	public function __construct( Transaction $transaction, int $detail_id = 0 ) {
 		$this->fetch(
 			[
 				'id'             => $detail_id,
-				'transaction_id' => $transaction_id,
+				'transaction_id' => $transaction->id,
 				'account_id'     => null,
 				'actor_id'       => null,
 				'taxcode_id'     => null,

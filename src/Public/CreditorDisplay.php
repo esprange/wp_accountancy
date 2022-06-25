@@ -42,14 +42,12 @@ class CreditorDisplay extends Display {
 	 * @return string
 	 */
 	public function update() : string {
-		global $wpacc_business;
 		$input                   = filter_input_array( INPUT_POST );
-		$creditor                = new Creditor( intval( $input['actor_id'] ?? 0 ) );
+		$creditor                = new Creditor( $this->business, intval( $input['actor_id'] ?? 0 ) );
 		$creditor->name          = sanitize_text_field( $input['name'] ?? '' );
 		$creditor->address       = sanitize_textarea_field( $input['address'] ?? '' );
 		$creditor->email_address = sanitize_email( $input['email_address'] ?? '' );
 		$creditor->active        = boolval( $input['active'] ?? true );
-		$creditor->business_id   = $wpacc_business->id;
 		$creditor->update();
 		return $this->notify( 1, __( 'Supplier saved', 'wpacc' ) );
 	}
@@ -62,7 +60,7 @@ class CreditorDisplay extends Display {
 	public function delete() : string {
 		$actor_id = filter_input( INPUT_POST, 'actor_id', FILTER_SANITIZE_NUMBER_INT );
 		if ( $actor_id ) {
-			$creditor = new Creditor( intval( $actor_id ) );
+			$creditor = new Creditor( $this->business, intval( $actor_id ) );
 			if ( $creditor->delete() ) {
 				return $this->notify( - 1, __( 'Supplier removed', 'wpacc' ) );
 			}
@@ -77,7 +75,7 @@ class CreditorDisplay extends Display {
 	 * @return string
 	 */
 	public function read() : string {
-		$creditor = new Creditor( intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
+		$creditor = new Creditor( $this->business, intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
 		$html     =
 			$this->field->render(
 				[
@@ -156,7 +154,7 @@ class CreditorDisplay extends Display {
 							),
 						],
 					],
-					'items'   => ( new CreditorQuery() )->get_results(),
+					'items'   => ( new CreditorQuery( $this->business ) )->get_results(),
 					'options' => [ 'button_create' => __( 'New supplier', 'wpacc' ) ],
 				]
 			)

@@ -10,8 +10,6 @@
 
 namespace WP_Accountancy\Includes;
 
-use Generator;
-
 /**
  * Business class.
  *
@@ -19,30 +17,12 @@ use Generator;
  * @property string name
  * @property string address
  * @property string country
+ * @property string language
  * @property string logo
  * @property string slug
  * @property bool   active,
  */
 class Business extends Entity {
-
-	const COUNTRIES = [
-		'United Kingdom' => [
-			'language' => 'English',
-			'template' => 'english.json',
-		],
-		'United States'  => [
-			'language' => 'English',
-			'template' => 'english.json',
-		],
-		'Nederland'      => [
-			'language' => 'Nederlands',
-			'template' => 'dutch.json',
-		],
-		'Belgium'        => [
-			'language' => 'Nederlands',
-			'template' => 'dutch.json',
-		],
-	];
 
 	/**
 	 * Constructor
@@ -83,14 +63,4 @@ class Business extends Entity {
 		return 'wpacc_business';
 	}
 
-	/**
-	 * Return the countries
-	 *
-	 * @return Generator
-	 */
-	public function countries() : Generator {
-		foreach ( self::COUNTRIES as $country => $details ) {
-			yield  $country => (object) [ 'name' => $country ];
-		}
-	}
 }

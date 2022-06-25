@@ -20,7 +20,7 @@ class Upgrade {
 	/**
 	 * Plugin-database-version
 	 */
-	const DBVERSION = 44;
+	const DBVERSION = 47;
 
 	/**
 	 * Execute upgrade actions if needed.
@@ -123,6 +123,7 @@ class Upgrade {
 			language   TINYTEXT NOT NULL,
 			logo_url   TINYTEXT,
 			logo       TINYTEXT,
+			UNIQUE KEY name_idx (name),
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
@@ -143,6 +144,7 @@ class Upgrade {
 			name         VARCHAR (50) NOT NULL,
 			rate         FLOAT,
 			active       BOOL DEFAULT TRUE,
+			UNIQUE KEY business_name_idx ( business_id, name ),
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
@@ -166,6 +168,7 @@ class Upgrade {
 			rate         FLOAT,
 			cost         DECIMAL (13,4),
 			provision    DECIMAL (13,4),
+			UNIQUE KEY business_name_idx ( business_id, name ),
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
@@ -192,6 +195,7 @@ class Upgrade {
 			order_number  INT,
 			active        BOOL DEFAULT TRUE,
 			initial_value DECIMAL(13,4) DEFAULT 0.0,
+			UNIQUE KEY business_name_idx (business_id, name ),
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
@@ -219,6 +223,7 @@ class Upgrade {
 			email_address   TINYTEXT,
 			active          BOOL DEFAULT TRUE,
 			type            TINYTEXT,
+			UNIQUE KEY business_name_idx ( business_id, name ),
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
@@ -320,18 +325,20 @@ class Upgrade {
 	 * @return void
 	 */
 	private function load_data(): void {
-		$countries_file = wp_remote_get( plugins_url( '..\Templates\\\countries.json', __FILE__ ) );
-		if ( is_wp_error( $countries_file ) ) {
-			fout( $countries_file->get_error_message() );
+		$countries_data = file_get_contents( __DIR__ . '\..\Templates\countries.json' ); // phpcs:ignore
+		if ( false === $countries_data ) {
+			trigger_error( 'Error loading countries, file cannot be opened', E_USER_ERROR ); // phpcs:ignore
 		}
-		$countries = json_decode( $countries_file['body'] );
+		$countries = json_decode( $countries_data );
 		if ( $countries ) {
 			foreach ( $countries as $item ) {
 				$country       = new Country( $item->country, $item->language );
 				$country->file = $item->file;
 				$country->insert();
 			}
+			return;
 		}
+		trigger_error( 'Error loading countries, no data', E_USER_ERROR ); // phpcs:ignore
 	}
 
 	/**

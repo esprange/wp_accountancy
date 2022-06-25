@@ -25,32 +25,32 @@ class DetailQuery {
 	/**
 	 * The constructor
 	 *
-	 * @param array $args The query arguments.
+	 * @param Business $business The business.
+	 * @param array    $args The query arguments.
 	 *
 	 * @return void
 	 */
-	public function __construct( array $args = [] ) {
+	public function __construct( Business $business, array $args = [] ) {
 		global $wpdb;
 		$defaults          = [
 			'transaction_id' => 0,
 			'account_id'     => 0,
 			'taxcode_id'     => 0,
 			'actor_id'       => 0,
-			'id'             => 0,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
-		$this->query_where = ' 1 = 1';
-		if ( $query_vars['actor_id'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND actor_id = %d', $query_vars['actor_id'] );
-		}
+		$this->query_where = $wpdb->prepare( 'business_id = %d', $business->id );
 		if ( $query_vars['transaction_id'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND transaction_id = %d', $query_vars['transaction_id'] );
 		}
+		if ( $query_vars['account_id'] ) {
+			$this->query_where .= $wpdb->prepare( ' AND account_id = %d', $query_vars['account_id'] );
+		}
+		if ( $query_vars['actor_id'] ) {
+			$this->query_where .= $wpdb->prepare( ' AND actor_id = %d', $query_vars['actor_id'] );
+		}
 		if ( $query_vars['taxcode_id'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND taxcode_id = %d', $query_vars['taxcode_id'] );
-		}
-		if ( $query_vars['id'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND id = %d', $query_vars['id'] );
 		}
 	}
 
@@ -64,8 +64,9 @@ class DetailQuery {
 	public function get_results() : array {
 		global $wpdb;
 		return $wpdb->get_results(
-			"SELECT id AS detail_id, account_id, description, quantity, unitprice, taxcode_id
-			FROM {$wpdb->prefix}wpacc_detail
+			"SELECT detail.id AS detail_id, account_id, detail.description AS description, quantity, unitprice, taxcode_id
+			FROM {$wpdb->prefix}wpacc_detail AS detail
+			INNER JOIN {$wpdb->prefix}wpacc_transaction AS transaction
 			WHERE $this->query_where
 			ORDER BY order_number",
 			OBJECT_K

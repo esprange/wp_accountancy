@@ -59,6 +59,13 @@ function filter_input( int $type, string $var_name, int $filter = FILTER_DEFAULT
 abstract class UnitTestCase extends WP_UnitTestCase {
 
 	/**
+	 * The default business.
+	 *
+	 * @var Business
+	 */
+	protected Business $business;
+
+	/**
 	 * Activate the plugin which includes the WP_Accountancy specific tables if not present.
 	 * Create also an initial business.
 	 */
@@ -70,10 +77,9 @@ abstract class UnitTestCase extends WP_UnitTestCase {
 
 		( new Upgrade() )->run();
 
-		global $wpacc_business;
-		$wpacc_business       = new Business();
-		$wpacc_business->name = 'Test';
-		$wpacc_business->update();
+		$this->business       = new Business();
+		$this->business->name = 'Test';
+		$this->business->update();
 	}
 
 	/**

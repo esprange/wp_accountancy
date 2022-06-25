@@ -97,7 +97,9 @@ abstract class Entity extends stdClass {
 		 */
 		foreach ( $this->original ?: $this->default as $property => $value ) {
 			$this->$property = $value;
-			settype( $this->$property, $types[ $property ] );
+			if ( ! is_null( $value ) ) {
+				settype( $this->$property, $types[ $property ] );
+			}
 		}
 	}
 

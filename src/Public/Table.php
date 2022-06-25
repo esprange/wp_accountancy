@@ -130,7 +130,8 @@ class Table {
 
 			EOT;
 			foreach ( $args->fields as $field ) {
-				$field['value'] = $item->{$field['name']};
+				$property       = substr( $field['name'], ( strrpos( $field['name'], '.' ) ?: - 1 ) + 1 );
+				$field['value'] = $item->$property;
 				$field['label'] = '';
 				$field['name'] .= in_array( $field['type'], [ 'radio', 'checkbox' ], true ) ? '' : '[]';
 				$html          .= '<td>' . ( new Field() )->render( $field ) . "</td>\n";

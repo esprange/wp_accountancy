@@ -20,10 +20,11 @@ class Debtor extends Actor {
 	/**
 	 * Constructor
 	 *
-	 * @param int $actor_id  The debtor id, if specified, the debtor is retrieved from the db.
+	 * @param Business $business The business.
+	 * @param int      $actor_id The debtor id, if specified, the debtor is retrieved from the db.
 	 */
-	public function __construct( int $actor_id = 0 ) {
-		parent::__construct( $actor_id );
+	public function __construct( Business $business, int $actor_id = 0 ) {
+		parent::__construct( $business, $actor_id );
 		$this->type = self::TYPE;
 	}
 }

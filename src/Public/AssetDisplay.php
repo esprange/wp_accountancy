@@ -42,15 +42,13 @@ class AssetDisplay extends Display {
 	 * @return string
 	 */
 	public function update() : string {
-		global $wpacc_business;
 		$input              = filter_input_array( INPUT_POST );
-		$asset              = new Asset( $input['asset_id'] ?? 0 );
+		$asset              = new Asset( $this->business, $input['asset_id'] ?? 0 );
 		$asset->name        = sanitize_text_field( $input['name'] ?? '' );
 		$asset->description = sanitize_textarea_field( $input['description'] ?? '' );
 		$asset->rate        = floatval( $input['rate'] ?? 0.0 );
 		$asset->cost        = floatval( $input['cost'] ?? 0.0 );
 		$asset->provision   = floatval( $input['provision'] ?? 0.0 );
-		$asset->business_id = $wpacc_business->id;
 		$asset->update();
 		return $this->notify( 1, __( 'Asset saved', 'wpacc' ) );
 	}
@@ -78,7 +76,7 @@ class AssetDisplay extends Display {
 	 * @return string
 	 */
 	public function read() : string {
-		$asset = new Asset( intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
+		$asset = new Asset( $this->business, intval( filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT ) ) );
 		return $this->form(
 			$this->field->render(
 				[
@@ -159,7 +157,7 @@ class AssetDisplay extends Display {
 							),
 						],
 					],
-					'items'   => ( new AssetQuery() )->get_results(),
+					'items'   => ( new AssetQuery( $this->business ) )->get_results(),
 					'options' => [ 'button_create' => __( 'New fixed asset', 'wpacc' ) ],
 				]
 			)

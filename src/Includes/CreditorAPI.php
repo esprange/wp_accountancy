@@ -23,10 +23,12 @@ class CreditorAPI extends API {
 	/**
 	 * List function
 	 *
+	 * @param WP_REST_Request $request The request.
 	 * @return WP_REST_Response
 	 */
-	public function list() : WP_REST_Response {
-		$creditors = ( new CreditorQuery() )->get_results();
+	public function list( WP_REST_Request $request ) : WP_REST_Response {
+		$business_id = intval( $request->get_param( 'business_id' ) );
+		$creditors   = ( new CreditorQuery( new Business( $business_id ) ) )->get_results();
 		return new WP_REST_Response( array_walk( $creditors, 'get_object_vars' ) );
 	}
 
@@ -38,7 +40,8 @@ class CreditorAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function get( WP_REST_Request $request ) : WP_REST_Response {
-		$creditor = new Creditor( intval( $request->get_param( 'id' ) ) );
+		$business_id = intval( $request->get_param( 'business_id' ) );
+		$creditor    = new Creditor( new Business( $business_id ), intval( $request->get_param( 'id' ) ) );
 		if ( $creditor->id ) {
 			return new WP_REST_Response( array_walk( $creditor, 'get_object_vars' ) );
 		}
@@ -53,7 +56,8 @@ class CreditorAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function update( WP_REST_Request $request ) : WP_REST_Response {
-		$creditor = new Creditor( intval( $request->get_param( 'id' ) ) );
+		$business_id = intval( $request->get_param( 'business_id' ) );
+		$creditor    = new Creditor( new Business( $business_id ), intval( $request->get_param( 'id' ) ) );
 		if ( $creditor->id ) {
 			$update = $request->get_body_params();
 			foreach ( $update as $key => $value ) {
@@ -75,7 +79,8 @@ class CreditorAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function cancel( WP_REST_Request $request ) : WP_REST_Response {
-		$creditor = new Creditor( intval( $request->get_param( 'id' ) ) );
+		$business_id = intval( $request->get_param( 'business_id' ) );
+		$creditor    = new Creditor( new Business( $business_id ), intval( $request->get_param( 'id' ) ) );
 		if ( $creditor->id ) {
 			if ( $creditor->delete() ) {
 				return new WP_REST_Response( null, 204 );
@@ -93,7 +98,8 @@ class CreditorAPI extends API {
 	 * @return WP_REST_Response
 	 */
 	public function create( WP_REST_Request $request ) : WP_REST_Response {
-		$creditor = new Creditor();
+		$business_id = intval( $request->get_param( 'business_id' ) );
+		$creditor    = new Creditor( new Business( $business_id ) );
 		foreach ( $request->get_body_params() as $key => $value ) {
 			if ( property_exists( $creditor, $key ) && gettype( $creditor->$key ) === gettype( $value ) ) {
 				$creditor->$key = $value;

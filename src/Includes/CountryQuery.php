@@ -49,10 +49,10 @@ class CountryQuery {
 	public function get_results() : array {
 		global $wpdb;
 		return $wpdb->get_results(
-			"SELECT name, language, file
+			"SELECT CONCAT( name, '|', language ) AS name_language, name
 				FROM {$wpdb->prefix}wpacc_country
                 WHERE $this->query_where
-                ORDER BY name",
+                ORDER BY name, language",
 			OBJECT_K
 		);
 	}
