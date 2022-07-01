@@ -6,7 +6,7 @@
  * @package WP_Accounting
  */
 
-/* global wpaccData, wpacc_i18n */
+/* global wpaccData */
 
 /**
  * Jquery part

@@ -32,9 +32,9 @@ class Upgrade {
 		update_option( 'wpacc-plugin-version', $data['Version'] );
 		$database_version = intval( get_option( 'wpacc-database-version', 0 ) );
 		if ( $database_version < self::DBVERSION ) {
-			$this->convert_options();
-			$this->convert_database();
-			$this->convert_data();
+			$this->set_options();
+			$this->set_database();
+			$this->migrate_data();
 			$this->load_data();
 			update_option( 'wpacc-database-version', self::DBVERSION );
 		}
@@ -45,7 +45,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function convert_options(): void {
+	private function set_options(): void {
 		$default_options = [
 			'multibusiness' => false,
 		];
@@ -75,16 +75,16 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	public function convert_database(): void {
+	public function set_database(): void {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		$this->convert_country();
-		$this->convert_business();
-		$this->convert_taxcode();
-		$this->convert_asset();
-		$this->convert_account();
-		$this->convert_actor();
-		$this->convert_transaction();
-		$this->convert_detail();
+		$this->set_country();
+		$this->set_business();
+		$this->set_taxcode();
+		$this->set_asset();
+		$this->set_account();
+		$this->set_actor();
+		$this->set_transaction();
+		$this->set_detail();
 	}
 
 	/**
@@ -92,7 +92,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function convert_country(): void {
+	private function set_country(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -110,7 +110,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function convert_business(): void {
+	private function set_business(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -134,7 +134,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function convert_taxcode(): void {
+	private function set_taxcode(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -158,7 +158,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function convert_asset(): void {
+	private function set_asset(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -183,7 +183,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function convert_account(): void {
+	private function set_account(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -212,7 +212,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function convert_actor(): void {
+	private function set_actor(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -237,7 +237,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function convert_transaction(): void {
+	private function set_transaction(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -264,7 +264,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function convert_detail(): void {
+	private function set_detail(): void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -349,7 +349,7 @@ class Upgrade {
 	/**
 	 * Converteer data
 	 */
-	private function convert_data(): void {
+	private function migrate_data(): void {
 		// Currently, no action.
 	}
 
