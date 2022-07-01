@@ -197,6 +197,7 @@ class BusinessDisplay extends Display {
 	 * Upload the logo file
 	 *
 	 * @return array
+	 * @suppressWarnings(PHPMD,Superglobals)
 	 */
 	private function upload_logo() : array {
 		/**

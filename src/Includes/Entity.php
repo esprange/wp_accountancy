@@ -22,6 +22,7 @@ abstract class Entity extends stdClass {
 	 * The record id.
 	 *
 	 * @var int $id The record id.
+	 * @suppressWarnings(PHPMD,ShortVariable)
 	 */
 	public int $id = 0;
 
