@@ -31,6 +31,7 @@ class Field {
 			'value'    => null,
 			'list'     => [],
 			'optgroup' => false,
+			'lstgroup' => false,
 		];
 		$args           = (object) wp_parse_args( $args, $default );
 		$args->required = $args->required ? 'required' : '';
@@ -67,7 +68,7 @@ class Field {
 	 * @return string
 	 */
 	private function render_static( object $args ) : string {
-		return $args->value;
+		return $args->lstgroup ? "<strong>$args->value</strong>" : "&nbsp;&nbsp;$args->value";
 	}
 
 	/**
@@ -163,9 +164,10 @@ class Field {
 	 * @return string
 	 */
 	private function render_check( object $args ) : string {
-		$checked = checked( $args->value, true, false );
+		$value   = strtok( $args->value, '|' );
+		$checked = checked( strtok( '|' ), true, false );
 		return <<<EOT
-		<input name="$args->name" type="$args->type" value="$args->value" $checked $args->required $args->readonly >
+		<input name="$args->name" type="$args->type" value="$value" $checked $args->required $args->readonly >
 		EOT;
 	}
 
@@ -177,8 +179,13 @@ class Field {
 	 * @return string
 	 */
 	private function render_zoom( object $args ) : string {
-		return <<<EOT
-		<a class="wpacc-zoom" >$args->value</a>
+		return $args->lstgroup ?
+		<<<EOT
+		<strong><a class="wpacc-zoom" >$args->value</a></strong>
+		EOT
+		:
+		<<<EOT
+		&nbsp;&nbsp;<a class="wpacc-zoom" >$args->value</a>
 		EOT;
 	}
 

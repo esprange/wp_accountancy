@@ -130,11 +130,12 @@ class Table {
 
 			EOT;
 			foreach ( $args->fields as $field ) {
-				$property       = substr( $field['name'], ( strrpos( $field['name'], '.' ) ?: - 1 ) + 1 );
-				$field['value'] = $item->$property;
-				$field['label'] = '';
-				$field['name'] .= in_array( $field['type'], [ 'radio', 'checkbox' ], true ) ? '' : '[]';
-				$html          .= '<td>' . ( new Field() )->render( $field ) . "</td>\n";
+				$property          = substr( $field['name'], ( strrpos( $field['name'], '.' ) ?: - 1 ) + 1 );
+				$field['value']    = $item->$property;
+				$field['lstgroup'] = $item->group ?? false;
+				$field['label']    = '';
+				$field['name']    .= in_array( $field['type'], [ 'radio', 'checkbox' ], true ) ? '' : '[]';
+				$html             .= '<td>' . ( new Field() )->render( $field ) . "</td>\n";
 			}
 			$html .= <<<EOT
 				</tr>

@@ -33,8 +33,9 @@ class TaxCodeQuery {
 	public function __construct( Business $business, array $args = [] ) {
 		global $wpdb;
 		$defaults          = [
-			'name'   => '',
-			'active' => 0,
+			'name'       => '',
+			'active'     => 0,
+			'account_id' => 0,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
 		$this->query_where = $wpdb->prepare( 'WHERE business_id = %d', $business->id );
@@ -43,6 +44,9 @@ class TaxCodeQuery {
 		}
 		if ( $query_vars['name'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND name = %s', $query_vars['name'] );
+		}
+		if ( $query_vars['account_id'] ) {
+			$this->query_where .= $wpdb->prepare( ' AND account_id = %d', $query_vars['account_id'] );
 		}
 	}
 
@@ -56,7 +60,7 @@ class TaxCodeQuery {
 	public function get_results() : array {
 		global $wpdb;
 		return $wpdb->get_results(
-			"SELECT id as taxcode_id, name, business_id, rate, active
+			"SELECT id as taxcode_id, name, business_id, account_id, rate, active
 			FROM {$wpdb->prefix}wpacc_taxcode $this->query_where
 			ORDER BY name",
 			OBJECT_K

@@ -33,8 +33,10 @@ class AccountQuery {
 	public function __construct( Business $business, array $args = [] ) {
 		global $wpdb;
 		$defaults          = [
-			'type'   => '',
-			'active' => false,
+			'type'     => '',
+			'active'   => false,
+			'group_id' => null,
+			'groups'   => false,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
 		$this->query_where = $wpdb->prepare( ' business_id = %d', $business->id );
@@ -42,7 +44,13 @@ class AccountQuery {
 			$this->query_where .= ' AND active';
 		}
 		if ( $query_vars['type'] ) {
-			$this->query_where .= $wpdb->prepare( ' AND name = %s', $query_vars['type'] );
+			$this->query_where .= $wpdb->prepare( ' AND type = %s', $query_vars['type'] );
+		}
+		if ( $query_vars['groups'] ) {
+			$this->query_where .= ' AND group_id IS NULL';
+		}
+		if ( $query_vars['group_id'] ) {
+			$this->query_where .= $wpdb->prepare( ' AND group_id = %d', $query_vars['group_id'] );
 		}
 	}
 

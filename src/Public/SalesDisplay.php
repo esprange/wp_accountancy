@@ -49,7 +49,7 @@ class SalesDisplay extends Display {
 	public function update() : string {
 		$input              = filter_input_array( INPUT_POST );
 		$sales              = new Transaction( $this->business, intval( $input['id'] ?? 0 ) );
-		$sales->actor_id    = intval( $input['actor_id'] ?? null );
+		$sales->actor_id    = intval( $input['actor_id'] ) ?: null;
 		$sales->reference   = sanitize_text_field( $input['reference'] ?? '' );
 		$sales->address     = sanitize_text_field( $input['address'] ?? '' );
 		$sales->invoice_id  = sanitize_text_field( $input['invoice_id'] ?? '' );
@@ -59,12 +59,13 @@ class SalesDisplay extends Display {
 		$sales->update();
 		foreach ( $input['detail_id'] ?? [] as $index => $detail_id ) {
 			$detail               = new Detail( $sales, intval( $detail_id ) );
-			$detail->account_id   = intval( $input['detail.account_id'][ $index ] ?? null );
+			$detail->account_id   = intval( $input['detail.account_id'][ $index ] ) ?: null;
 			$detail->quantity     = floatval( $input['detail.quantity'][ $index ] ?? 1.0 );
 			$detail->unitprice    = floatval( $input['detail.unitprice'][ $index ] ?? 0.0 );
 			$detail->description  = sanitize_text_field( $input['detail.description'][ $index ] ?? '' );
-			$detail->taxcode_id   = $input['detail.taxcode_id'][ $index ] ?? null;
+			$detail->taxcode_id   = intval( $input['detail.taxcode_id'][ $index ] ) ?: null;
 			$detail->order_number = $index;
+			$detail->credit       = $detail->quantity * $detail->unitprice;
 			$detail->update();
 		}
 		return $this->notify( 1, __( 'Sales transaction saved', 'wpacc' ) );

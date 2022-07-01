@@ -16,24 +16,32 @@ namespace WP_Accountancy\Includes;
 class BusinessQuery {
 
 	/**
-	 * De query string
+	 * The query string
 	 *
-	 * @var string De query.
+	 * @var string The query.
 	 */
 	protected string $query_where;
 
 	/**
+	 * The currently selected business
+	 *
+	 * @var int
+	 */
+	private int $selected;
+
+	/**
 	 * The constructor
 	 *
-	 * @param array $args        The query arguments.
+	 * @param array $args The query arguments.
 	 *
 	 * @return void
 	 */
 	public function __construct( array $args = [] ) {
 		global $wpdb;
 		$defaults          = [
-			'name' => 0,
-			'slug' => '',
+			'name'          => 0,
+			'slug'          => '',
+			'show_selected' => 0,
 		];
 		$query_vars        = wp_parse_args( $args, $defaults );
 		$this->query_where = ' 1 = 1';
@@ -43,6 +51,7 @@ class BusinessQuery {
 		if ( $query_vars['slug'] ) {
 			$this->query_where .= $wpdb->prepare( ' AND lower(slug) = lower(%s)', $query_vars['name'] );
 		}
+		$this->selected = intval( $query_vars['show_selected'] );
 	}
 
 	/**
@@ -55,7 +64,7 @@ class BusinessQuery {
 	public function get_results() : array {
 		global $wpdb;
 		return $wpdb->get_results(
-			"SELECT id AS business_id, name, country, logo, address, slug AS selected
+			"SELECT id AS business_id, name, country, logo, address, CONCAT( id, '|', id = $this->selected ) AS selected
 				FROM {$wpdb->prefix}wpacc_business
                 WHERE $this->query_where
                 ORDER BY name",

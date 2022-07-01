@@ -135,8 +135,13 @@ class Actions {
 		}
 		$businesses = ( new BusinessQuery() )->get_results();
 		if ( count( $businesses ) ) {
-			return new Business( ( reset( $businesses ) )->business_id );
+			$business_id = ( reset( $businesses ) )->business_id;
+			do_action( 'wpacc_business_select', $business_id );
+			return new Business( $business_id );
 		}
-		return new Business();
+		$business->name = __( 'Default company', 'wpacc' );
+		$business->update();
+		do_action( 'wpacc_business_select', $business->id );
+		return $business;
 	}
 }

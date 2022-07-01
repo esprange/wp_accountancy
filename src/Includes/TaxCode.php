@@ -32,6 +32,7 @@ class TaxCode extends Entity {
 			[
 				'id'          => $taxcode_id,
 				'business_id' => $business->id,
+				'account_id'  => null,
 				'name'        => '',
 				'rate'        => 0.0,
 				'active'      => true,
@@ -39,6 +40,7 @@ class TaxCode extends Entity {
 			[
 				'id'          => 'int',
 				'business_id' => 'int',
+				'taxcode_id'  => 'int',
 				'name'        => 'string',
 				'rate'        => 'float',
 				'active'      => 'bool',

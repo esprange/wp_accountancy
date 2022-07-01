@@ -13,7 +13,6 @@ namespace WP_Accountancy\Public;
 use WP_Accountancy\Includes\Account;
 use WP_Accountancy\Includes\Business;
 use WP_Accountancy\Includes\BusinessQuery;
-use WP_Accountancy\Includes\ChartOfAccounts;
 use WP_Accountancy\Includes\Country;
 use WP_Accountancy\Includes\CountryQuery;
 
@@ -47,9 +46,9 @@ class BusinessDisplay extends Display {
 	 */
 	public function select() : string {
 		$input       = filter_input_array( INPUT_POST );
-		$selected    = sanitize_text_field( $input['selected'] ?? 0 );
-		$business_id = intval( strtok( $selected, '|' ) );
+		$business_id = intval( $input['selected'] );
 		if ( $business_id ) {
+			$this->business = new Business( $business_id );
 			do_action( 'wpacc_business_select', $business_id );
 			return $this->notify( 1, __( 'Business selected', 'wpacc' ) );
 		}
@@ -62,24 +61,24 @@ class BusinessDisplay extends Display {
 	 * @return string
 	 */
 	public function update() : string {
-		$input              = filter_input_array( INPUT_POST );
-		$business           = new Business( intval( $input['id'] ?? 0 ) );
-		$import             = ! $business->id;
-		$business->name     = sanitize_text_field( $input['name'] ?? '' );
-		$business->address  = sanitize_textarea_field( $input['address'] ?? '' );
-		$business->country  = strtok( sanitize_text_field( $input['language'] ?? '' ), '|' );
-		$business->language = strtok( '|' );
-		$business->slug     = sanitize_title( $input['name'] ?? '' );
-		$logo               = $this->upload_logo();
+		$input                    = filter_input_array( INPUT_POST );
+		$this->business           = new Business( intval( $input['id'] ?? 0 ) );
+		$import                   = ! $this->business->id;
+		$this->business->name     = sanitize_text_field( $input['name'] ?? '' );
+		$this->business->address  = sanitize_textarea_field( $input['address'] ?? '' );
+		$this->business->country  = strtok( sanitize_text_field( $input['language'] ?? '' ), '|' );
+		$this->business->language = strtok( '|' );
+		$this->business->slug     = sanitize_title( $input['name'] ?? '' );
+		$logo                     = $this->upload_logo();
 		if ( $logo ) {
 			if ( isset( $logo['error'] ) ) {
 				return $this->notify( 0, $logo['error'] );
 			}
-			$business->logo     = $logo['file'];
-			$business->logo_url = $logo['url'];
+			$this->business->logo     = $logo['file'];
+			$this->business->logo_url = $logo['url'];
 		}
-		$business->update();
-		do_action( 'wpacc_business_select', $business->id );
+		$this->business->update();
+		do_action( 'wpacc_business_select', $this->business->id );
 		if ( $import ) {
 			$this->import();
 		}
@@ -184,7 +183,7 @@ class BusinessDisplay extends Display {
 							'label' => __( 'Name', 'wpacc' ),
 						],
 					],
-					'items'   => ( new BusinessQuery() )->get_results(),
+					'items'   => ( new BusinessQuery( [ 'show_selected' => $this->business->id ] ) )->get_results(),
 					'options' => [
 						'button_create' => __( 'New business', 'wpacc' ),
 						'button_select' => __( 'Select business', 'wpacc' ),
@@ -246,6 +245,5 @@ class BusinessDisplay extends Display {
 		}
 		trigger_error( "Error loading coa, file $country->file, no data", E_USER_ERROR ); // phpcs:ignore
 	}
-
 
 }

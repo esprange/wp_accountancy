@@ -43,6 +43,8 @@ class Detail extends Entity {
 				'unitprice'      => 0.0,
 				'description'    => '',
 				'order_number'   => 0,
+				'debit'          => 0.0,
+				'credit'         => 0.0,
 			],
 			[
 				'id'             => 'int',
@@ -54,6 +56,8 @@ class Detail extends Entity {
 				'unitprice'      => 'float',
 				'description'    => 'string',
 				'order_number'   => 'int',
+				'debit'          => 'float',
+				'credit'         => 'float',
 			]
 		);
 	}

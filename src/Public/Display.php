@@ -64,7 +64,7 @@ abstract class Display {
 	 *
 	 * @param Business $business The active business.
 	 */
-	final public function __construct( Business $business ) {
+	public function __construct( Business $business ) {
 		$this->button   = new Button();
 		$this->table    = new Table();
 		$this->field    = new Field();
@@ -77,12 +77,15 @@ abstract class Display {
 	 * @return string
 	 */
 	final public function controller() : string {
-		$action = filter_input( INPUT_POST, 'wpacc_action' ) ?: filter_input( INPUT_GET, 'wpacc_action' );
-		$title  = '<p class="wpacc-title" >' . $this->get_title() . '</p>';
-		if ( $action && method_exists( $this, $action ) ) {
-			return $title . $this->$action();
-		}
-		return $title . $this->overview();
+		$action   = filter_input( INPUT_POST, 'wpacc_action' ) ?: filter_input( INPUT_GET, 'wpacc_action' );
+		$title    = $this->get_title();
+		$contents = $action && method_exists( $this, $action ) ? $this->$action() : $this->overview();
+		return <<<EOT
+			<span class="wpacc-title" >$title</span>
+			<div class="wpacc-content">
+			$contents
+			</div>
+		EOT;
 	}
 
 	/**
@@ -149,7 +152,7 @@ abstract class Display {
 			0  => 'wpacc-error',
 			1  => 'wpacc-success',
 		];
-		return "<div class=\"{$levels[$status]}\"><p>$message</p></div>";
+		return "<div class=\"{$levels[$status]}\"><p>$message</p></div>" . $this->overview();
 	}
 
 	/**

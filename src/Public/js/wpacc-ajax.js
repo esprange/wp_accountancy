@@ -117,6 +117,8 @@
 			$( 'a[data-menu]' ).on(
 				'click',
 				function() {
+					$( '.wpacc-menu a' ).removeClass( 'wpacc-menu-selected' );
+					$( this ).addClass( 'wpacc-menu-selected' );
 					doAjaxMenu( $( this ).data( 'menu' ) );
 				}
 			);

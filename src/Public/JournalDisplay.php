@@ -10,6 +10,8 @@
 
 namespace WP_Accountancy\Public;
 
+use WP_Accountancy\Includes\JournalQuery;
+
 /**
  * The Public filters.
  */
@@ -30,11 +32,42 @@ class JournalDisplay extends Display {
 	 * @return string
 	 */
 	public function overview() : string {
-		ob_start();
-		?>
-		journal
-		<?php
-		return ob_get_clean() . $this->form( $this->button->action( 'change', __( 'Change', 'wpacc' ) ) );
+		$journal = new JournalQuery( $this->business );
+		return $this->form(
+			$this->table->render(
+				[
+					'fields'  => [
+						[
+							'name'  => 'transaction_id',
+							'label' => 'id',
+							'type'  => 'static',
+						],
+						[
+							'name'  => 'date',
+							'label' => __( 'Invoice date', 'wpacc' ),
+							'type'  => 'static',
+						],
+						[
+							'name'  => 'description',
+							'label' => __( 'Description', 'wpacc' ),
+							'type'  => 'zoom',
+						],
+						[
+							'name'  => 'debit_total',
+							'label' => __( 'Debit', 'wpacc' ),
+							'type'  => 'static',
+						],
+						[
+							'name'  => 'credit_total',
+							'label' => __( 'Credit', 'wpacc' ),
+							'type'  => 'static',
+						],
+					],
+					'items'   => $journal->get_results(),
+					'options' => [ 'button_create' => __( 'New journal entry', 'wpacc' ) ],
+				]
+			)
+		);
 	}
 
 }

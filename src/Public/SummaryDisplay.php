@@ -64,14 +64,16 @@ class SummaryDisplay extends Display {
 
 		ob_start();
 		?>
-		<div style="float:left;width:50%;padding-right: 10px" >
-			<?php $this->list( Account::ASSETS_ITEM, __( 'Assets', 'wpacc' ) ); ?>
-			<?php $this->list( Account::LIABILITY_ITEM, __( 'Liabilities', 'wpacc' ) ); ?>
-			<?php $this->list( Account::EQUITY_ITEM, __( 'Equity', 'wpacc' ) ); ?>
-		</div>
-		<div style="float:right; width:50%;" >
-			<?php $this->list( Account::INCOME_ITEM, __( 'Assets', 'wpacc' ) ); ?>
-			<?php $this->list( Account::EXPENSE_ITEM, __( 'Expenses', 'wpacc' ) ); ?>
+		<div class="wpacc-split">
+			<div style="grid-column:1;" >
+				<?php $this->list( Account::ASSETS_ITEM, __( 'Assets', 'wpacc' ) ); ?>
+				<?php $this->list( Account::LIABILITY_ITEM, __( 'Liabilities', 'wpacc' ) ); ?>
+				<?php $this->list( Account::EQUITY_ITEM, __( 'Equity', 'wpacc' ) ); ?>
+			</div>
+			<div style="grid-column:2;" >
+				<?php $this->list( Account::INCOME_ITEM, __( 'Income', 'wpacc' ) ); ?>
+				<?php $this->list( Account::EXPENSE_ITEM, __( 'Expenses', 'wpacc' ) ); ?>
+			</div>
 		</div>
 		<?php
 		return ob_get_clean() . $this->form( $this->button->action( 'change', __( 'Change', 'wpacc' ) ) );

@@ -20,7 +20,7 @@ class Upgrade {
 	/**
 	 * Plugin-database-version
 	 */
-	const DBVERSION = 47;
+	const DBVERSION = 49;
 
 	/**
 	 * Execute upgrade actions if needed.
@@ -141,6 +141,7 @@ class Upgrade {
 			"CREATE TABLE {$wpdb->prefix}wpacc_taxcode (
 			id           INT (10) NOT NULL AUTO_INCREMENT,
 			business_id  INT (10) NOT NULL,
+			account_id   INT (10) NULL,
 			name         VARCHAR (50) NOT NULL,
 			rate         FLOAT,
 			active       BOOL DEFAULT TRUE,
@@ -149,6 +150,7 @@ class Upgrade {
 			) $charset_collate;"
 		);
 		$this->foreign_key( 'taxcode', 'business' );
+		$this->foreign_key( 'taxcode', 'account' );
 	}
 
 	/**
@@ -189,7 +191,7 @@ class Upgrade {
 			id            INT (10) NOT NULL AUTO_INCREMENT,
 			business_id   INT (10) NOT NULL,
 			taxcode_id    INT (10) NULL,
-			name          VARCHAR (50),
+			name          VARCHAR (50) NOT NULL,
 			group_id      INT (10) NULL,
 			type          TINYTEXT,
 			order_number  INT,
@@ -249,6 +251,7 @@ class Upgrade {
 			date        DATE,
 			type        TINYTEXT,
 			description TINYTEXT,
+			tax_include BOOL DEFAULT TRUE,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
@@ -268,13 +271,15 @@ class Upgrade {
 			"CREATE TABLE {$wpdb->prefix}wpacc_detail (
 			id             INT (10) NOT NULL AUTO_INCREMENT,
 			transaction_id INT (10) NOT NULL,
-			account_id     INT (10),
+			account_id     INT (10) NOT NULL,
 			taxcode_id     INT (10) NULL,
 			actor_id       INT (10) NULL,
-			quantity       FLOAT,
-			unitprice      DECIMAL (13,4),
+			quantity       FLOAT DEFAULT 1.0,
+			unitprice      DECIMAL (13,4) DEFAULT 0.0,
 			description    TINYTEXT,
 			order_number   INT,
+			debit          DECIMAL (13,4) DEFAULT 0.0,
+			credit         DECIMAL (13,4) DEFAULT 0.0,
 			PRIMARY KEY  (id)
 			) $charset_collate;"
 		);
