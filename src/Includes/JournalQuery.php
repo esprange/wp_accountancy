@@ -40,11 +40,11 @@ class JournalQuery extends TransactionQuery {
 		$locale = get_locale();
 		return $wpdb->get_results(
 			"SELECT
-				transaction.id AS transaction_id,
+				transaction.id AS journal_id,
 				transaction.date AS date,
 				transaction.description AS description,
        			FORMAT( SUM( detail.debit ), 2, '$locale' ) AS debit_total,
-       			FORMAT( SUM( detail.credit ), 2, '$locale' ) AS credit_total,
+       			FORMAT( SUM( detail.credit ), 2, '$locale' ) AS credit_total
 			FROM
 				{$wpdb->prefix}wpacc_transaction AS transaction
 			INNER JOIN

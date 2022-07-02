@@ -64,7 +64,7 @@ class DetailQuery {
 	public function get_results() : array {
 		global $wpdb;
 		return $wpdb->get_results(
-			"SELECT detail.id AS detail_id, account_id, detail.description AS description, quantity, unitprice, taxcode_id
+			"SELECT detail.id AS detail_id, account_id, detail.description AS description, quantity, unitprice, taxcode_id, debit, credit
 			FROM {$wpdb->prefix}wpacc_detail AS detail
 			INNER JOIN {$wpdb->prefix}wpacc_transaction AS transaction
 			WHERE $this->query_where

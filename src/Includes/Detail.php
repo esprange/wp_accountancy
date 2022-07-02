@@ -22,6 +22,8 @@ namespace WP_Accountancy\Includes;
  * @property float  unitprice
  * @property string description
  * @property int    order_number
+ * @property float  debit
+ * @property float  credit
  */
 class Detail extends Entity {
 

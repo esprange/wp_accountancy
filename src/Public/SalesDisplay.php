@@ -59,13 +59,13 @@ class SalesDisplay extends Display {
 		$sales->update();
 		foreach ( $input['detail_id'] ?? [] as $index => $detail_id ) {
 			$detail               = new Detail( $sales, intval( $detail_id ) );
-			$detail->account_id   = intval( $input['detail.account_id'][ $index ] ) ?: null;
-			$detail->quantity     = floatval( $input['detail.quantity'][ $index ] ?? 1.0 );
-			$detail->unitprice    = floatval( $input['detail.unitprice'][ $index ] ?? 0.0 );
-			$detail->description  = sanitize_text_field( $input['detail.description'][ $index ] ?? '' );
-			$detail->taxcode_id   = intval( $input['detail.taxcode_id'][ $index ] ) ?: null;
+			$detail->account_id   = intval( $input['detail-account_id'][ $index ] ) ?: null;
+			$detail->quantity     = floatval( $input['detail-quantity'][ $index ] ?? 1.0 );
+			$detail->unitprice    = floatval( $input['detail-unitprice'][ $index ] ?? 0.0 );
+			$detail->description  = sanitize_text_field( $input['detail-description'][ $index ] ?? '' );
+			$detail->taxcode_id   = intval( $input['detail-taxcode_id'][ $index ] ) ?: null;
 			$detail->order_number = $index;
-			$detail->credit       = $detail->quantity * $detail->unitprice;
+			$detail->credit       = $detail->unitprice * $detail->quantity;
 			$detail->update();
 		}
 		return $this->notify( 1, __( 'Sales transaction saved', 'wpacc' ) );
@@ -145,30 +145,30 @@ class SalesDisplay extends Display {
 							'type' => 'hidden',
 						],
 						[
-							'name'     => 'detail.account_id',
+							'name'     => 'detail-account_id',
 							'type'     => 'select',
 							'list'     => ( new AccountQuery( $this->business ) )->get_results(),
 							'required' => true,
 							'label'    => __( 'Account', 'wpacc' ),
 						],
 						[
-							'name'  => 'detail.description',
+							'name'  => 'detail-description',
 							'type'  => 'text',
 							'label' => __( 'Description', 'wpacc' ),
 						],
 						[
-							'name'  => 'detail.quantity',
+							'name'  => 'detail-quantity',
 							'type'  => 'float',
 							'label' => __( 'Amount', 'wpacc' ),
 						],
 						[
-							'name'     => 'detail.unitprice',
+							'name'     => 'detail-unitprice',
 							'type'     => 'currency',
 							'label'    => __( 'Unitprice', 'wpacc' ),
 							'required' => true,
 						],
 						[
-							'name'  => 'detail.taxcode_id',
+							'name'  => 'detail-taxcode_id',
 							'type'  => 'select',
 							'list'  => ( new TaxCodeQuery( $this->business ) )->get_results(),
 							'label' => __( 'Taxcode', 'wpacc' ),

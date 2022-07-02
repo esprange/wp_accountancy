@@ -59,11 +59,11 @@ class PurchaseDisplay extends Display {
 		$purchase->update();
 		foreach ( $input['detail_id'] ?? [] as $index => $detail_id ) {
 			$detail               = new Detail( $purchase, intval( $detail_id ) );
-			$detail->account_id   = intval( $input['detail.account_id'][ $index ] ) ?: null;
-			$detail->quantity     = floatval( $input['detail.quantity'][ $index ] );
-			$detail->unitprice    = floatval( $input['detail.unitprice'][ $index ] );
-			$detail->description  = sanitize_text_field( $input['detail.description'][ $index ] );
-			$detail->taxcode_id   = intval( $input['detail.description'][ $index ] ) ?: null;
+			$detail->account_id   = intval( $input['detail-account_id'][ $index ] ) ?: null;
+			$detail->quantity     = floatval( $input['detail-quantity'][ $index ] );
+			$detail->unitprice    = floatval( $input['detail-unitprice'][ $index ] );
+			$detail->description  = sanitize_text_field( $input['detail-description'][ $index ] );
+			$detail->taxcode_id   = intval( $input['detail-description'][ $index ] ) ?: null;
 			$detail->order_number = $index;
 			$detail->debit        = $detail->quantity * $detail->unitprice;
 			$detail->update();

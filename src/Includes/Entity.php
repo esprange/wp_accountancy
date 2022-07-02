@@ -86,7 +86,10 @@ abstract class Entity extends stdClass {
 		if ( $this->default['id'] ) {
 			$tablename      = $this->tablename();
 			$this->original = $wpdb->get_row(
-				"SELECT * FROM $wpdb->prefix$tablename WHERE id = {$this->default['id']}", // phpcs:ignore
+				$wpdb->prepare(
+					"SELECT * FROM $wpdb->prefix$tablename WHERE id = %d",
+					$this->default['id']
+				),
 				ARRAY_A
 			);
 			if ( ! $this->original ) {

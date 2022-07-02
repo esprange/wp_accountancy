@@ -22,6 +22,7 @@ namespace WP_Accountancy\Includes;
  * @property string date
  * @property string type
  * @property string description
+ * @property bool   tax_include
  */
 class Transaction extends Entity {
 	const SALES_INVOICE          = 'sales invoice';
@@ -52,6 +53,7 @@ class Transaction extends Entity {
 				'date'        => wp_date( 'Y-m-d' ),
 				'type'        => '',
 				'description' => '',
+				'tax_include' => true,
 			],
 			[
 				'id'          => 'int',
@@ -63,6 +65,7 @@ class Transaction extends Entity {
 				'date'        => 'string',
 				'type'        => 'string',
 				'description' => 'string',
+				'tax_include' => 'bool',
 			],
 		);
 	}
