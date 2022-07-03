@@ -11,7 +11,6 @@
 namespace WP_Accountancy\Public;
 
 use WP_Accountancy\Includes\AccountQuery;
-use WP_Accountancy\Includes\Detail;
 use WP_Accountancy\Includes\DetailQuery;
 use WP_Accountancy\Includes\JournalQuery;
 use WP_Accountancy\Includes\TaxCodeQuery;
@@ -20,7 +19,7 @@ use WP_Accountancy\Includes\Transaction;
 /**
  * The Public filters.
  */
-class JournalDisplay extends Display {
+class JournalDisplay extends TransactionDisplay {
 
 	/**
 	 * Provide the top title
@@ -32,37 +31,12 @@ class JournalDisplay extends Display {
 	}
 
 	/**
-	 * Create the journal entry.
-	 *
-	 * @return string
-	 */
-	public function create() : string {
-		return $this->read();
-	}
-
-	/**
 	 * Update the journal entry.
 	 *
 	 * @return string
 	 */
 	public function update() : string {
-		$input                = filter_input_array( INPUT_POST );
-		$journal              = new Transaction( $this->business, intval( $input['id'] ?? 0 ) );
-		$journal->date        = sanitize_text_field( $input['date'] ?? wp_date( __( 'Y/m/d', 'wpacc' ) ) );
-		$journal->description = sanitize_text_field( $input['description'] ?? '' );
-		$journal->type        = Transaction::JOURNAL_ENTRY;
-		$journal->update();
-		foreach ( $input['detail_id'] ?? [] as $index => $detail_id ) {
-			$detail               = new Detail( $journal, intval( $detail_id ) );
-			$detail->account_id   = intval( $input['detail-account_id'][ $index ] ) ?: null;
-			$detail->debit        = floatval( $input['detail-debit'][ $index ] ?? 0.0 );
-			$detail->credit       = floatval( $input['detail-credit'][ $index ] ?? 0.0 );
-			$detail->description  = sanitize_text_field( $input['detail-description'][ $index ] ?? '' );
-			$detail->taxcode_id   = intval( $input['detail-taxcode_id'][ $index ] ) ?: null;
-			$detail->order_number = $index;
-			$detail->update();
-		}
-		return $this->notify( 1, __( 'Journal entry saved', 'wpacc' ) );
+		return $this->update_transaction( Transaction::JOURNAL_ENTRY, __( 'Journal entry saved', 'wpacc' ) );
 	}
 
 	/**
@@ -71,17 +45,8 @@ class JournalDisplay extends Display {
 	 * @return string
 	 */
 	public function delete() : string {
-		$journal_id = filter_input( INPUT_POST, 'journal_id', FILTER_SANITIZE_NUMBER_INT );
-		if ( $journal_id ) {
-			$journal = new Transaction( $this->business, intval( $journal_id ) );
-			if ( $journal->delete() ) {
-				return $this->notify( - 1, __( 'Journal entry removed', 'wpacc' ) );
-			}
-			return $this->notify( 0, __( 'Remove not allowed', 'wpacc' ) );
-		}
-		return $this->notify( 0, __( 'Internal error' ) );
+		return $this->delete_transaction( __( 'Journal entry removed', 'wpacc' ) );
 	}
-
 
 	/**
 	 * Display the form
@@ -93,21 +58,25 @@ class JournalDisplay extends Display {
 		return $this->form(
 			$this->field->render(
 				[
+					'name'  => 'journal_id',
+					'type'  => 'hidden',
+					'value' => $journal->id,
+				]
+			) . $this->field->render(
+				[
 					'name'     => 'date',
 					'type'     => 'date',
 					'value'    => $journal->date,
 					'label'    => __( 'Issue date', 'wpacc' ),
 					'required' => true,
 				]
-			) .
-			$this->field->render(
+			) . $this->field->render(
 				[
 					'name'  => 'description',
 					'value' => $journal->description,
 					'label' => __( 'Description', 'wpacc' ),
 				]
-			) .
-			$this->table->render(
+			) . $this->table->render(
 				[
 					'fields'  => [
 						[
@@ -146,15 +115,7 @@ class JournalDisplay extends Display {
 					'items'   => ( new DetailQuery( $this->business, [ 'transaction_id' => $journal->id ] ) )->get_results(),
 					'options' => [ 'addrow' ],
 				]
-			) .
-			$this->field->render(
-				[
-					'name'  => 'id',
-					'type'  => 'hidden',
-					'value' => $journal->id,
-				]
-			) .
-			$this->button->save( __( 'Save', 'wpacc' ) ) .
+			) . $this->button->save( __( 'Save', 'wpacc' ) ) .
 			( $journal->id ? $this->button->delete( __( 'Delete', 'wpacc' ) ) : '' )
 		);
 	}

@@ -7,6 +7,7 @@
 
 namespace WP_Accountancy\Tests;
 
+use WP_Accountancy\Includes\Account;
 use WP_Accountancy\Includes\Detail;
 use WP_Accountancy\Includes\Transaction;
 use WP_Accountancy\Includes\DetailQuery;
@@ -25,9 +26,13 @@ class Test_Detail extends UnitTestCase {
 		$transaction = new Transaction( $this->business );
 		$transaction->update();
 
+		$account              = new Account( $this->business );
+		$account->name        = 'test-account';
+		$account_id           = $account->update();
 		$detail1              = new Detail( $transaction );
 		$detail1->description = 'test-detail';
 		$detail1->unitprice   = 543.21;
+		$detail1->account_id  = $account_id;
 		$detail_id            = $detail1->update();
 		$detail2              = new Detail( $transaction, $detail_id );
 		$this->assertEquals( get_object_vars( $detail1 ), get_object_vars( $detail2 ), 'detail store incorrect' );
@@ -43,9 +48,13 @@ class Test_Detail extends UnitTestCase {
 		$transaction = new Transaction( $this->business );
 		$transaction->update();
 
+		$account              = new Account( $this->business );
+		$account->name        = 'test-account';
+		$account_id           = $account->update();
 		$detail1              = new Detail( $transaction );
 		$detail1->description = 'test-detail';
 		$detail1->unitprice   = 543.21;
+		$detail1->account_id  = $account_id;
 		$detail_id            = $detail1->update();
 
 		$detail2           = new Detail( $transaction, $detail_id );
@@ -65,9 +74,13 @@ class Test_Detail extends UnitTestCase {
 		$transaction = new Transaction( $this->business );
 		$transaction->update();
 
+		$account              = new Account( $this->business );
+		$account->name        = 'test-account';
+		$account_id           = $account->update();
 		$detail1              = new Detail( $transaction );
 		$detail1->description = 'test-detail';
 		$detail1->unitprice   = 543.21;
+		$detail1->account_id  = $account_id;
 		$detail_id            = $detail1->update();
 
 		$detail2 = new Detail( $transaction, $detail_id );
@@ -86,9 +99,13 @@ class Test_Detail extends UnitTestCase {
 		$amount      = 5;
 		$transaction = new Transaction( $this->business );
 		$transaction->update();
+		$account       = new Account( $this->business );
+		$account->name = 'test-account';
+		$account_id    = $account->update();
 		for ( $index = 0; $index < $amount; $index++ ) {
 			$detail              = new Detail( $transaction );
 			$detail->description = "test-detail_$index";
+			$detail->account_id  = $account_id;
 			$detail->update();
 		}
 		$query = ( new DetailQuery( $this->business ) )->get_results();

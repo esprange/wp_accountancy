@@ -34,7 +34,7 @@ class Country {
 		];
 		$result  = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * from {$wpdb->prefix}wpacc_country WHERE name = %s AND language = %s",
+				"SELECT name, language, file FROM {$wpdb->prefix}wpacc_country WHERE name = %s AND language = %s",
 				$name,
 				$language
 			),

@@ -130,7 +130,7 @@ class Table {
 
 			EOT;
 			foreach ( $args->fields as $field ) {
-				$property          = substr( $field['name'], ( strrpos( $field['name'], '.' ) ?: - 1 ) + 1 );
+				$property          = substr( $field['name'], ( strrpos( $field['name'], '-' ) ?: - 1 ) + 1 );
 				$field['value']    = $item->$property;
 				$field['lstgroup'] = $item->group ?? false;
 				$field['label']    = '';

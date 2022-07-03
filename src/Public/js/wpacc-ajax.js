@@ -69,7 +69,7 @@
 			}
 		).fail(
 			function( jqXHR ) {
-				$( '#wpacc-main' ).html( jqXHR.responseJSON.message );
+				$( '#wpacc-main' ).html( '<span class="wpacc-error">' + jqXHR.statusText + '</span>' );
 			}
 		);
 	}

@@ -12,7 +12,6 @@ namespace WP_Accountancy\Public;
 
 use WP_Accountancy\Includes\AccountQuery;
 use WP_Accountancy\Includes\DebtorQuery;
-use WP_Accountancy\Includes\Detail;
 use WP_Accountancy\Includes\DetailQuery;
 use WP_Accountancy\Includes\SalesQuery;
 use WP_Accountancy\Includes\TaxCodeQuery;
@@ -21,7 +20,7 @@ use WP_Accountancy\Includes\Transaction;
 /**
  * The Sales Display class.
  */
-class SalesDisplay extends Display {
+class SalesDisplay extends TransactionDisplay {
 
 	/**
 	 * Provide the top title
@@ -33,42 +32,12 @@ class SalesDisplay extends Display {
 	}
 
 	/**
-	 * Create the sales.
-	 *
-	 * @return string
-	 */
-	public function create() : string {
-		return $this->read();
-	}
-
-	/**
 	 * Update the sales.
 	 *
 	 * @return string
 	 */
 	public function update() : string {
-		$input              = filter_input_array( INPUT_POST );
-		$sales              = new Transaction( $this->business, intval( $input['id'] ?? 0 ) );
-		$sales->actor_id    = intval( $input['actor_id'] ) ?: null;
-		$sales->reference   = sanitize_text_field( $input['reference'] ?? '' );
-		$sales->address     = sanitize_text_field( $input['address'] ?? '' );
-		$sales->invoice_id  = sanitize_text_field( $input['invoice_id'] ?? '' );
-		$sales->date        = sanitize_text_field( $input['date'] ?? wp_date( __( 'Y/m/d', 'wpacc' ) ) );
-		$sales->description = sanitize_text_field( $input['description'] ?? '' );
-		$sales->type        = Transaction::SALES_INVOICE;
-		$sales->update();
-		foreach ( $input['detail_id'] ?? [] as $index => $detail_id ) {
-			$detail               = new Detail( $sales, intval( $detail_id ) );
-			$detail->account_id   = intval( $input['detail-account_id'][ $index ] ) ?: null;
-			$detail->quantity     = floatval( $input['detail-quantity'][ $index ] ?? 1.0 );
-			$detail->unitprice    = floatval( $input['detail-unitprice'][ $index ] ?? 0.0 );
-			$detail->description  = sanitize_text_field( $input['detail-description'][ $index ] ?? '' );
-			$detail->taxcode_id   = intval( $input['detail-taxcode_id'][ $index ] ) ?: null;
-			$detail->order_number = $index;
-			$detail->credit       = $detail->unitprice * $detail->quantity;
-			$detail->update();
-		}
-		return $this->notify( 1, __( 'Sales transaction saved', 'wpacc' ) );
+		return $this->update_transaction( Transaction::SALES_INVOICE, __( 'Sales transaction saved', 'wpacc' ) );
 	}
 
 	/**
@@ -77,15 +46,7 @@ class SalesDisplay extends Display {
 	 * @return string
 	 */
 	public function delete() : string {
-		$sales_id = filter_input( INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT );
-		if ( $sales_id ) {
-			$sales = new Transaction( $this->business, intval( $sales_id ) );
-			if ( $sales->delete() ) {
-				return $this->notify( - 1, __( 'Sales transaction removed', 'wpacc' ) );
-			}
-			return $this->notify( 0, __( 'Remove not allowed', 'wpacc' ) );
-		}
-		return $this->notify( 0, __( 'Internal error' ) );
+		return $this->delete_transaction( __( 'Sales transaction removed', 'wpacc' ) );
 	}
 
 	/**
@@ -98,14 +59,19 @@ class SalesDisplay extends Display {
 		return $this->form(
 			$this->field->render(
 				[
+					'name'  => 'transaction_id',
+					'type'  => 'hidden',
+					'value' => $sales->id,
+				]
+			) . $this->field->render(
+				[
 					'name'     => 'date',
 					'type'     => 'date',
 					'value'    => $sales->date,
 					'label'    => __( 'Issue date', 'wpacc' ),
 					'required' => true,
 				]
-			) .
-			$this->field->render(
+			) . $this->field->render(
 				[
 					'name'     => 'actor_id',
 					'type'     => 'select',
@@ -114,30 +80,26 @@ class SalesDisplay extends Display {
 					'required' => true,
 					'list'     => ( new DebtorQuery( $this->business ) )->get_results(),
 				]
-			) .
-			$this->field->render(
+			) . $this->field->render(
 				[
 					'name'  => 'reference',
 					'value' => $sales->reference,
 					'label' => __( 'Reference', 'wpacc' ),
 				]
-			) .
-			$this->field->render(
+			) . $this->field->render(
 				[
 					'name'  => 'address',
 					'type'  => 'textarea',
 					'value' => $sales->address,
 					'label' => __( 'Billing address', 'wpacc' ),
 				]
-			) .
-			$this->field->render(
+			) . $this->field->render(
 				[
 					'name'  => 'description',
 					'value' => $sales->description,
 					'label' => __( 'Description', 'wpacc' ),
 				]
-			) .
-			$this->table->render(
+			) . $this->table->render(
 				[
 					'fields'  => [
 						[
@@ -177,15 +139,7 @@ class SalesDisplay extends Display {
 					'items'   => ( new DetailQuery( $this->business, [ 'transaction_id' => $sales->id ] ) )->get_results(),
 					'options' => [ 'addrow' ],
 				]
-			) .
-			$this->field->render(
-				[
-					'name'  => 'id',
-					'type'  => 'hidden',
-					'value' => $sales->id,
-				]
-			) .
-			$this->button->save( __( 'Save', 'wpacc' ) ) .
+			) . $this->button->save( __( 'Save', 'wpacc' ) ) .
 			( $sales->id ? $this->button->delete( __( 'Delete', 'wpacc' ) ) : '' )
 		);
 	}
