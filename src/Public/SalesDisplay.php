@@ -27,7 +27,7 @@ class SalesDisplay extends TransactionDisplay {
 	 *
 	 * @return string
 	 */
-	public function get_title(): string {
+	public function get_title() : string {
 		return __( 'Sales Invoices', 'wpacc' );
 	}
 

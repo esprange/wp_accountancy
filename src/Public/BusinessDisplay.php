@@ -26,7 +26,7 @@ class BusinessDisplay extends Display {
 	 *
 	 * @return string
 	 */
-	public function get_title(): string {
+	public function get_title() : string {
 		return __( 'Businesses', 'wpacc' );
 	}
 
@@ -228,7 +228,7 @@ class BusinessDisplay extends Display {
 	 *
 	 * @return void
 	 */
-	private function import(): void {
+	private function import() : void {
 		$country  = new Country( $this->business->country, $this->business->language );
 		$coa_data = file_get_contents( __DIR__ . "\..\Templates\\$country->file.json" ); // phpcs:ignore
 		if ( false === $coa_data ) {

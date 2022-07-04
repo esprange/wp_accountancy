@@ -256,6 +256,7 @@ button.wpacc-btn {
 	display: block;
 	font-weight: bold;
 	font-size: x-small;
+	margin: 6px 0;
 	padding: 3px 12px;
 	text-decoration: none;
 	text-shadow: 0 1px 0 #fff;

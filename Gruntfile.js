@@ -83,7 +83,7 @@ module.exports = function( grunt ) {
 	grunt.registerTask(
 		'versie_check',
 		'Versie mutatie in readme en plugin',
-		function (){
+		function () {
 			const pkg  = grunt.file.readJSON( 'package.json' );
 			let readme = grunt.file.read( 'readme.txt' );
 			let plugin = grunt.file.read( pkg.name + '.php' );

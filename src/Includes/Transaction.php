@@ -75,7 +75,7 @@ class Transaction extends Entity {
 	 *
 	 * @return string
 	 */
-	public function tablename(): string {
+	public function tablename() : string {
 		return 'wpacc_transaction';
 	}
 

@@ -23,7 +23,7 @@ class AssetDisplay extends Display {
 	 *
 	 * @return string
 	 */
-	public function get_title(): string {
+	public function get_title() : string {
 		return __( 'Assets', 'wpacc' );
 	}
 

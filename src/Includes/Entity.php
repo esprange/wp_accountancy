@@ -113,7 +113,7 @@ abstract class Entity extends stdClass {
 	 *
 	 * @return Generator
 	 */
-	private function get_values(): Generator {
+	private function get_values() : Generator {
 		foreach ( array_keys( $this->default ) as $property ) {
 			yield $property => $this->$property;
 		}

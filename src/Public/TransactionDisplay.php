@@ -23,28 +23,28 @@ abstract class TransactionDisplay extends Display {
 	 *
 	 * @return string
 	 */
-	abstract function update() : string;
+	abstract public function update() : string;
 
 	/**
 	 * Show the transaction form
 	 *
 	 * @return string
 	 */
-	abstract function read() : string;
+	abstract public function read() : string;
 
 	/**
 	 * Delete the transaction
 	 *
 	 * @return string
 	 */
-	abstract function delete() : string;
+	abstract public function delete() : string;
 
 	/**
 	 * Show the overview of transactions
 	 *
 	 * @return string
 	 */
-	abstract function overview() : string;
+	abstract public function overview() : string;
 
 	/**
 	 * Create the transaction.
@@ -62,7 +62,7 @@ abstract class TransactionDisplay extends Display {
 	 * @param string $notify Notification message.
 	 * @return string
 	 */
-	protected function update_transaction ( string $type, string $notify ) : string {
+	protected function update_transaction( string $type, string $notify ) : string {
 		$input                    = filter_input_array( INPUT_POST );
 		$transaction              = new Transaction( $this->business, intval( $input['transaction_id'] ?? 0 ) );
 		$transaction->actor_id    = intval( $input['actor_id'] ) ?: null;

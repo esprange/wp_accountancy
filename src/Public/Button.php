@@ -25,8 +25,13 @@ class Button {
 	 * @return string
 	 */
 	public function action( string $action, string $text, string $position = 'left' ) : string {
+		$style = match ( $position ) {
+			'left'  => 'float: left',
+			'right' => 'float: right',
+			'full'  => 'width: 100%'
+		};
 		return <<<EOT
-		<button name="wpacc_action" type="button" class="wpacc-btn" style="float: $position;" value="$action" >$text</button>
+		<button name="wpacc_action" type="button" class="wpacc-btn" style="$style;" value="$action" >$text</button>
 		EOT;
 	}
 

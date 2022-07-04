@@ -18,7 +18,7 @@ class Deactivator {
 	/**
 	 * Deactiveer de plugin.
 	 */
-	public static function deactivate(): void {
+	public static function deactivate() : void {
 	}
 
 }

@@ -107,7 +107,7 @@ class Test_Table extends UnitTestCase {
 	 *
 	 * @return void
 	 */
-	public function test_render_checkbox(): void {
+	public function test_render_checkbox() : void {
 		$table = new Table();
 		$html  = $table->render(
 			[
@@ -144,7 +144,7 @@ class Test_Table extends UnitTestCase {
 	 *
 	 * @return void
 	 */
-	public function test_render_zoom(): void {
+	public function test_render_zoom() : void {
 		$table = new Table();
 		$html  = $table->render(
 			[
@@ -181,7 +181,7 @@ class Test_Table extends UnitTestCase {
 	 *
 	 * @return void
 	 */
-	public function test_render_inputs(): void {
+	public function test_render_inputs() : void {
 		$table = new Table();
 		$html  = $table->render(
 			[

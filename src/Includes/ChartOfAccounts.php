@@ -40,7 +40,7 @@ class ChartOfAccounts {
 	 *
 	 * @return void
 	 */
-	public function add( Account $account ): void {
+	public function add( Account $account ) : void {
 		if ( false === $this->find( $account->id ) ) {
 			$this->accounts[] = $account;
 		}
@@ -53,7 +53,7 @@ class ChartOfAccounts {
 	 *
 	 * @return void
 	 */
-	public function remove( Account $account ): void {
+	public function remove( Account $account ) : void {
 		$index = $this->find( $account->id );
 		if ( false !== $index ) {
 			unset( $this->accounts[ $index ] );

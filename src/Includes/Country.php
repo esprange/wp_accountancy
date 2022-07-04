@@ -53,7 +53,7 @@ class Country {
 	 *
 	 * @return void
 	 */
-	public function insert(): void {
+	public function insert() : void {
 		global $wpdb;
 		$wpdb->query(
 			$wpdb->prepare(

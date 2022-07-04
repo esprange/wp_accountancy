@@ -27,7 +27,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	public function run(): void {
+	public function run() : void {
 		$data = get_plugin_data( WPACC_PLUGIN_PATH . 'wp-accountancy.php', false, false );
 		update_option( 'wpacc-plugin-version', $data['Version'] );
 		$database_version = intval( get_option( 'wpacc-database-version', 0 ) );
@@ -45,7 +45,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function set_options(): void {
+	private function set_options() : void {
 		$default_options = [
 			'multibusiness' => false,
 		];
@@ -75,7 +75,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	public function set_database(): void {
+	public function set_database() : void {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		$this->set_country();
 		$this->set_business();
@@ -92,7 +92,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function set_country(): void {
+	private function set_country() : void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -110,7 +110,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function set_business(): void {
+	private function set_business() : void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -134,7 +134,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function set_taxcode(): void {
+	private function set_taxcode() : void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -158,7 +158,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function set_asset(): void {
+	private function set_asset() : void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -183,7 +183,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function set_account(): void {
+	private function set_account() : void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -212,7 +212,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function set_actor(): void {
+	private function set_actor() : void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -237,7 +237,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function set_transaction(): void {
+	private function set_transaction() : void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -264,7 +264,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function set_detail(): void {
+	private function set_detail() : void {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
@@ -299,7 +299,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function foreign_key( string $table, string $parent, string $foreign = '', string $action = 'CASCADE' ): void {
+	private function foreign_key( string $table, string $parent, string $foreign = '', string $action = 'CASCADE' ) : void {
 		if ( defined( 'WPACC_TEST' ) ) {
 			return; // Phpunit creates temporary tables which don't allow foreign key constraints.
 		}
@@ -329,7 +329,7 @@ class Upgrade {
 	 *
 	 * @return void
 	 */
-	private function load_data(): void {
+	private function load_data() : void {
 		$countries_data = file_get_contents( __DIR__ . '\..\Templates\countries.json' ); // phpcs:ignore
 		if ( false === $countries_data ) {
 			trigger_error( 'Error loading countries, file cannot be opened', E_USER_ERROR ); // phpcs:ignore
@@ -349,7 +349,7 @@ class Upgrade {
 	/**
 	 * Converteer data
 	 */
-	private function migrate_data(): void {
+	private function migrate_data() : void {
 		// Currently, no action.
 	}
 

@@ -20,7 +20,7 @@ use WP_Accountancy\Includes\Business;
  * @param array|int $options   Filter opties.
  * @param bool      $add_empty Afwezige keys als null tonen.
  */
-function filter_input_array( int $type, array|int $options = FILTER_DEFAULT, bool $add_empty = true ): bool|array|null {
+function filter_input_array( int $type, array|int $options = FILTER_DEFAULT, bool $add_empty = true ) : bool|array|null {
 	// @phpcs:disable
 	if ( INPUT_GET === $type ) {
 		return filter_var_array( $_GET, $options, $add_empty);
@@ -39,7 +39,7 @@ function filter_input_array( int $type, array|int $options = FILTER_DEFAULT, boo
  *
  * @return mixed
  */
-function filter_input( int $type, string $var_name, int $filter = FILTER_DEFAULT, array|int $options = 0 ): mixed {
+function filter_input( int $type, string $var_name, int $filter = FILTER_DEFAULT, array|int $options = 0 ) : mixed {
 	// @phpcs:disable
 	if ( INPUT_GET === $type && isset( $_GET[ $var_name ] ) ) {
 		return filter_var( $_GET[ $var_name ], $filter, $options );
@@ -69,7 +69,7 @@ abstract class UnitTestCase extends WP_UnitTestCase {
 	 * Activate the plugin which includes the WP_Accountancy specific tables if not present.
 	 * Create also an initial business.
 	 */
-	public function setUp(): void {
+	public function setUp() : void {
 		parent::setUp();
 		new Accountancy();
 		$_GET  = [];
@@ -141,7 +141,7 @@ abstract class UnitTestCase extends WP_UnitTestCase {
 					 *
 					 * @return bool
 					 */
-					protected function matches( mixed $other ): bool {
+					protected function matches( mixed $other ) : bool {
 						return 0 === count( $other );
 					}
 
@@ -152,7 +152,7 @@ abstract class UnitTestCase extends WP_UnitTestCase {
 					 *
 					 * @return string
 					 */
-					protected function failureDescription( mixed $other ): string {
+					protected function failureDescription( mixed $other ) : string {
 						$this->analysis = "$this->html\n";
 						foreach ( $other as $errors ) {
 							$this->analysis .= "$errors->type $errors->message\n";
@@ -165,7 +165,7 @@ abstract class UnitTestCase extends WP_UnitTestCase {
 					 *
 					 * @return string
 					 */
-					public function toString(): string {
+					public function toString() : string {
 						return $this->analysis;
 					}
 				},

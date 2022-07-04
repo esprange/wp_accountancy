@@ -21,7 +21,7 @@ class SettingDisplay extends Display {
 	 *
 	 * @return string
 	 */
-	public function get_title(): string {
+	public function get_title() : string {
 		return __( 'Settings', 'wpacc' );
 	}
 
@@ -30,7 +30,7 @@ class SettingDisplay extends Display {
 	 *
 	 * @return string
 	 */
-	public function currency(): string {
+	public function currency() : string {
 		return 'currency';
 	}
 
@@ -39,7 +39,7 @@ class SettingDisplay extends Display {
 	 *
 	 * @return string
 	 */
-	public function taxcode(): string {
+	public function taxcode() : string {
 		$display = new TaxcodeDisplay( $this->business );
 		return $display->overview();
 	}
@@ -49,7 +49,7 @@ class SettingDisplay extends Display {
 	 *
 	 * @return string
 	 */
-	public function coa(): string {
+	public function coa() : string {
 		$display = new CoaDisplay( $this->business );
 		return $display->overview();
 	}
@@ -59,7 +59,7 @@ class SettingDisplay extends Display {
 	 *
 	 * @return string
 	 */
-	public function i18n(): string {
+	public function i18n() : string {
 		return 'i18n';
 	}
 
@@ -68,7 +68,7 @@ class SettingDisplay extends Display {
 	 *
 	 * @return string
 	 */
-	public function lock(): string {
+	public function lock() : string {
 		return 'lock';
 	}
 
@@ -101,10 +101,24 @@ class SettingDisplay extends Display {
 			],
 		];
 
-		$html = '';
+		$html[1] = '';
+		$html[2] = '';
+		$index   = 0;
 		foreach ( $settings as $action => $setting ) {
-			$html .= $this->button->action( $action, '<span class="dashicons ' . $setting['icon'] . '"></span>' . $setting['title'] ) . '<br/>';
+			$html[ 1 + $index % 2 ] .= $this->button->action( $action, '<span class="dashicons ' . $setting['icon'] . '"></span>' . $setting['title'], 'full' );
+			$index++;
 		}
+		$html = <<<EOT
+		<div class="wpacc-split">
+			<div style="grid-column: 1">
+				{$html[1]}
+			</div>
+			<div style="grid-column: 2">
+				{$html[2]}
+			</div>
+		</div>
+		EOT;
 		return $this->form( $html );
+
 	}
 }

@@ -20,7 +20,7 @@ class Activator {
 	/**
 	 * Activeer de plugin.
 	 */
-	public static function activate(): void {
+	public static function activate() : void {
 		$upgrade = new Upgrade();
 		$upgrade->run();
 	}
