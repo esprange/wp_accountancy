@@ -79,4 +79,19 @@ class Transaction extends Entity {
 		return 'wpacc_transaction';
 	}
 
+	/**
+	 * Return the details of the transaction
+	 *
+	 * @return array
+	 */
+	public function details() : array {
+		global $wpdb;
+		return $wpdb->get_results(
+			"SELECT id AS detail_id, account_id, description, quantity, unitprice, taxcode_id, debit, credit
+		FROM {$wpdb->prefix}wpacc_detail
+		WHERE transaction_id = $this->id
+		ORDER BY order_number",
+			OBJECT_K
+		);
+	}
 }

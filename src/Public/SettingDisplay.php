@@ -111,10 +111,10 @@ class SettingDisplay extends Display {
 		$html = <<<EOT
 		<div class="wpacc-split">
 			<div style="grid-column: 1">
-				{$html[1]}
+				$html[1]
 			</div>
 			<div style="grid-column: 2">
-				{$html[2]}
+				$html[2]
 			</div>
 		</div>
 		EOT;

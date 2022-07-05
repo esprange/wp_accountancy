@@ -12,7 +12,6 @@ namespace WP_Accountancy\Public;
 
 use WP_Accountancy\Includes\AccountQuery;
 use WP_Accountancy\Includes\CreditorQuery;
-use WP_Accountancy\Includes\DetailQuery;
 use WP_Accountancy\Includes\PurchaseQuery;
 use WP_Accountancy\Includes\TaxCodeQuery;
 use WP_Accountancy\Includes\Transaction;
@@ -59,7 +58,7 @@ class PurchaseDisplay extends TransactionDisplay {
 		return $this->form(
 			$this->field->render(
 				[
-					'name'  => 'id',
+					'name'  => 'transaction_id',
 					'type'  => 'hidden',
 					'value' => $purchase->id,
 				]
@@ -104,7 +103,7 @@ class PurchaseDisplay extends TransactionDisplay {
 					'fields'  => [
 						[
 							'name' => 'detail_id',
-							'type' => 'static',
+							'type' => 'hidden',
 						],
 						[
 							'name'     => 'detail-account_id',
@@ -136,7 +135,7 @@ class PurchaseDisplay extends TransactionDisplay {
 							'label' => __( 'Taxcode', 'wpacc' ),
 						],
 					],
-					'items'   => ( new DetailQuery( $this->business, [ 'transaction_id' => $purchase->id ] ) )->get_results(),
+					'items'   => $purchase->details(),
 					'options' => [ 'addrow' ],
 				]
 			) . $this->button->save( __( 'Save', 'wpacc' ) ) .

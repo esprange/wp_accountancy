@@ -32,6 +32,8 @@ class Field {
 			'list'     => [],
 			'optgroup' => false,
 			'lstgroup' => false,
+			'class'    => '',
+			'table'    => '',
 		];
 		$args           = (object) wp_parse_args( $args, $default );
 		$args->required = $args->required ? 'required' : '';
@@ -51,7 +53,7 @@ class Field {
 			'text'      => $this->render_input( $args ),
 			'select'    => $this->render_select( $args ),
 			'textarea'  => $this->render_textarea( $args ),
-			'radio',
+			'radio'     => $this->render_radio( $args ),
 			'checkbox'  => $this->render_check( $args ),
 			'zoom'      => $this->render_zoom( $args ),
 			'image'     => $this->render_image( $args ),
@@ -68,7 +70,7 @@ class Field {
 	 * @return string
 	 */
 	private function render_static( object $args ) : string {
-		return $args->lstgroup ? "<strong>$args->value</strong>" : "&nbsp;&nbsp;$args->value";
+		return $args->value;
 	}
 
 	/**
@@ -80,7 +82,7 @@ class Field {
 	 */
 	private function render_input( object $args ) : string {
 		return <<<EOT
-		<input name="$args->name" type="$args->type" value="$args->value" $args->required $args->readonly >
+		<input name="$args->name$args->table" class="$args->class" type="$args->type" value="$args->value" $args->required $args->readonly >
 		EOT;
 	}
 
@@ -94,7 +96,7 @@ class Field {
 	private function render_float( object $args ) : string {
 		$step = in_array( $args->type, [ 'float', 'currency' ], true ) ? 'step="0.01"' : '';
 		return <<<EOT
-		<input name="$args->name" type="number" value="$args->value" $step $args->required $args->readonly >
+		<input name="$args->name$args->table" class="$args->class" type="number" value="$args->value" $step $args->required $args->readonly >
 		EOT;
 	}
 
@@ -106,9 +108,11 @@ class Field {
 	 * @return string
 	 */
 	private function render_select( object $args ) : string {
-		$optgroup = '';
-		$html     = <<<EOT
-		<select name="$args->name" $args->required $args->readonly >
+		$optgroup    = '';
+		$firstoption = $args->required ? '' : '<option></option>';
+		$html        = <<<EOT
+		<select name="$args->name$args->table" $args->required $args->readonly >
+		$firstoption
 		EOT;
 		foreach ( $args->list as $option_id => $option ) {
 			$selected = selected( $args->value, $option_id, false );
@@ -152,22 +156,36 @@ class Field {
 	 */
 	private function render_textarea( object $args ) : string {
 		return <<<EOT
-		<textarea name="$args->name" $args->required $args->readonly >$args->value</textarea>
+		<textarea name="$args->name$args->table" $args->required $args->readonly >$args->value</textarea>
 		EOT;
 	}
 
 	/**
-	 * Render a radio or checkbox element
+	 * Render a radio element
+	 *
+	 * @param object $args Field definition.
+	 *
+	 * @return string
+	 */
+	private function render_radio( object $args ) : string {
+		$value   = strtok( $args->value, '|' );
+		$checked = checked( strtok( '|' ), true, false );
+		return <<<EOT
+		<input name="$args->name" type="$args->type" value="$value" $checked $args->required $args->readonly >
+		EOT;
+	}
+
+	/**
+	 * Render a checkbox element
 	 *
 	 * @param object $args Field definition.
 	 *
 	 * @return string
 	 */
 	private function render_check( object $args ) : string {
-		$value   = strtok( $args->value, '|' );
-		$checked = checked( strtok( '|' ), true, false );
+		$checked = checked( $args->value, true, false );
 		return <<<EOT
-		<input name="$args->name" type="$args->type" value="$value" $checked $args->required $args->readonly >
+		<input name="$args->name$args->table" type="$args->type" $checked $args->required $args->readonly >
 		EOT;
 	}
 
@@ -201,7 +219,7 @@ class Field {
 		$img    = $args->value ?: plugin_dir_url( __FILE__ ) . '/../images/1x1-transparant.png';
 		$img_id = 'wpacc_img_' . wp_rand();
 		return <<<EOT
-		<input name="$args->name" type="file" class="wpacc-image" accept="image/png, image/jpeg" $args->required $args->readonly >
+		<input name="$args->name$args->table" type="file" class="wpacc-image" accept="image/png, image/jpeg" $args->required $args->readonly >
 		<img src="$img" id="{$img_id}img" alt="$alt" width="100" height="100" />
 		EOT;
 	}

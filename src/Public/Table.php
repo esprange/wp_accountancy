@@ -32,6 +32,7 @@ class Table {
 	 *          addrow:   add am add row button below the table, the table starts with an empty row
 	 *          create*:  add a button on top to create a new item in the list
 	 *          select:   first field is a checkbox that can be used to select a row, if not set, first field is hidden
+	 *          totals:   add totals to the colums
 	 *
 	 * @param array $args The table data.
 	 * @return string The html text to render the table.
@@ -134,7 +135,8 @@ class Table {
 				$field['value']    = $item->$property;
 				$field['lstgroup'] = $item->group ?? false;
 				$field['label']    = '';
-				$field['name']    .= in_array( $field['type'], [ 'radio', 'checkbox' ], true ) ? '' : '[]';
+				$field['class']    = in_array( $field['name'], $args->options['totals'] ?? [], true ) ? "wpacc-total-{$field['name']}" : '';
+				$field['table']    = '[]';
 				$html             .= '<td>' . ( new Field() )->render( $field ) . "</td>\n";
 			}
 			$html .= <<<EOT
@@ -150,7 +152,6 @@ class Table {
 			foreach ( $args->fields as $field ) {
 				$field['value'] = '';
 				$field['label'] = '';
-				$field['name'] .= in_array( $field['type'], [ 'radio', 'checkbox' ], true ) ? '' : '[]';
 				$html          .= '<td>' . ( new Field() )->render( $field ) . "</td>\n";
 			}
 			$html .= <<<EOT
@@ -173,9 +174,17 @@ class Table {
 	 * @return string
 	 */
 	private function render_table_foot( object $args ) : string {
-		$html = '</table>';
-		if ( in_array( 'addrow', $args->options, true ) ) {
-			$html .= '<button type="button" class="wpacc-btn wpacc-add-row" value="addrow" >+</button><br/>';
+		$html = '';
+		if ( isset( $args->options['totals'] ) ) {
+			$html = '<tfoot><tr>';
+			foreach ( $args->fields as $field ) {
+				$html .= '<td>' . ( in_array( $field['name'], $args->options['totals'], true ) ? '<span class="wpacc-sum-' . $field['name'] . '"></span>' : '' ) . '</td>';
+			}
+			$html .= '</tr></tfoot>';
+		}
+		$html .= '</table>';
+		if ( isset( $args->options['addrow'] ) ) {
+			$html .= '<button type="button" class="wpacc-btn wpacc-add-row" value="addrow" ><span class="dashicons dashicons-plus"></span></button><br/>';
 		}
 		return $html;
 	}

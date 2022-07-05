@@ -27,7 +27,7 @@ class Actions {
 	public function load_script() : void {
 		$dev = 'development' === wp_get_environment_type() ? '' : '.min';
 		wp_register_style( 'wpacc', plugin_dir_url( __FILE__ ) . "/css/wpacc$dev.css", [], version() );
-		wp_register_script( 'wpacc', plugin_dir_url( __FILE__ ) . "/js/wpacc-ajax$dev.js", [ 'jquery' ], version(), true );
+		wp_register_script( 'wpacc', plugin_dir_url( __FILE__ ) . "/js/wpacc$dev.js", [ 'jquery' ], version(), true );
 	}
 
 	/**

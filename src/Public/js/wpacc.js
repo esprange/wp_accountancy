@@ -1,5 +1,5 @@
 /**
- * WPACC javascript functions for forms.
+ * WPACC javascript functions.
  *
  * @author Eric Sprangers.
  * @since  1.0.0
@@ -18,6 +18,7 @@
 	 * Actions after document ready or ajax ready
 	 */
 	function onload() {
+		$( 'input[class^=wpacc-total-]' ).trigger( 'change' );
 	}
 
 	/**
@@ -25,7 +26,7 @@
 	 *
 	 * @param {array} params
 	 */
-	function doAjaxForm( params = [] ) {
+	function doForm( params = [] ) {
 		const form     = document.getElementById( 'wpacc-form' );
 		const formData = new FormData( form );
 		/**
@@ -59,40 +60,26 @@
 				url:         wpaccData.ajaxurl,
 				processData: false,
 				contentType: false,
-			}
-		).done(
-			function ( response ) {
-				if ( '' !== response.data ) {
-					$( '#wpacc-main' ).html( response.data.main );
-					$( '#wpacc-business' ).html( response.data.business );
-				}
-			}
-		).fail(
-			function( jqXHR ) {
-				$( '#wpacc-main' ).html( '<span class="wpacc-error">' + jqXHR.statusText + '</span>' );
-			}
-		);
-	}
-
-	/**
-	 * Perform Ajax menu call.
-	 *
-	 * @param {string} menu
-	 */
-	function doAjaxMenu( menu ) {
-		$.ajax(
-			{
-				data: {
-					'action':       'wpacc_menuhandler',
-					'menu':         menu,
-				},
-				type:        'GET',
-				url:         wpaccData.ajaxurl,
-			}
-		).done(
-			function ( response ) {
-				$( '#wpacc-main' ).html( response.data.main );
-				$( '#wpacc-business' ).html( response.data.business );
+				dataType:    'json',
+				beforeSend:
+					function() {
+						$( document ).css( 'cursor', 'wait' );
+					},
+				success:
+					function ( response ) {
+						if ('' !== response.data) {
+							$( '#wpacc-main' ).html( response.data.main );
+							$( '#wpacc-business' ).html( response.data.business );
+						}
+					},
+				error:
+					function( jqXHR ) {
+						$( '#wpacc-main' ).html( '<span class="wpacc-error">' + jqXHR.statusText + '</span>' );
+					},
+				complete:
+					function() {
+						$( document ).css( 'cursor', 'default' );
+					}
 			}
 		);
 	}
@@ -111,17 +98,33 @@
 	 */
 	$(
 		function() {
+			onload();
+
 			/**
-			 * Events for the menu sections.
+			 * Main menu event.
 			 */
 			$( 'a[data-menu]' ).on(
 				'click',
 				function() {
 					$( '.wpacc-menu a' ).removeClass( 'wpacc-menu-selected' );
 					$( this ).addClass( 'wpacc-menu-selected' );
-					doAjaxMenu( $( this ).data( 'menu' ) );
+					$.get(
+						wpaccData.ajaxurl,
+						{
+							'action': 'wpacc_menuhandler',
+							'menu': $( this ).data( 'menu' ),
+						},
+						function (response) {
+							$( '#wpacc-main' ).html( response.data.main );
+							$( '#wpacc-business' ).html( response.data.business );
+						},
+					);
 				}
 			);
+
+			/**
+			 * Business select menu
+			 */
 			$( '#wpacc-menu-dropdown' ).on(
 				'click',
 				function( e ) {
@@ -129,6 +132,10 @@
 					e.preventDefault();
 				}
 			);
+
+			/**
+			 * Make the main menu responsive
+			 */
 			$( window ).on(
 				'resize',
 				function() {
@@ -149,22 +156,25 @@
 				'click',
 				'button[name=wpacc_action]',
 				function( e ) {
-					doAjaxForm( [ { wpacc_action: $( this ).val() } ] );
+					doForm( [ { wpacc_action: $( this ).val() } ] );
 					e.preventDefault();
 				}
 			)
 			/**
-			 * An anchor is clicked
+			 * A zoom anchor is clicked
 			 */
 			.on(
 				'click',
 				'a.wpacc-zoom',
 				function( e ) {
 					let id = $( this ). closest( 'tr' ). children( 'td:first' ).text();
-					doAjaxForm( [ { wpacc_action: 'read' }, { id: id } ] );
+					doForm( [ { wpacc_action: 'read' }, { id: id } ] );
 					e.preventDefault();
 				}
 			)
+			/**
+			 * An add row button is clicked
+			 */
 			.on(
 				'click',
 				'button.wpacc-add-row',
@@ -179,6 +189,9 @@
 					e.preventDefault();
 				}
 			)
+			/**
+			 * An image is selected, show the preview
+			 */
 			.on(
 				'change',
 				'input.wpacc-image',
@@ -192,6 +205,20 @@
 						}
 						reader.readAsDataURL( file );
 					}
+				}
+			)
+			.on(
+				'change',
+				'input[class^=wpacc-total-]',
+				function() {
+					let sum  = 0.0,
+						name = this.name;
+					$( "[name='" + name + "']" ).each(
+						function() {
+							sum += parseFloat( $( this ).val() );
+						}
+					);
+					$( '.wpacc-sum-' + name.replace( '[]', '' ) ).html( sum );
 				}
 			);
 		}

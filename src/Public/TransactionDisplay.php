@@ -65,7 +65,7 @@ abstract class TransactionDisplay extends Display {
 	protected function update_transaction( string $type, string $notify ) : string {
 		$input                    = filter_input_array( INPUT_POST );
 		$transaction              = new Transaction( $this->business, intval( $input['transaction_id'] ?? 0 ) );
-		$transaction->actor_id    = intval( $input['actor_id'] ) ?: null;
+		$transaction->actor_id    = intval( $input['actor_id'] ?? 0 ) ?: null;
 		$transaction->reference   = sanitize_text_field( $input['reference'] ?? '' );
 		$transaction->address     = sanitize_text_field( $input['address'] ?? '' );
 		$transaction->invoice_id  = sanitize_text_field( $input['invoice_id'] ?? '' );
@@ -75,11 +75,11 @@ abstract class TransactionDisplay extends Display {
 		$transaction->update();
 		foreach ( $input['detail_id'] ?? [] as $index => $detail_id ) {
 			$detail               = new Detail( $transaction, intval( $detail_id ) );
-			$detail->account_id   = intval( $input['detail-account_id'][ $index ] ) ?: null;
+			$detail->account_id   = intval( $input['detail-account_id'][ $index ] ?? 0 ) ?: null;
 			$detail->quantity     = floatval( $input['detail-quantity'][ $index ] ?? 1.0 );
 			$detail->unitprice    = floatval( $input['detail-unitprice'][ $index ] ?? 0.0 );
 			$detail->description  = sanitize_text_field( $input['detail-description'][ $index ] ?? '' );
-			$detail->taxcode_id   = intval( $input['detail-taxcode_id'][ $index ] ) ?: null;
+			$detail->taxcode_id   = intval( $input['detail-taxcode_id'][ $index ] ?? 0 ) ?: null;
 			$detail->order_number = $index;
 			switch ( $type ) {
 				case Transaction::JOURNAL_ENTRY:

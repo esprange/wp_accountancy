@@ -12,7 +12,6 @@ namespace WP_Accountancy\Public;
 
 use WP_Accountancy\Includes\AccountQuery;
 use WP_Accountancy\Includes\DebtorQuery;
-use WP_Accountancy\Includes\DetailQuery;
 use WP_Accountancy\Includes\SalesQuery;
 use WP_Accountancy\Includes\TaxCodeQuery;
 use WP_Accountancy\Includes\Transaction;
@@ -136,7 +135,7 @@ class SalesDisplay extends TransactionDisplay {
 							'label' => __( 'Taxcode', 'wpacc' ),
 						],
 					],
-					'items'   => ( new DetailQuery( $this->business, [ 'transaction_id' => $sales->id ] ) )->get_results(),
+					'items'   => $sales->details(),
 					'options' => [ 'addrow' ],
 				]
 			) . $this->button->save( __( 'Save', 'wpacc' ) ) .

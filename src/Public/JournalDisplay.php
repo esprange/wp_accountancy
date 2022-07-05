@@ -11,7 +11,6 @@
 namespace WP_Accountancy\Public;
 
 use WP_Accountancy\Includes\AccountQuery;
-use WP_Accountancy\Includes\DetailQuery;
 use WP_Accountancy\Includes\JournalQuery;
 use WP_Accountancy\Includes\TaxCodeQuery;
 use WP_Accountancy\Includes\Transaction;
@@ -58,7 +57,7 @@ class JournalDisplay extends TransactionDisplay {
 		return $this->form(
 			$this->field->render(
 				[
-					'name'  => 'journal_id',
+					'name'  => 'transaction_id',
 					'type'  => 'hidden',
 					'value' => $journal->id,
 				]
@@ -112,8 +111,14 @@ class JournalDisplay extends TransactionDisplay {
 							'label' => __( 'Taxcode', 'wpacc' ),
 						],
 					],
-					'items'   => ( new DetailQuery( $this->business, [ 'transaction_id' => $journal->id ] ) )->get_results(),
-					'options' => [ 'addrow' ],
+					'items'   => $journal->details(),
+					'options' => [
+						'addrow',
+						'totals' => [
+							'detail-debit',
+							'detail-credit',
+						],
+					],
 				]
 			) . $this->button->save( __( 'Save', 'wpacc' ) ) .
 			( $journal->id ? $this->button->delete( __( 'Delete', 'wpacc' ) ) : '' )

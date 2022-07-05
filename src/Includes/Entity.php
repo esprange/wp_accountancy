@@ -64,10 +64,12 @@ abstract class Entity extends stdClass {
 	 */
 	final public function update() : int {
 		global $wpdb;
-		$wpdb->replace(
-			$wpdb->prefix . $this->tablename(),
-			iterator_to_array( $this->get_values() )
-		);
+		$row = iterator_to_array( $this->get_values() );
+		if ( $this->id ) {
+			$wpdb->update( $wpdb->prefix . $this->tablename(), $row, [ 'id' => $this->id ] );
+			return $this->id;
+		}
+		$wpdb->insert( $wpdb->prefix . $this->tablename(), $row );
 		$this->id = $wpdb->insert_id;
 		return $this->id;
 	}
