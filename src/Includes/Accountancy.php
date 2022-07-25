@@ -121,7 +121,6 @@ class Accountancy {
 	private function define_admin_hooks() : void {
 		$plugin_actions = new \WP_Accountancy\Admin\Actions();
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_actions, 'enqueue_scripts_and_styles' );
 		$this->loader->add_action( 'admin_init', $plugin_actions, 'initialize' );
 		$this->loader->add_action( 'admin_menu', $plugin_actions, 'add_plugin_admin_menu' );
 	}

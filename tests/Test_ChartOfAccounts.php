@@ -28,7 +28,7 @@ class Test_ChartOfAccounts extends UnitTestCase {
 		$business->language = 'dutch';
 		$business->update();
 
-		$chartofaccounts = new ChartOfAccounts( $this->business );
+		new ChartOfAccounts( $this->business );
 
 		$this->assertTrue( true, 'Dummy test Coa' );
 	}

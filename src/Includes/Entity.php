@@ -89,7 +89,8 @@ abstract class Entity extends stdClass {
 			$tablename      = $this->tablename();
 			$this->original = $wpdb->get_row(
 				$wpdb->prepare(
-					"SELECT * FROM $wpdb->prefix$tablename WHERE id = %d",
+					"# noinspection SqlResolve
+					SELECT * FROM $wpdb->prefix$tablename WHERE id = %d",
 					$this->default['id']
 				),
 				ARRAY_A

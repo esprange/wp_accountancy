@@ -2,26 +2,31 @@
   {
     "country": "United Kingdom",
     "language": "english",
-    "file": "UK-english"
+    "file": "UK-english",
+    "currency": "GBP"
   },
   {
     "country": "United States",
     "language": "english",
-    "file": "US-english"
+    "file": "US-english",
+    "currency": "USD"
   },
   {
     "country": "Nederland",
     "language": "dutch",
-    "file": "NL-dutch"
+    "file": "NL-dutch",
+    "currency": "EUR"
   },
   {
     "country": "Belgium",
     "language": "dutch",
-    "file": "BE-dutch"
+    "file": "BE-dutch",
+    "currency": "EUR"
   },
   {
     "country": "Belgium",
     "language": "french",
-    "file": "BE-french"
+    "file": "BE-french",
+    "currency": "EUR"
   }
 ]

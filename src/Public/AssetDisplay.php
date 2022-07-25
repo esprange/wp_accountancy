@@ -144,13 +144,15 @@ class AssetDisplay extends Display {
 				[
 					'fields'  => [
 						[
-							'name'  => 'asset_id',
-							'type'  => 'static',
-							'label' => '',
+							'name'   => 'asset_id',
+							'type'   => 'number',
+							'static' => true,
+							'label'  => '',
 						],
 						[
 							'name'  => 'name',
-							'type'  => 'zoom',
+							'type'  => 'text',
+							'zoom'  => true,
 							'label' => __(
 								'Name',
 								'wpacc'

@@ -137,17 +137,19 @@ class CreditorDisplay extends Display {
 	 */
 	public function overview() : string {
 		return $this->form(
-			( new Table() )->render(
+			( new Table( $this->business ) )->render(
 				[
 					'fields'  => [
 						[
-							'name'  => 'actor_id',
-							'type'  => 'static',
-							'label' => '',
+							'name'   => 'actor_id',
+							'type'   => 'number',
+							'static' => true,
+							'label'  => '',
 						],
 						[
 							'name'  => 'name',
-							'type'  => 'zoom',
+							'type'  => 'text',
+							'zoom'  => true,
 							'label' => __(
 								'Name',
 								'wpacc'

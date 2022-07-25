@@ -59,24 +59,28 @@ class SummaryDisplay extends Display {
 			[
 				'from'  => $this->from,
 				'until' => $this->until,
+				'query' => 'summary',
 			]
 		) )->get_results();
-
-		ob_start();
-		?>
+		$assets        = $this->list( Account::ASSETS_ITEM, __( 'Assets', 'wpacc' ) );
+		$liabilities   = $this->list( Account::LIABILITY_ITEM, __( 'Liabilities', 'wpacc' ) );
+		$equity        = $this->list( Account::EQUITY_ITEM, __( 'Equity', 'wpacc' ) );
+		$income        = $this->list( Account::INCOME_ITEM, __( 'Income', 'wpacc' ) );
+		$expense       = $this->list( Account::EXPENSE_ITEM, __( 'Expenses', 'wpacc' ) );
+		$html          = <<<EOT
 		<div class="wpacc-split">
 			<div style="grid-column:1;" >
-				<?php $this->list( Account::ASSETS_ITEM, __( 'Assets', 'wpacc' ) ); ?>
-				<?php $this->list( Account::LIABILITY_ITEM, __( 'Liabilities', 'wpacc' ) ); ?>
-				<?php $this->list( Account::EQUITY_ITEM, __( 'Equity', 'wpacc' ) ); ?>
+				$assets
+				$liabilities
+				$equity
 			</div>
 			<div style="grid-column:2;" >
-				<?php $this->list( Account::INCOME_ITEM, __( 'Income', 'wpacc' ) ); ?>
-				<?php $this->list( Account::EXPENSE_ITEM, __( 'Expenses', 'wpacc' ) ); ?>
+				$income
+				$expense
 			</div>
 		</div>
-		<?php
-		return ob_get_clean() . $this->form( $this->button->action( 'change', __( 'Change', 'wpacc' ) ) );
+		EOT;
+		return $html . $this->form( $this->button->action( 'change', __( 'Change', 'wpacc' ) ) );
 	}
 
 	/**
@@ -99,10 +103,63 @@ class SummaryDisplay extends Display {
 	 * @return string
 	 */
 	public function read() : string {
-		ob_start();
-		?>
-		<?php
-		return ob_get_clean();
+		$account = new Account( $this->business, intval( filter_input( INPUT_GET, 'id' ) ?? 0 ) );
+		$list    = ( new ChartOfAccountsQuery(
+			$this->business,
+			[
+				'from'       => $this->from,
+				'until'      => $this->until,
+				'account_id' => $account->id,
+			]
+		) )->get_results();
+		return $this->table->render(
+			[
+				'fields' => [
+					[
+						'name' => 'transaction_id',
+						'type' => 'hidden',
+					],
+					[
+						'name'   => 'date',
+						'type'   => 'date',
+						'static' => true,
+						'label'  => __( 'Date', 'wpacc' ),
+					],
+					[
+						'name'   => 'transaction',
+						'type'   => 'text',
+						'static' => true,
+						'label'  => __( 'Transaction', 'wpacc' ),
+
+					],
+					[
+						'name'   => 'actor',
+						'type'   => Account::EXPENSE_ITEM === $account->type || Account::INCOME_ITEM === $account->type ? 'text' : 'hidden',
+						'static' => true,
+						'label'  => Account::EXPENSE_ITEM === $account->type ? __( 'Supplier', 'wpacc' ) : __( 'Customer', 'wpacc' ),
+					],
+					[
+						'name'   => 'description',
+						'type'   => 'text',
+						'static' => true,
+						'label'  => __( 'Description', 'wpacc' ),
+					],
+					[
+						'name'   => 'debit',
+						'type'   => 'currency',
+						'static' => true,
+						'label'  => __( 'Debit', 'wpacc' ),
+					],
+					[
+						'name'   => 'credit',
+						'type'   => 'currency',
+						'static' => true,
+						'label'  => __( 'Credit', 'wpacc' ),
+					],
+				],
+				'items'  => $list,
+			]
+		);
 	}
 
 	/**
@@ -111,28 +168,37 @@ class SummaryDisplay extends Display {
 	 * @param string $type  Type of accounts to show.
 	 * @param string $title The contents of the header.
 	 */
-	private function list( string $type, string $title ) {
+	private function list( string $type, string $title ) : string {
 		$list = array_filter(
 			$this->summary,
 			function( $list_item ) use ( $type ) {
 				return $type === $list_item->type;
 			}
 		);
-		?>
-		<span style="font-size: large"><?php echo esc_html( $title ); ?></span>
+		$sum  = 0.0;
+		$html = <<<EOT
+		<span style="font-size: large">$title</span>
 		<ul style="list-style-type: none;">
-		<?php foreach ( $list as $list_item ) : ?>
-			<li>
-				<?php echo esc_html( $list_item->name ); ?>
-				<span style="float:right;"><a href="<?php echo esc_url( sprintf( '?wpacc_action=read&id=%d', $list_item->id ) ); ?>"><?php echo esc_html( number_format_i18n( $list_item->value ?? 0, 2 ) ); ?></a></span>
+		EOT;
+		foreach ( $list as $list_item ) {
+			$sum  += $list_item->value ?? 0.0;
+			$value = number_format_i18n( $list_item->value ?? 0, 2 );
+			$html .= <<<EOT
+			<li>$list_item->name
+				<span style="float:right;"><a href="?wpacc_action=read&id=$list_item->account_id">$value</a></span>
 			</li>
-		<?php endforeach; ?>
+			EOT;
+		}
+		$total_label = __( 'Total', 'wpacc' );
+		$total_value = number_format_i18n( $sum, 2 );
+		$html       .= <<<EOT
 			<li>
-				<strong><?php esc_html_e( 'Total', 'wpacc' ); ?>
-				<span style="float:right;"><?php echo esc_html( number_format_i18n( $list_item->value ?? 0, 2 ) ); ?></span>
+				<strong>$total_label
+				<span style="float:right;">$total_value</span>
 				</strong>
 			</li>
 		</ul>
-		<?php
+		EOT;
+		return $html;
 	}
 }

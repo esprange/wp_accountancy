@@ -136,14 +136,16 @@ class TaxcodeDisplay extends Display {
 				[
 					'fields'  => [
 						[
-							'name'  => 'taxcode_id',
-							'label' => 'id',
-							'type'  => 'static',
+							'name'   => 'taxcode_id',
+							'label'  => 'id',
+							'type'   => 'number',
+							'static' => true,
 						],
 						[
 							'name'  => 'name',
 							'label' => __( 'Name', 'wpacc' ),
-							'type'  => 'zoom',
+							'type'  => 'text',
+							'zoom'  => true,
 						],
 					],
 					'items'   => $taxcodes->get_results(),

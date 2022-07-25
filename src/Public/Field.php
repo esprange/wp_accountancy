@@ -10,10 +10,34 @@
 
 namespace WP_Accountancy\Public;
 
+use WP_Accountancy\Includes\Business;
 /**
  * The Forms class.
  */
 class Field {
+
+	/**
+	 * Settings for fields.
+	 *
+	 * @var object
+	 */
+	private object $business;
+
+	/**
+	 * Assign a unique field number to a field
+	 *
+	 * @var int $field_id Unique field number.
+	 */
+	private static int $field_id = 0;
+
+	/**
+	 * Contructor
+	 *
+	 * @param Business $business The business settings.
+	 */
+	public function __construct( Business $business ) {
+		$this->business = $business;
+	}
 
 	/**
 	 * Render a field
@@ -25,27 +49,31 @@ class Field {
 	public function render( array $args ) : string {
 		$default        = [
 			'required' => false,
-			'readonly' => false,
 			'type'     => 'text',
 			'label'    => '',
 			'value'    => null,
 			'list'     => [],
 			'optgroup' => false,
 			'lstgroup' => false,
+			'static'   => false,
+			'zoom'     => false,
+			'total'    => false,
 			'class'    => '',
 			'table'    => '',
+			'unit'     => '',
 		];
 		$args           = (object) wp_parse_args( $args, $default );
 		$args->required = $args->required ? 'required' : '';
-		$args->readonly = $args->readonly ? 'readonly' : '';
-		$html           = '';
-		if ( $args->label ) {
-			$html = "<label >$args->label";
-		}
-		$html .= match ( $args->type ) {
-			'static'    => $this->render_static( $args ),
-			'float',
-			'currency'  => $this->render_float( $args ),
+		$args->readonly = wp_readonly( $args->total, true, false );
+		$args->class   .= " wpacc-type-$args->type";
+		$args->unit     = $args->unit ? "<span>$args->unit</span>" : '';
+		$args->static   = $args->static ?: $args->zoom;
+		$args->field_id = self::$field_id;
+		self::$field_id++;
+		return ( $args->label ? "<label >$args->label</label>" : '' ) .
+		match ( $args->type ) {
+			'float'     => $this->render_float( $args ),
+			'currency'  => $this->render_currency( $args ),
 			'number',
 			'date',
 			'email',
@@ -55,11 +83,8 @@ class Field {
 			'textarea'  => $this->render_textarea( $args ),
 			'radio'     => $this->render_radio( $args ),
 			'checkbox'  => $this->render_check( $args ),
-			'zoom'      => $this->render_zoom( $args ),
 			'image'     => $this->render_image( $args ),
 		};
-		$html .= $args->label ? '</label>' : '';
-		return $html;
 	}
 
 	/**
@@ -70,7 +95,28 @@ class Field {
 	 * @return string
 	 */
 	private function render_static( object $args ) : string {
-		return $args->value;
+		if ( $args->zoom ) {
+			if ( $args->lstgroup ) {
+				return <<<EOT
+				<div class="wpacc-field">
+					$args->unit
+					<strong><a class="$args->class wpacc-zoom" >$args->value</a></strong>
+				</div>
+				EOT;
+			}
+			return <<<EOT
+				<div class="wpacc-field">
+					$args->unit
+					&nbsp;&nbsp;<a class="$args->class wpacc-zoom" >$args->value</a>
+				</div>
+				EOT;
+		}
+		return <<<EOT
+		<div class="wpacc-field">
+			$args->unit
+			$args->value
+		</div>
+		EOT;
 	}
 
 	/**
@@ -81,8 +127,14 @@ class Field {
 	 * @return string
 	 */
 	private function render_input( object $args ) : string {
+		if ( $args->static ) {
+			return $this->render_static( $args );
+		}
 		return <<<EOT
-		<input name="$args->name$args->table" class="$args->class" type="$args->type" value="$args->value" $args->required $args->readonly >
+		<div class="wpacc-field">
+			$args->unit
+			<input name="$args->name$args->table" id="wpacc-$args->field_id" class="$args->class" type="$args->type" value="$args->value" $args->required $args->readonly >
+		</div>
 		EOT;
 	}
 
@@ -94,10 +146,29 @@ class Field {
 	 * @return string
 	 */
 	private function render_float( object $args ) : string {
-		$step = in_array( $args->type, [ 'float', 'currency' ], true ) ? 'step="0.01"' : '';
+		if ( $args->static ) {
+			$args->value = number_format( (float) $args->value, $this->business->decimals, $this->business->decimalsep, $this->business->thousandsep );
+			return $this->render_static( $args );
+		}
 		return <<<EOT
-		<input name="$args->name$args->table" class="$args->class" type="number" value="$args->value" $step $args->required $args->readonly >
+		<div class="wpacc-field">
+			$args->unit
+			<input name="$args->name$args->table" id="wpacc-$args->field_id" class="$args->class" type="text" value="$args->value" inputmode="numeric" $args->required $args->readonly >
+		</div>
 		EOT;
+	}
+
+	/**
+	 * Render an input currency element
+	 *
+	 * @param object $args Field definition.
+	 *
+	 * @return string
+	 */
+	private function render_currency( object $args ) : string {
+//		$args->value = number_format( (float) $args->value, $this->business->decimals, $this->business->decimalsep, $this->business->thousandsep );
+		$args->unit  = $this->business->currency;
+		return $this->render_float( $args );
 	}
 
 	/**
@@ -109,10 +180,11 @@ class Field {
 	 */
 	private function render_select( object $args ) : string {
 		$optgroup    = '';
-		$firstoption = $args->required ? '' : '<option></option>';
+		$firstoption = $args->required ? '' : '<option value="">&nbsp;</option>';
 		$html        = <<<EOT
-		<select name="$args->name$args->table" $args->required $args->readonly >
-		$firstoption
+		<div class="wpacc-field">
+			<select name="$args->name$args->table" id="wpacc-$args->field_id" class="$args->class" $args->required $args->readonly >
+			$firstoption
 		EOT;
 		foreach ( $args->list as $option_id => $option ) {
 			$selected = selected( $args->value, $option_id, false );
@@ -123,26 +195,27 @@ class Field {
 				if ( $group !== $optgroup ) {
 					if ( $optgroup ) {
 						$html .= <<<EOT
-			</optgroup>
+				</optgroup>
 		EOT;
 					}
 					$optgroup = $group;
 					$html    .= <<<EOT
-			<optgroup label = "$group">
+				<optgroup label = "$group">
 		EOT;
 				}
 			}
 			$html .= <<<EOT
-			<option value="$option_id" $selected >$name</option>
+				<option value="$option_id" $selected >$name</option>
 		EOT;
 		}
 		if ( $args->optgroup ) {
 			$html .= <<<EOT
-			</optgroup>
+				</optgroup>
 		EOT;
 		}
 		$html .= <<<EOT
-		</select>
+			</select>
+		</div>
 		EOT;
 		return $html;
 	}
@@ -156,7 +229,7 @@ class Field {
 	 */
 	private function render_textarea( object $args ) : string {
 		return <<<EOT
-		<textarea name="$args->name$args->table" $args->required $args->readonly >$args->value</textarea>
+		<textarea name="$args->name$args->table" id="wpacc-$args->field_id" class="$args->class" $args->required $args->readonly >$args->value</textarea>
 		EOT;
 	}
 
@@ -171,7 +244,7 @@ class Field {
 		$value   = strtok( $args->value, '|' );
 		$checked = checked( strtok( '|' ), true, false );
 		return <<<EOT
-		<input name="$args->name" type="$args->type" value="$value" $checked $args->required $args->readonly >
+		<input name="$args->name" id="wpacc-$args->field_id" type="$args->type" class="$args->class" value="$value" $checked $args->required $args->readonly >
 		EOT;
 	}
 
@@ -185,25 +258,7 @@ class Field {
 	private function render_check( object $args ) : string {
 		$checked = checked( $args->value, true, false );
 		return <<<EOT
-		<input name="$args->name$args->table" type="$args->type" $checked $args->required $args->readonly >
-		EOT;
-	}
-
-	/**
-	 * Render an anchor element
-	 *
-	 * @param object $args Field definition.
-	 *
-	 * @return string
-	 */
-	private function render_zoom( object $args ) : string {
-		return $args->lstgroup ?
-		<<<EOT
-		<strong><a class="wpacc-zoom" >$args->value</a></strong>
-		EOT
-		:
-		<<<EOT
-		&nbsp;&nbsp;<a class="wpacc-zoom" >$args->value</a>
+		<input name="$args->name$args->table" id="wpacc-$args->field_id" type="$args->type" class="$args->class" $checked $args->required $args->readonly >
 		EOT;
 	}
 
@@ -215,12 +270,11 @@ class Field {
 	 * @return string
 	 */
 	private function render_image( object $args ) : string {
-		$alt    = __( 'Your image', 'wpacc' );
 		$img    = $args->value ?: plugin_dir_url( __FILE__ ) . '/../images/1x1-transparant.png';
 		$img_id = 'wpacc_img_' . wp_rand();
 		return <<<EOT
-		<input name="$args->name$args->table" type="file" class="wpacc-image" accept="image/png, image/jpeg" $args->required $args->readonly >
-		<img src="$img" id="{$img_id}img" alt="$alt" width="100" height="100" />
+		<input name="$args->name$args->table" id="wpacc-$args->field_id" type="file" class="$args->class" accept="image/png, image/jpeg" $args->required $args->readonly >
+		<img src="$img" id="{$img_id}img" width="100" height="100" alt=""/>
 		EOT;
 	}
 }

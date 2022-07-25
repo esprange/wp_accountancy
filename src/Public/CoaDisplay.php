@@ -256,14 +256,16 @@ class CoaDisplay extends Display {
 				[
 					'fields' => [
 						[
-							'name'  => 'account_id',
-							'label' => 'id',
-							'type'  => 'static',
+							'name'   => 'account_id',
+							'label'  => 'id',
+							'type'   => 'number',
+							'static' => true,
 						],
 						[
 							'name'  => 'name',
 							'label' => __( 'Name', 'wpacc' ),
-							'type'  => 'zoom',
+							'type'  => 'text',
+							'zoom'  => true,
 						],
 					],
 					'items'  => $items,

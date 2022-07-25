@@ -18,19 +18,21 @@ class Test_Table extends UnitTestCase {
 	 * Test an empty table.
 	 */
 	public function test_render_empty() {
-		$table = new Table();
+		$table = new Table( $this->business );
 		$html  = $table->render(
 			[
 				'fields' => [
 					[
-						'name'  => 'id',
-						'type'  => 'static',
-						'label' => '',
+						'name'   => 'id',
+						'type'   => 'number',
+						'static' => true,
+						'label'  => '',
 					],
 					[
-						'name'  => 'test',
-						'type'  => 'static',
-						'label' => 'Test',
+						'name'   => 'test',
+						'type'   => 'text',
+						'static' => true,
+						'label'  => 'Test',
 					],
 				],
 			]
@@ -43,19 +45,21 @@ class Test_Table extends UnitTestCase {
 	 * Test render of buttons function.
 	 */
 	public function test_buttons() {
-		$table = new Table();
+		$table = new Table( $this->business );
 		$html  = $table->render(
 			[
 				'fields'  => [
 					[
-						'name'  => 'id',
-						'type'  => 'static',
-						'label' => '',
+						'name'   => 'id',
+						'type'   => 'number',
+						'static' => true,
+						'label'  => '',
 					],
 					[
-						'name'  => 'test',
-						'type'  => 'static',
-						'label' => 'Test',
+						'name'   => 'test',
+						'type'   => 'text',
+						'static' => true,
+						'label'  => 'Test',
 					],
 				],
 				'options' => [
@@ -72,19 +76,21 @@ class Test_Table extends UnitTestCase {
 	 * Test render functions.
 	 */
 	public function test_render_static() {
-		$table = new Table();
+		$table = new Table( $this->business );
 		$html  = $table->render(
 			[
 				'fields' => [
 					[
-						'name'  => 'id',
-						'type'  => 'static',
-						'label' => '',
+						'name'   => 'id',
+						'type'   => 'number',
+						'static' => true,
+						'label'  => '',
 					],
 					[
-						'name'  => 'test',
-						'type'  => 'static',
-						'label' => 'Test',
+						'name'   => 'test',
+						'type'   => 'text',
+						'static' => true,
+						'label'  => 'Test',
 					],
 				],
 				'items'  => [
@@ -108,7 +114,7 @@ class Test_Table extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_render_checkbox() : void {
-		$table = new Table();
+		$table = new Table( $this->business );
 		$html  = $table->render(
 			[
 				'fields' => [
@@ -118,9 +124,10 @@ class Test_Table extends UnitTestCase {
 						'label' => '',
 					],
 					[
-						'name'  => 'test',
-						'type'  => 'static',
-						'label' => 'Test',
+						'name'   => 'test',
+						'type'   => 'text',
+						'static' => true,
+						'label'  => 'Test',
 					],
 				],
 				'items'  => [
@@ -135,7 +142,7 @@ class Test_Table extends UnitTestCase {
 				],
 			],
 		);
-		$this->assertEquals( 2, substr_count( $html, 'radio' ), 'Number of radio buttons incorrect' );
+		$this->assertEquals( 2, substr_count( $html, 'type="radio"' ), 'Number of radio buttons incorrect' );
 		$this->assertValidHtml( $html, 'Invalid html 2' );
 	}
 
@@ -145,18 +152,20 @@ class Test_Table extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_render_zoom() : void {
-		$table = new Table();
+		$table = new Table( $this->business );
 		$html  = $table->render(
 			[
 				'fields' => [
 					[
-						'name'  => 'id',
-						'type'  => 'static',
-						'label' => '',
+						'name'   => 'id',
+						'type'   => 'number',
+						'static' => true,
+						'label'  => '',
 					],
 					[
 						'name'  => 'name',
-						'type'  => 'zoom',
+						'type'  => 'text',
+						'zoom'  => true,
 						'label' => 'Test',
 					],
 				],
@@ -182,14 +191,15 @@ class Test_Table extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_render_inputs() : void {
-		$table = new Table();
+		$table = new Table( $this->business );
 		$html  = $table->render(
 			[
 				'fields' => [
 					[
-						'name'  => 'id',
-						'type'  => 'static',
-						'label' => '',
+						'name'   => 'id',
+						'type'   => 'number',
+						'static' => true,
+						'label'  => '',
 					],
 					[
 						'name'  => 'numbers',
@@ -266,14 +276,15 @@ class Test_Table extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_addrow() : void {
-		$table = new Table();
+		$table = new Table( $this->business );
 		$html  = $table->render(
 			[
 				'fields'  => [
 					[
-						'name'  => 'id',
-						'type'  => 'static',
-						'label' => '',
+						'name'   => 'id',
+						'type'   => 'number',
+						'static' => true,
+						'label'  => '',
 					],
 					[
 						'name'  => 'texts',

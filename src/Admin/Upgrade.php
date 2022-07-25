@@ -20,7 +20,7 @@ class Upgrade {
 	/**
 	 * Plugin-database-version
 	 */
-	const DBVERSION = 49;
+	const DBVERSION = 52;
 
 	/**
 	 * Execute upgrade actions if needed.
@@ -74,6 +74,7 @@ class Upgrade {
 	 * Convert database. A long method but no reason to split it up into smaller segments.
 	 *
 	 * @return void
+	 * @noinspection PhpIncludeInspection
 	 */
 	public function set_database() : void {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -99,6 +100,7 @@ class Upgrade {
 			"CREATE TABLE {$wpdb->prefix}wpacc_country (
 			name      TINYTEXT NOT NULL,
 			language  TINYTEXT NOT NULL,
+			currency  CHAR(3),
 			file      TINYTEXT,
 			UNIQUE KEY name_lang_idx ( name, language )
 			) $charset_collate;"
@@ -115,14 +117,20 @@ class Upgrade {
 		$charset_collate = $wpdb->get_charset_collate();
 		dbDelta(
 			"CREATE TABLE {$wpdb->prefix}wpacc_business (
-			id         INT (10) NOT NULL AUTO_INCREMENT,
-			slug       TINYTEXT,
-			name       TINYTEXT NOT NULL,
-			address    TEXT,
-			country    TINYTEXT NOT NULL,
-			language   TINYTEXT NOT NULL,
-			logo_url   TINYTEXT,
-			logo       TINYTEXT,
+			id          INT (10) NOT NULL AUTO_INCREMENT,
+			slug        TINYTEXT,
+			name        TINYTEXT NOT NULL,
+			address     TEXT,
+			country     TINYTEXT NOT NULL,
+			language    TINYTEXT NOT NULL,
+			currency    CHAR(3)  DEFAULT 'EUR',
+			decimals    TINYINT  DEFAULT 2,
+			decimalsep  CHAR(1)  DEFAULT ',',
+			thousandsep CHAR(1)  DEFAULT '.',
+			dateformat  CHAR(10) DEFAULT 'd-m-Y',
+			timeformat  CHAR(10) DEFAULT 'H:i',
+			logo_url    TINYTEXT,
+			logo        TINYTEXT,
 			UNIQUE KEY name_idx (name),
 			PRIMARY KEY  (id)
 			) $charset_collate;"
@@ -298,6 +306,8 @@ class Upgrade {
 	 * @param string $action  Can be Cascade or Restrict or..
 	 *
 	 * @return void
+	 *
+	 * @noinspection PhpSameParameterValueInspection
 	 */
 	private function foreign_key( string $table, string $parent, string $foreign = '', string $action = 'CASCADE' ) : void {
 		if ( defined( 'WPACC_TEST' ) ) {
@@ -337,8 +347,9 @@ class Upgrade {
 		$countries = json_decode( $countries_data );
 		if ( $countries ) {
 			foreach ( $countries as $item ) {
-				$country       = new Country( $item->country, $item->language );
-				$country->file = $item->file;
+				$country           = new Country( $item->country, $item->language );
+				$country->file     = $item->file;
+				$country->currency = $item->currency;
 				$country->insert();
 			}
 			return;

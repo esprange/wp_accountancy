@@ -20,13 +20,14 @@ class Test_Field extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_render_static() : void {
-		$field = new Field();
+		$field = new Field( $this->business );
 		$html  = $field->render(
 			[
-				'name'  => 'test',
-				'type'  => 'static',
-				'label' => 'Test',
-				'value' => 'testvalue',
+				'name'   => 'test',
+				'type'   => 'text',
+				'static' => true,
+				'label'  => 'Test',
+				'value'  => 'testvalue',
 			]
 		);
 		$this->assertValidHtml( $html, 'Invalid html static' );
@@ -40,7 +41,7 @@ class Test_Field extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_input_fields() : void {
-		$field = new Field();
+		$field = new Field( $this->business );
 		$html  = '';
 		foreach (
 			[
@@ -71,7 +72,7 @@ class Test_Field extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_select_field() : void {
-		$field = new Field();
+		$field = new Field( $this->business );
 		$html  = $field->render(
 			[
 				'name'  => 'test',
@@ -94,7 +95,7 @@ class Test_Field extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_select_optgroup_field() : void {
-		$field = new Field();
+		$field = new Field( $this->business );
 		$html  = $field->render(
 			[
 				'name'     => 'test',
@@ -118,7 +119,7 @@ class Test_Field extends UnitTestCase {
 	 * @return void
 	 */
 	public function test_textarea_field() : void {
-		$field = new Field();
+		$field = new Field( $this->business );
 		$html  = $field->render(
 			[
 				'name'  => 'test',

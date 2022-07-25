@@ -10,10 +10,28 @@
 
 namespace WP_Accountancy\Public;
 
+use WP_Accountancy\Includes\Business;
+
 /**
  * The Table class.
  */
 class Table {
+
+	/**
+	 * Settings for fields.
+	 *
+	 * @var object
+	 */
+	private object $business;
+
+	/**
+	 * Contructor
+	 *
+	 * @param Business $business The business settings.
+	 */
+	public function __construct( Business $business ) {
+		$this->business = $business;
+	}
 
 	/**
 	 * Display a table
@@ -84,22 +102,17 @@ class Table {
 	 * @return string
 	 */
 	private function render_table_head( object $args ) : string {
-		$hide = isset( $args->options['select'] ) ? '' : 'style="visibility:collapse"';
-		$cols = count( $args->fields ) - 1;
 		$html = <<<EOT
 			<table class="wpacc" >
-			<colgroup>
-				<col $hide>
-				<col span="$cols">
-			</colgroup>
 			<thead>
 			<tr>
 
 		EOT;
-		foreach ( $args->fields as $field ) {
+		foreach ( $args->fields as $index => $field ) {
 			$label = $field['label'] ?? $field['name'];
+			$style = $index || isset( $args->options['select'] ) ? '' : 'style="display:none;"';
 			$html .= <<<EOT
-				<th>$label</th>
+				<th $style>$label</th>
 
 			EOT;
 		}
@@ -122,43 +135,25 @@ class Table {
 		$html = <<<EOT
 			<tbody>
 		EOT;
-		foreach ( $args->items as $key => $item ) {
-			if ( ! $key ) {
-				continue;
-			}
-			$html .= <<<EOT
-				<tr>
-
-			EOT;
-			foreach ( $args->fields as $field ) {
+		reset( $args->items );
+		do {
+			$item  = current( $args->items );
+			$html .= '<tr>';
+			foreach ( $args->fields as $index => $field ) {
+				$style             = $index || isset( $args->options['select'] ) ? '' : 'style="display:none;"';
 				$property          = substr( $field['name'], ( strrpos( $field['name'], '-' ) ?: - 1 ) + 1 );
-				$field['value']    = $item->$property;
-				$field['lstgroup'] = $item->group ?? false;
+				$field['value']    = key( $args->items ) ? $item->$property : '';
+				$field['lstgroup'] = key( $args->items ) ? ( $item->group ?? false ) : false;
 				$field['label']    = '';
 				$field['class']    = in_array( $field['name'], $args->options['totals'] ?? [], true ) ? "wpacc-total-{$field['name']}" : '';
 				$field['table']    = '[]';
-				$html             .= '<td>' . ( new Field() )->render( $field ) . "</td>\n";
+				$html             .= "<td $style>" . ( new Field( $this->business ) )->render( $field ) . "</td>\n";
 			}
 			$html .= <<<EOT
 				</tr>
 
 			EOT;
-		}
-		if ( 0 === count( $args->items ) ) {
-			$html .= <<<EOT
-			<tr>
-
-			EOT;
-			foreach ( $args->fields as $field ) {
-				$field['value'] = '';
-				$field['label'] = '';
-				$html          .= '<td>' . ( new Field() )->render( $field ) . "</td>\n";
-			}
-			$html .= <<<EOT
-			</tr>
-
-			EOT;
-		}
+		} while ( false !== next( $args->items ) );
 		$html .= <<<EOT
 			</tbody>
 
@@ -177,13 +172,23 @@ class Table {
 		$html = '';
 		if ( isset( $args->options['totals'] ) ) {
 			$html = '<tfoot><tr>';
-			foreach ( $args->fields as $field ) {
-				$html .= '<td>' . ( in_array( $field['name'], $args->options['totals'], true ) ? '<span class="wpacc-sum-' . $field['name'] . '"></span>' : '' ) . '</td>';
+			foreach ( $args->fields as $index => $field ) {
+				$style = $index || isset( $args->options['select'] ) ? '' : 'style="display:none;"';
+				$html .= "<td $style>" . ( in_array( $field['name'], $args->options['totals'], true ) ?
+						( new Field( $this->business ) )->render(
+							[
+								'name'  => 'total_' . $field['name'],
+								'total' => true,
+								'type'  => $field['type'],
+								'class' => 'wpacc-sum-' . $field['name'],
+							]
+						) : '' )
+						. '</td>';
 			}
 			$html .= '</tr></tfoot>';
 		}
 		$html .= '</table>';
-		if ( isset( $args->options['addrow'] ) ) {
+		if ( in_array( 'addrow', $args->options, true ) ) {
 			$html .= '<button type="button" class="wpacc-btn wpacc-add-row" value="addrow" ><span class="dashicons dashicons-plus"></span></button><br/>';
 		}
 		return $html;

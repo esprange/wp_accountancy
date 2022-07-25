@@ -1,19 +1,11 @@
 # Subversion
 .svn
 
-# Visual Studio
-.editorconfig
-
 # Ignore folders
 node_modules/
 vendor/
-tmp/
-.vscode/
-.idea/
-bin/
-lib/
 zip/
-refactor/
+.idea/
 
 # Build files
 *.min.js

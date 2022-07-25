@@ -168,9 +168,10 @@ class BusinessDisplay extends Display {
 				[
 					'fields'  => [
 						[
-							'name'  => 'business_id',
-							'type'  => 'static',
-							'label' => '',
+							'name'   => 'business_id',
+							'type'   => 'number',
+							'static' => true,
+							'label'  => '',
 						],
 						[
 							'name'  => 'selected',
@@ -179,7 +180,8 @@ class BusinessDisplay extends Display {
 						],
 						[
 							'name'  => 'name',
-							'type'  => 'zoom',
+							'type'  => 'text',
+							'zoom'  => true,
 							'label' => __( 'Name', 'wpacc' ),
 						],
 					],
@@ -202,6 +204,8 @@ class BusinessDisplay extends Display {
 	private function upload_logo() : array {
 		/**
 		 * Include voor image file upload.
+		 *
+		 * @noinspection PhpIncludeInspection
 		 */
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		$logo = $_FILES['logo'];

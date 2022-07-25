@@ -65,10 +65,10 @@ abstract class Display {
 	 * @param Business $business The active business.
 	 */
 	public function __construct( Business $business ) {
-		$this->button   = new Button();
-		$this->table    = new Table();
-		$this->field    = new Field();
 		$this->business = $business;
+		$this->button   = new Button();
+		$this->table    = new Table( $this->business );
+		$this->field    = new Field( $this->business );
 	}
 
 	/**
@@ -108,10 +108,9 @@ abstract class Display {
 		$head = $this->head();
 		$menu = $this->menu();
 		return <<<EOT
-		<div class="wpacc-container">
+		<div class="wpacc-container" id="wpacc-container">
 			<div class="wpacc-head" id="wpacc-head">
 				$head
-				<button class="wpacc-menu-dropdown" id="wpacc-menu-dropdown">&#9776;</button>
 			</div>
 			<div class="wpacc-menu" id="wpacc-menu">
 				$menu

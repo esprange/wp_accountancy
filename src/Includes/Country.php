@@ -16,6 +16,7 @@ namespace WP_Accountancy\Includes;
  * @property string name
  * @property string language
  * @property string file
+ * @property string currency
  */
 class Country {
 
@@ -31,10 +32,11 @@ class Country {
 			'name'     => $name,
 			'language' => $language,
 			'file'     => '',
+			'currency' => '',
 		];
 		$result  = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT name, language, file FROM {$wpdb->prefix}wpacc_country WHERE name = %s AND language = %s",
+				"SELECT name, language, file, currency FROM {$wpdb->prefix}wpacc_country WHERE name = %s AND language = %s",
 				$name,
 				$language
 			),
@@ -57,10 +59,11 @@ class Country {
 		global $wpdb;
 		$wpdb->query(
 			$wpdb->prepare(
-				"INSERT INTO {$wpdb->prefix}wpacc_country (name, language, file ) VALUES ( %s, %s, %s ) ON DUPLICATE KEY UPDATE file = %s",
+				"INSERT INTO {$wpdb->prefix}wpacc_country (name, language, file, currency ) VALUES ( %s, %s, %s, %s ) ON DUPLICATE KEY UPDATE file = %s",
 				$this->name,
 				$this->language,
 				$this->file,
+				$this->currency,
 				$this->file
 			)
 		);

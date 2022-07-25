@@ -25,9 +25,11 @@ class Actions {
 	 * @internal Action for wp_enqueue_scripts.
 	 */
 	public function load_script() : void {
-		$dev = 'development' === wp_get_environment_type() ? '' : '.min';
+		$dev    = 'development' === wp_get_environment_type() ? '' : '.min';
+		$cleave = '1.6.0';
 		wp_register_style( 'wpacc', plugin_dir_url( __FILE__ ) . "/css/wpacc$dev.css", [], version() );
-		wp_register_script( 'wpacc', plugin_dir_url( __FILE__ ) . "/js/wpacc$dev.js", [ 'jquery' ], version(), true );
+		wp_register_script( 'cleave', "https://cdnjs.cloudflare.com/ajax/libs/cleave.js/$cleave/cleave.min.js", [], $cleave, true );
+		wp_register_script( 'wpacc', plugin_dir_url( __FILE__ ) . "/js/wpacc$dev.js", [ 'jquery', 'cleave' ], version(), true );
 	}
 
 	/**
@@ -39,6 +41,9 @@ class Actions {
 		add_shortcode(
 			WPACC_SLUG,
 			function( mixed $atts ) : string {
+				if ( ! is_user_logged_in() ) {
+					return __( 'This function is only accessible for logged in users', 'wpacc' );
+				}
 				wp_enqueue_style( 'wpacc' );
 				wp_enqueue_script( 'wpacc' );
 				wp_add_inline_script(
@@ -80,7 +85,7 @@ class Actions {
 					wp_send_json_success(
 						[
 							'main'     => $display->controller(),
-							'business' => $business->name,
+							'business' => (array) $business,
 						]
 					);
 				}
@@ -104,7 +109,7 @@ class Actions {
 				wp_send_json_success(
 					[
 						'main'     => $display->controller(),
-						'business' => $business->name,
+						'business' => (array) $business,
 					]
 				);
 			}

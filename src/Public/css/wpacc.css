@@ -9,9 +9,23 @@
 
 :root {
 	--head: 3rem;
+	--input-color: #424751;
+	--input-border: #cdd9ed;
+	--input-background: #fff;
+	--input-placeholder: #cbd1dc;
+	--input-border-focus: #275efe;
+	--group-color: var(--input-color);
+	--group-border: var(--input-border);
+	--group-background: #eef4ff;
+	--group-color-focus: #fff;
+	--group-border-focus: var(--input-border-focus);
+	--group-background-focus: #678efe;
 }
 
-div.wpacc-container * {
+div.wpacc-container *,
+div.wpacc-container *::before,
+div.wpacc-container *::after {
+	box-sizing: border-box;
 	font-size: small;
 }
 
@@ -126,17 +140,7 @@ nav.wpacc-menu li a:hover {
 	font-weight: bold;
 }
 
-button.wpacc-menu-dropdown {
-	display: none;
-	height: var(--head);
-}
-
 @media screen and (max-width: 600px) {
-	button.wpacc-menu-dropdown {
-		display: inline-block;
-		float: right;
-	}
-
 	nav.wpacc-menu ul {
 		background-color: white;
 		display: none;
@@ -284,4 +288,53 @@ button.wpacc-btn-delete {
  */
 a.wpacc-zoom:hover {
 	cursor: pointer;
+}
+
+/**
+ * Input elements.
+ */
+.wpacc-field select,
+.wpacc-field input{
+	display: block;
+	padding: 8px 10px;
+	max-width: 10em;
+	border-radius: 6px;
+	color: var(--input-color);
+	border: 1px solid var(--input-border);
+	background: var(--input-background);
+	line-height: 20px;
+}
+
+.wpacc-field input[type=number] {
+	width: 50px;
+}
+
+.wpacc-field {
+	position: relative;
+	display: flex;
+}
+
+.wpacc-field input {
+	position: relative;
+	flex: auto;
+}
+
+.wpacc-field span {
+	display: block;
+	padding: 8px 5px;
+	max-width: 3em;
+	border-radius: 6px 0 0 6px;
+	color: var(--group-color);
+	border: 1px solid var(--group-border);
+	background: var(--group-background);
+	white-space: nowrap;
+}
+
+.wpacc-field span + input {
+	border-radius: 0 6px 6px 0;
+}
+
+.wpacc-field:focus {
+	outline: none;
+	border-color: var(--input-border-focus);
 }

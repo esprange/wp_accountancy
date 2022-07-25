@@ -137,29 +137,34 @@ class JournalDisplay extends TransactionDisplay {
 				[
 					'fields'  => [
 						[
-							'name'  => 'journal_id',
-							'label' => 'id',
-							'type'  => 'static',
+							'name'   => 'journal_id',
+							'label'  => 'id',
+							'type'   => 'number',
+							'static' => true,
 						],
 						[
-							'name'  => 'date',
-							'label' => __( 'Invoice date', 'wpacc' ),
-							'type'  => 'static',
+							'name'   => 'date',
+							'label'  => __( 'Invoice date', 'wpacc' ),
+							'type'   => 'date',
+							'static' => true,
 						],
 						[
 							'name'  => 'description',
 							'label' => __( 'Description', 'wpacc' ),
-							'type'  => 'zoom',
+							'type'  => 'text',
+							'zoom'  => true,
 						],
 						[
 							'name'  => 'debit_total',
 							'label' => __( 'Debit', 'wpacc' ),
-							'type'  => 'static',
+							'type'  => 'currency',
+							'total' => true,
 						],
 						[
 							'name'  => 'credit_total',
 							'label' => __( 'Credit', 'wpacc' ),
-							'type'  => 'static',
+							'type'  => 'currency',
+							'total' => true,
 						],
 					],
 					'items'   => $journal->get_results(),

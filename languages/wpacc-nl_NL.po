@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP-Accountancy 1.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp_accountancy\n"
-"POT-Creation-Date: 2022-06-13T22:23:08+02:00\n"
-"PO-Revision-Date: 2022-06-13 22:28+0200\n"
+"POT-Creation-Date: 2022-07-14T11:40:43+02:00\n"
+"PO-Revision-Date: 2022-07-18 15:54+0200\n"
 "Last-Translator: Eric Sprangers <eric.sprangers@gmail.com>\n"
 "Language-Team: \n"
 "Language: nl\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1\n"
+"X-Generator: Poedit 3.1.1\n"
 "X-Domain: wpacc\n"
 
 #. Plugin Name of the plugin
@@ -34,7 +34,7 @@ msgstr ""
 msgid "http://URI_Of_The_Plugin_Author"
 msgstr ""
 
-#: src/Admin/Actions.php:57 src/Admin/Actions.php:58
+#: src/Admin/Actions.php:44 src/Admin/Actions.php:45
 msgid "Configuration"
 msgstr ""
 
@@ -42,12 +42,14 @@ msgstr ""
 msgid "Allow accounting for multiple bsuinesses"
 msgstr ""
 
-#: src/Admin/ConfigDisplay.php:137 src/Public/AssetDisplay.php:94
-#: src/Public/AssetDisplay.php:130 src/Public/BankcashDisplay.php:122
-#: src/Public/BankcashDisplay.php:178 src/Public/BusinessDisplay.php:75
-#: src/Public/BusinessDisplay.php:111 src/Public/CreditorDisplay.php:86
-#: src/Public/CreditorDisplay.php:153 src/Public/DebtorDisplay.php:87
-#: src/Public/DebtorDisplay.php:152
+#: src/Admin/ConfigDisplay.php:137 src/Public/AssetDisplay.php:85
+#: src/Public/AssetDisplay.php:154 src/Public/BankcashDisplay.php:107
+#: src/Public/BankcashDisplay.php:163 src/Public/BusinessDisplay.php:122
+#: src/Public/BusinessDisplay.php:183 src/Public/CoaDisplay.php:135
+#: src/Public/CoaDisplay.php:265 src/Public/CreditorDisplay.php:84
+#: src/Public/CreditorDisplay.php:151 src/Public/DebtorDisplay.php:85
+#: src/Public/DebtorDisplay.php:150 src/Public/TaxcodeDisplay.php:85
+#: src/Public/TaxcodeDisplay.php:145
 msgid "Name"
 msgstr "Naam"
 
@@ -71,188 +73,266 @@ msgstr "Opties"
 msgid "Setup"
 msgstr "Instellingen"
 
-#: src/Public/Actions.php:51 src/Public/BusinessDisplay.php:125
+#: src/Public/Actions.php:50
 msgid "Create"
 msgstr "Nieuw"
 
-#: src/Public/Actions.php:52 src/Public/BankcashDisplay.php:156
-#: src/Public/CreditorDisplay.php:131 src/Public/DebtorDisplay.php:130
-#: src/Public/PurchaseDisplay.php:191 src/Public/SalesDisplay.php:191
+#: src/Public/Actions.php:51 src/Public/AssetDisplay.php:132
+#: src/Public/BankcashDisplay.php:141 src/Public/BusinessDisplay.php:156
+#: src/Public/CoaDisplay.php:172 src/Public/CreditorDisplay.php:129
+#: src/Public/DebtorDisplay.php:128 src/Public/JournalDisplay.php:124
+#: src/Public/PurchaseDisplay.php:142 src/Public/SalesDisplay.php:142
+#: src/Public/TaxcodeDisplay.php:123
 msgid "Delete"
 msgstr "Verwijder"
 
-#: src/Public/Actions.php:53 src/Public/AssetDisplay.php:146
-#: src/Public/CreditnoteDisplay.php:37 src/Public/DepreciationDisplay.php:37
-#: src/Public/InteraccountDisplay.php:37 src/Public/JournalDisplay.php:37
-#: src/Public/ReportDisplay.php:37 src/Public/SettingDisplay.php:37
-#: src/Public/SummaryDisplay.php:76
+#: src/Public/Actions.php:52 src/Public/CreditnoteDisplay.php:37
+#: src/Public/DepreciationDisplay.php:37 src/Public/InteraccountDisplay.php:37
+#: src/Public/ReportDisplay.php:37 src/Public/SummaryDisplay.php:83
 msgid "Change"
 msgstr "Wijzig"
 
-#: src/Public/Actions.php:83
+#: src/Public/Actions.php:87
 msgid "Security error"
 msgstr "Beveiligingsfout"
 
-#: src/Public/Actions.php:86 src/Public/Actions.php:102
+#: src/Public/Actions.php:90 src/Public/Actions.php:112
 msgid "Something went wrong"
 msgstr "Er is iets verkeerd gegaan"
 
-#: src/Public/Actions.php:138
-msgid "Default"
-msgstr "Standaard waarde"
+#: src/Public/Actions.php:142
+msgid "Default company"
+msgstr "Standaard bedrijf"
 
-#: src/Public/AssetDisplay.php:27 src/Public/SummaryDisplay.php:67
-#: src/Public/SummaryDisplay.php:72
+#: src/Public/AssetDisplay.php:27 src/Public/CoaDisplay.php:45
+#: src/Public/SummaryDisplay.php:65
 msgid "Assets"
 msgstr "Activa"
 
-#: src/Public/AssetDisplay.php:65
+#: src/Public/AssetDisplay.php:53
 msgid "Asset saved"
 msgstr "Het activa is bewaard"
 
-#: src/Public/AssetDisplay.php:78
+#: src/Public/AssetDisplay.php:66
 msgid "Asset removed"
 msgstr "Het activa is verwijderd"
 
-#: src/Public/AssetDisplay.php:80 src/Public/BankcashDisplay.php:91
-#: src/Public/BusinessDisplay.php:170 src/Public/CreditorDisplay.php:69
-#: src/Public/DebtorDisplay.php:70 src/Public/PurchaseDisplay.php:88
-#: src/Public/SalesDisplay.php:88
+#: src/Public/AssetDisplay.php:68 src/Public/BankcashDisplay.php:80
+#: src/Public/BusinessDisplay.php:104 src/Public/CoaDisplay.php:113
+#: src/Public/CreditorDisplay.php:67 src/Public/DebtorDisplay.php:68
+#: src/Public/TaxcodeDisplay.php:67 src/Public/TransactionDisplay.php:116
 msgid "Remove not allowed"
 msgstr "Verwijdering niet toegestaan"
 
-#: src/Public/AssetDisplay.php:97 src/Public/PurchaseDisplay.php:139
-#: src/Public/PurchaseDisplay.php:159 src/Public/SalesDisplay.php:139
-#: src/Public/SalesDisplay.php:159
+#: src/Public/AssetDisplay.php:94 src/Public/JournalDisplay.php:76
+#: src/Public/JournalDisplay.php:95 src/Public/JournalDisplay.php:151
+#: src/Public/PurchaseDisplay.php:99 src/Public/PurchaseDisplay.php:118
+#: src/Public/SalesDisplay.php:99 src/Public/SalesDisplay.php:118
+#: src/Public/SummaryDisplay.php:141
 msgid "Description"
 msgstr "Beschrijving"
 
-#: src/Public/AssetDisplay.php:100
+#: src/Public/AssetDisplay.php:103
 msgid "Depreciation rate"
 msgstr "Percentage afschrijving"
 
-#: src/Public/AssetDisplay.php:103
+#: src/Public/AssetDisplay.php:112
 msgid "Acquisition cost"
 msgstr "Aanschafwaarde"
 
-#: src/Public/AssetDisplay.php:106
+#: src/Public/AssetDisplay.php:121
 msgid "Accumulated depreciation"
 msgstr "Gecumuleerde afschrijving"
 
-#: src/Public/AssetDisplay.php:109 src/Public/BankcashDisplay.php:139
-#: src/Public/CreditorDisplay.php:117 src/Public/DebtorDisplay.php:120
-msgid "Active"
-msgstr "Actief"
-
-#: src/Public/AssetDisplay.php:114 src/Public/BankcashDisplay.php:156
-#: src/Public/BusinessDisplay.php:93 src/Public/CreditorDisplay.php:130
-#: src/Public/DebtorDisplay.php:130 src/Public/PurchaseDisplay.php:190
-#: src/Public/SalesDisplay.php:190
+#: src/Public/AssetDisplay.php:132 src/Public/BankcashDisplay.php:141
+#: src/Public/BusinessDisplay.php:156 src/Public/CoaDisplay.php:171
+#: src/Public/CreditorDisplay.php:128 src/Public/DebtorDisplay.php:128
+#: src/Public/JournalDisplay.php:123 src/Public/PurchaseDisplay.php:141
+#: src/Public/SalesDisplay.php:141 src/Public/TaxcodeDisplay.php:122
 msgid "Save"
 msgstr "Bewaren"
+
+#: src/Public/AssetDisplay.php:161
+msgid "New fixed asset"
+msgstr "Nieuw Activum"
 
 #: src/Public/BankcashDisplay.php:27
 msgid "Bank and Cash accounts"
 msgstr "Bank en Kasrekeningen"
 
-#: src/Public/BankcashDisplay.php:76
+#: src/Public/BankcashDisplay.php:65
 msgid "Bank saved"
 msgstr "Bank bewaard"
 
-#: src/Public/BankcashDisplay.php:76
-msgid "Cash saved"
-msgstr "Kas bewaard"
+#: src/Public/BankcashDisplay.php:65
+msgid "Cash account saved"
+msgstr "Kas rekening bewaard"
 
-#: src/Public/BankcashDisplay.php:89
+#: src/Public/BankcashDisplay.php:78
 msgid "Bank removed"
 msgstr "Bank verwijderd"
 
-#: src/Public/BankcashDisplay.php:89
-msgid "Cash removed"
-msgstr "Kas verwijderd"
+#: src/Public/BankcashDisplay.php:78
+msgid "Cash account removed"
+msgstr "Kas rekening verwijderd"
 
-#: src/Public/BankcashDisplay.php:131
+#: src/Public/BankcashDisplay.php:116
 msgid "Start balance"
 msgstr "Beginsaldo"
 
-#: src/Public/BankcashDisplay.php:183
+#: src/Public/BankcashDisplay.php:124 src/Public/CoaDisplay.php:161
+#: src/Public/CreditorDisplay.php:115 src/Public/DebtorDisplay.php:118
+#: src/Public/TaxcodeDisplay.php:112
+msgid "Active"
+msgstr "Actief"
+
+#: src/Public/BankcashDisplay.php:168
 msgid "Balance"
 msgstr "Saldo"
 
-#: src/Public/BankcashDisplay.php:188
+#: src/Public/BankcashDisplay.php:173
 msgid "New bank account"
 msgstr "Nieuwe bankrekening"
 
-#: src/Public/BankcashDisplay.php:189
+#: src/Public/BankcashDisplay.php:174
 msgid "New cash account"
 msgstr "Nieuwe kas rekening"
 
-#: src/Public/BusinessDisplay.php:47
+#: src/Public/BusinessDisplay.php:30
 msgid "Businesses"
 msgstr "Bedrijven"
 
-#: src/Public/BusinessDisplay.php:78
-msgid "Country"
-msgstr "Land"
+#: src/Public/BusinessDisplay.php:53
+msgid "Business selected"
+msgstr "Bedrijf geselecteerd"
 
-#: src/Public/BusinessDisplay.php:85 src/Public/CreditorDisplay.php:95
-#: src/Public/DebtorDisplay.php:96 src/Public/PurchaseDisplay.php:132
-msgid "Address"
-msgstr "Adres"
-
-#: src/Public/BusinessDisplay.php:88
-msgid "Logo"
-msgstr "Logo"
-
-#: src/Public/BusinessDisplay.php:151
+#: src/Public/BusinessDisplay.php:85
 msgid "Business saved"
 msgstr "Bedrijf bewaard"
 
-#: src/Public/BusinessDisplay.php:168
+#: src/Public/BusinessDisplay.php:102
 msgid "Business removed"
 msgstr "Bedrijf verwijderd"
+
+#: src/Public/BusinessDisplay.php:129
+msgid "Country"
+msgstr "Land"
+
+#: src/Public/BusinessDisplay.php:139
+msgid "Logo"
+msgstr "Logo"
+
+#: src/Public/BusinessDisplay.php:145 src/Public/CreditorDisplay.php:93
+#: src/Public/DebtorDisplay.php:94 src/Public/PurchaseDisplay.php:93
+msgid "Address"
+msgstr "Adres"
+
+#: src/Public/BusinessDisplay.php:178
+msgid "Selected"
+msgstr "Geselecteerd"
+
+#: src/Public/BusinessDisplay.php:188
+msgid "New business"
+msgstr "Nieuw bedrijf"
+
+#: src/Public/BusinessDisplay.php:189
+msgid "Select business"
+msgstr "Selecteer bedrijf"
+
+#: src/Public/BusinessDisplay.php:215
+msgid "Logo file size is too large"
+msgstr "Logo bestand is te groot"
+
+#: src/Public/BusinessDisplay.php:218
+msgid "WordPress doesn't allow this type of uploads."
+msgstr "Wordpress ondersteunt dit type upload niet"
+
+#: src/Public/CoaDisplay.php:46
+msgid "Liability"
+msgstr "Vreemd vermogen"
+
+#: src/Public/CoaDisplay.php:47 src/Public/SummaryDisplay.php:67
+msgid "Equity"
+msgstr "Eigen Vermogen"
+
+#: src/Public/CoaDisplay.php:50 src/Public/SummaryDisplay.php:68
+msgid "Income"
+msgstr "Inkomsten"
+
+#: src/Public/CoaDisplay.php:51
+msgid "Expense"
+msgstr "Uitgaven"
+
+#: src/Public/CoaDisplay.php:62 src/Public/SettingDisplay.php:91
+msgid "Chart of Accounts"
+msgstr "Rekeningschema"
+
+#: src/Public/CoaDisplay.php:98
+msgid "Account saved"
+msgstr "Rekening bewaard"
+
+#: src/Public/CoaDisplay.php:111
+msgid "Account removed"
+msgstr "Rekening verwijderd"
+
+#: src/Public/CoaDisplay.php:153 src/Public/JournalDisplay.php:111
+#: src/Public/PurchaseDisplay.php:135 src/Public/SalesDisplay.php:135
+msgid "Taxcode"
+msgstr "BTW code"
+
+#: src/Public/CoaDisplay.php:183 src/Public/CoaDisplay.php:188
+msgid "New account"
+msgstr "Nieuwe rekening"
+
+#: src/Public/CoaDisplay.php:184 src/Public/CoaDisplay.php:189
+msgid "New group"
+msgstr "Nieuwe groep"
+
+#: src/Public/CoaDisplay.php:190
+msgid "New total"
+msgstr "New totaal"
 
 #: src/Public/CreditnoteDisplay.php:24
 msgid "Credit notes"
 msgstr "Crediteringen"
 
-#: src/Public/CreditorDisplay.php:27 src/Public/Display.php:172
+#: src/Public/CreditorDisplay.php:27 src/Public/Display.php:183
 msgid "Suppliers"
 msgstr "Crediteuren/Leveranciers"
 
-#: src/Public/CreditorDisplay.php:54
+#: src/Public/CreditorDisplay.php:52
 msgid "Supplier saved"
 msgstr "Leverancier bewaard"
 
-#: src/Public/CreditorDisplay.php:67
+#: src/Public/CreditorDisplay.php:65
 msgid "Supplier removed"
 msgstr "Leverancier verwijderd"
 
-#: src/Public/CreditorDisplay.php:106 src/Public/DebtorDisplay.php:112
+#: src/Public/CreditorDisplay.php:104 src/Public/DebtorDisplay.php:110
 msgid "Email"
 msgstr "Email"
 
-#: src/Public/CreditorDisplay.php:160
+#: src/Public/CreditorDisplay.php:158
 msgid "New supplier"
 msgstr "Nieuwe Leverancier"
 
-#: src/Public/DebtorDisplay.php:27 src/Public/Display.php:169
+#: src/Public/DebtorDisplay.php:27 src/Public/Display.php:180
 msgid "Customers"
 msgstr "Debiteuren/Klanten"
 
-#: src/Public/DebtorDisplay.php:55
+#: src/Public/DebtorDisplay.php:53
 msgid "Customer saved"
 msgstr "Klant bewaard"
 
-#: src/Public/DebtorDisplay.php:68
+#: src/Public/DebtorDisplay.php:66
 msgid "Customer removed"
 msgstr "Klant verwijderd"
 
-#: src/Public/DebtorDisplay.php:104 src/Public/SalesDisplay.php:132
+#: src/Public/DebtorDisplay.php:102 src/Public/SalesDisplay.php:93
 msgid "Billing address"
 msgstr "Factuuradres"
 
-#: src/Public/DebtorDisplay.php:159
+#: src/Public/DebtorDisplay.php:154
 msgid "New customer"
 msgstr "Nieuwe klant"
 
@@ -260,146 +340,212 @@ msgstr "Nieuwe klant"
 msgid "Asset depreciation"
 msgstr "Afschrijving"
 
-#: src/Public/Display.php:166 src/Public/SummaryDisplay.php:27
+#: src/Public/Display.php:177 src/Public/SummaryDisplay.php:27
 msgid "Summary"
 msgstr "Overzicht"
 
-#: src/Public/Display.php:167
+#: src/Public/Display.php:178
 msgid "Bank and Cash Accounts"
 msgstr "Bank en Kasrekeningen"
 
-#: src/Public/Display.php:168
+#: src/Public/Display.php:179
 msgid "Inter Account Transfers"
 msgstr "Interne overboekingen"
 
-#: src/Public/Display.php:170 src/Public/SalesDisplay.php:32
+#: src/Public/Display.php:181 src/Public/SalesDisplay.php:30
 msgid "Sales Invoices"
 msgstr "Verkoopfacturen"
 
-#: src/Public/Display.php:171
+#: src/Public/Display.php:182
 msgid "Credit Notes"
 msgstr "Crediteringen"
 
-#: src/Public/Display.php:173 src/Public/PurchaseDisplay.php:32
+#: src/Public/Display.php:184 src/Public/PurchaseDisplay.php:30
 msgid "Purchase Invoices"
 msgstr "Inkoopfacturen"
 
-#: src/Public/Display.php:174
+#: src/Public/Display.php:185
 msgid "Fixed Assets"
 msgstr "Vaste Activa"
 
-#: src/Public/Display.php:175
+#: src/Public/Display.php:186
 msgid "Depreciation Entries"
 msgstr "Afschrijvingen"
 
-#: src/Public/Display.php:176
+#: src/Public/Display.php:187
 msgid "Journal Entries"
 msgstr "Memoriaalboekingen"
 
-#: src/Public/Display.php:177 src/Public/ReportDisplay.php:24
+#: src/Public/Display.php:188 src/Public/ReportDisplay.php:24
 msgid "Reports"
 msgstr "Rapporten"
 
-#: src/Public/Display.php:178 src/Public/SettingDisplay.php:24
+#: src/Public/Display.php:189 src/Public/SettingDisplay.php:25
 msgid "Settings"
 msgstr "Instellingen"
+
+#: src/Public/Field.php:222
+msgid "Your image"
+msgstr ""
 
 #: src/Public/InteraccountDisplay.php:24
 msgid "Interaccount transactions"
 msgstr "Interne overboekingen"
 
-#: src/Public/JournalDisplay.php:24
+#: src/Public/JournalDisplay.php:29
 msgid "Journal transactions"
 msgstr "Memoriaalboekingen"
 
-#: src/Public/PurchaseDisplay.php:57 src/Public/SalesDisplay.php:57
-msgid "Y/m/d"
-msgstr "d-m-Y"
+#: src/Public/JournalDisplay.php:38
+msgid "Journal entry saved"
+msgstr "Boeking bewaard"
 
-#: src/Public/PurchaseDisplay.php:73
-msgid "Purchase transaction saved"
-msgstr "Inkoop factuur bewaard"
+#: src/Public/JournalDisplay.php:47
+msgid "Journal entry removed"
+msgstr "Boeking verwijderd"
 
-#: src/Public/PurchaseDisplay.php:86
-msgid "Purchase transaction removed"
-msgstr "Inkoop factuur verwijderd"
-
-#: src/Public/PurchaseDisplay.php:106 src/Public/SalesDisplay.php:106
+#: src/Public/JournalDisplay.php:69 src/Public/PurchaseDisplay.php:70
+#: src/Public/SalesDisplay.php:70
 msgid "Issue date"
 msgstr "Datum"
 
-#: src/Public/PurchaseDisplay.php:115 src/Public/SalesDisplay.php:115
-#: src/Public/SalesDisplay.php:223
-msgid "Customer"
-msgstr "Klant"
-
-#: src/Public/PurchaseDisplay.php:124 src/Public/SalesDisplay.php:124
-msgid "Reference"
-msgstr "Referentie"
-
-#: src/Public/PurchaseDisplay.php:154 src/Public/SalesDisplay.php:154
+#: src/Public/JournalDisplay.php:90 src/Public/PurchaseDisplay.php:113
+#: src/Public/SalesDisplay.php:113 src/Public/TaxcodeDisplay.php:104
 msgid "Account"
 msgstr "Grootboekrekening"
 
-#: src/Public/PurchaseDisplay.php:164 src/Public/SalesDisplay.php:164
-msgid "Amount"
-msgstr "Aantal"
+#: src/Public/JournalDisplay.php:100 src/Public/JournalDisplay.php:156
+#: src/Public/SummaryDisplay.php:146
+msgid "Debit"
+msgstr "Debet"
 
-#: src/Public/PurchaseDisplay.php:169 src/Public/SalesDisplay.php:169
-msgid "Unitprice"
-msgstr "Prijs per eenheid"
+#: src/Public/JournalDisplay.php:105 src/Public/JournalDisplay.php:161
+#: src/Public/SummaryDisplay.php:151
+msgid "Credit"
+msgstr "Credit"
 
-#: src/Public/PurchaseDisplay.php:176 src/Public/SalesDisplay.php:176
-msgid "Taxcode"
-msgstr "BTW code"
-
-#: src/Public/PurchaseDisplay.php:213 src/Public/SalesDisplay.php:213
+#: src/Public/JournalDisplay.php:146 src/Public/PurchaseDisplay.php:164
+#: src/Public/SalesDisplay.php:164
 msgid "Invoice date"
 msgstr "Factuur datum"
 
-#: src/Public/PurchaseDisplay.php:223
+#: src/Public/JournalDisplay.php:166
+msgid "New journal entry"
+msgstr "Nieuwe boeking"
+
+#: src/Public/PurchaseDisplay.php:39
+msgid "Purchase transaction saved"
+msgstr "Inkoop factuur bewaard"
+
+#: src/Public/PurchaseDisplay.php:48
+msgid "Purchase transaction removed"
+msgstr "Inkoop factuur verwijderd"
+
+#: src/Public/PurchaseDisplay.php:78 src/Public/PurchaseDisplay.php:174
+#: src/Public/SummaryDisplay.php:136
 msgid "Supplier"
 msgstr "Leverancier"
 
-#: src/Public/PurchaseDisplay.php:228 src/Public/SalesDisplay.php:228
+#: src/Public/PurchaseDisplay.php:86 src/Public/SalesDisplay.php:86
+msgid "Reference"
+msgstr "Referentie"
+
+#: src/Public/PurchaseDisplay.php:123 src/Public/SalesDisplay.php:123
+msgid "Amount"
+msgstr "Aantal"
+
+#: src/Public/PurchaseDisplay.php:128 src/Public/SalesDisplay.php:128
+msgid "Unitprice"
+msgstr "Prijs per eenheid"
+
+#: src/Public/PurchaseDisplay.php:179 src/Public/SalesDisplay.php:179
 msgid "Invoice total"
 msgstr "Factuur totaal"
 
-#: src/Public/PurchaseDisplay.php:233 src/Public/SalesDisplay.php:233
+#: src/Public/PurchaseDisplay.php:184 src/Public/SalesDisplay.php:184
 msgid "Balance due"
 msgstr "Saldo"
 
-#: src/Public/PurchaseDisplay.php:238
+#: src/Public/PurchaseDisplay.php:189
 msgid "New purchase invoice"
 msgstr "Nieuwe inkoopfactuur"
 
-#: src/Public/SalesDisplay.php:73
+#: src/Public/SalesDisplay.php:39
 msgid "Sales transaction saved"
 msgstr "Inkoopfactuur verwijderd"
 
-#: src/Public/SalesDisplay.php:86
+#: src/Public/SalesDisplay.php:48
 msgid "Sales transaction removed"
 msgstr "Inkoop transactie verwijderd"
 
-#: src/Public/SalesDisplay.php:238
+#: src/Public/SalesDisplay.php:78 src/Public/SalesDisplay.php:174
+#: src/Public/SummaryDisplay.php:136
+msgid "Customer"
+msgstr "Klant"
+
+#: src/Public/SalesDisplay.php:189
 msgid "New sales invoice"
 msgstr "Nieuwe verkoopfactuur"
 
-#: src/Public/SummaryDisplay.php:68
+#: src/Public/SettingDisplay.php:83
+msgid "Base currency"
+msgstr ""
+
+#: src/Public/SettingDisplay.php:87
+msgid "Tax codes"
+msgstr "BTW code"
+
+#: src/Public/SettingDisplay.php:95
+msgid "Date and number format"
+msgstr "Datum en tijd formaat"
+
+#: src/Public/SettingDisplay.php:99
+msgid "Lock data"
+msgstr "Blokkeer wijziging"
+
+#: src/Public/SummaryDisplay.php:66
 msgid "Liabilities"
 msgstr "Passiva"
 
 #: src/Public/SummaryDisplay.php:69
-msgid "Equity"
-msgstr "Eigen Vermogen"
-
-#: src/Public/SummaryDisplay.php:73
 msgid "Expenses"
 msgstr "Uitgaven"
 
-#: src/Public/SummaryDisplay.php:128
+#: src/Public/SummaryDisplay.php:125
+msgid "Date"
+msgstr "Datum"
+
+#: src/Public/SummaryDisplay.php:130
+msgid "Transaction"
+msgstr "Boeking"
+
+#: src/Public/SummaryDisplay.php:186
 msgid "Total"
 msgstr "Totaal"
+
+#: src/Public/TaxcodeDisplay.php:28
+msgid "Taxcodes"
+msgstr "BTW code"
+
+#: src/Public/TaxcodeDisplay.php:52
+msgid "Taxcode saved"
+msgstr "BTW code bewaard"
+
+#: src/Public/TaxcodeDisplay.php:65
+msgid "Taxcode removed"
+msgstr "BTW code verwijderd"
+
+#: src/Public/TaxcodeDisplay.php:94
+msgid "Rate"
+msgstr "Percentage"
+
+#: src/Public/TaxcodeDisplay.php:150
+msgid "New tax code"
+msgstr "Nieuwe BTW code"
+
+#: src/Public/TransactionDisplay.php:72
+msgid "Y/m/d"
+msgstr "d-m-Y"
 
 #~ msgid "Purchases"
 #~ msgstr "Inkoopfacturen"

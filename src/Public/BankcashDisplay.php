@@ -153,18 +153,21 @@ class BankcashDisplay extends Display {
 				[
 					'fields'  => [
 						[
-							'name'  => 'bankcash_id',
-							'type'  => 'static',
-							'label' => '',
+							'name'   => 'bankcash_id',
+							'type'   => 'number',
+							'static' => true,
+							'label'  => '',
 						],
 						[
-							'name'  => 'name',
-							'type'  => 'static',
-							'label' => __( 'Name', 'wpacc' ),
+							'name'   => 'name',
+							'type'   => 'text',
+							'static' => true,
+							'label'  => __( 'Name', 'wpacc' ),
 						],
 						[
 							'name'  => 'actual_balance',
-							'type'  => 'zoom',
+							'type'  => 'currency',
+							'zoom'  => true,
 							'label' => __( 'Balance', 'wpacc' ),
 						],
 					],

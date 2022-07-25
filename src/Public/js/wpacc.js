@@ -6,7 +6,7 @@
  * @package WP_Accounting
  */
 
-/* global wpaccData */
+/* global wpaccData, Cleave */
 
 /**
  * Jquery part
@@ -15,10 +15,54 @@
 	'use strict';
 
 	/**
+	 * Business object.
+	 *
+	 * @property {object} business
+	 * @property {string} business.decimalsep
+	 * @property {string} business.thousandsep
+	 * @property {number} business.decimals
+	 * @property {string} business.dateformat
+	 * @property {string} business.timeformat
+	 * @property {string} business.name
+	 */
+	let business;
+
+	let currencies;
+
+	/**
 	 * Actions after document ready or ajax ready
 	 */
 	function onload() {
+		currencies = [];
+		$( '.wpacc-type-currency' ).each(
+			function( index, element ) {
+				currencies[ element.id ] = new Cleave(
+					element,
+					{
+						numeral: true,
+						delimiter: business.thousandsep,
+						numeralDecimalMark: business.decimalsep,
+						numeralDecimalScale: business.decimals,
+						completeDecimalsOnBlur: true
+					}
+				);
+			}
+		);
 		$( 'input[class^=wpacc-total-]' ).trigger( 'change' );
+		$( '.wpacc-type-date' ).each(
+			function() {
+				// Dateformat is the PHP dateformat, requires to be split for Cleave.
+				let pattern = Array.from( business.dateformat );
+				new Cleave(
+					this,
+					{
+						date: true,
+						delimiter: pattern[1],
+						datePattern: [ pattern[0], pattern[2], pattern[4] ]
+					}
+				);
+			}
+		);
 	}
 
 	/**
@@ -68,8 +112,9 @@
 				success:
 					function ( response ) {
 						if ('' !== response.data) {
+							business = response.data.business;
 							$( '#wpacc-main' ).html( response.data.main );
-							$( '#wpacc-business' ).html( response.data.business );
+							$( '#wpacc-business' ).html( business.name );
 						}
 					},
 				error:
@@ -101,39 +146,6 @@
 			onload();
 
 			/**
-			 * Main menu event.
-			 */
-			$( 'a[data-menu]' ).on(
-				'click',
-				function() {
-					$( '.wpacc-menu a' ).removeClass( 'wpacc-menu-selected' );
-					$( this ).addClass( 'wpacc-menu-selected' );
-					$.get(
-						wpaccData.ajaxurl,
-						{
-							'action': 'wpacc_menuhandler',
-							'menu': $( this ).data( 'menu' ),
-						},
-						function (response) {
-							$( '#wpacc-main' ).html( response.data.main );
-							$( '#wpacc-business' ).html( response.data.business );
-						},
-					);
-				}
-			);
-
-			/**
-			 * Business select menu
-			 */
-			$( '#wpacc-menu-dropdown' ).on(
-				'click',
-				function( e ) {
-					$( '#wpacc-menu ul' ).slideToggle( 500 );
-					e.preventDefault();
-				}
-			);
-
-			/**
 			 * Make the main menu responsive
 			 */
 			$( window ).on(
@@ -148,7 +160,30 @@
 			/**
 			 * Events for the content section.
 			 */
-			$( '#wpacc-main' )
+			$( '#wpacc-container' )
+			/**
+			 * Main menu event.
+			 */
+			.on(
+				'click',
+				'a[data-menu]',
+				function() {
+					$( '.wpacc-menu a' ).removeClass( 'wpacc-menu-selected' );
+					$( this ).addClass( 'wpacc-menu-selected' );
+					$.get(
+						wpaccData.ajaxurl,
+						{
+							'action': 'wpacc_menuhandler',
+							'menu': $( this ).data( 'menu' ),
+						},
+						function (response) {
+							business = response.data.business;
+							$( '#wpacc-main' ).html( response.data.main );
+							$( '#wpacc-business' ).html( business.name );
+						},
+					);
+				}
+			)
 			/**
 			 * A button is clicked
 			 */
@@ -170,6 +205,20 @@
 					let id = $( this ). closest( 'tr' ). children( 'td:first' ).text();
 					doForm( [ { wpacc_action: 'read' }, { id: id } ] );
 					e.preventDefault();
+				}
+			)
+			.on(
+				'change ready',
+				'.wpacc-type-currency',
+				function( e ) {
+					let number;
+					if ( 'INPUT' === e.nodeName ) {
+						number  = parseFloat( e.value );
+						e.value = new Intl.NumberFormat( 'en-US', { style: 'currency', currency: 'USD' } ).format( number );
+						return;
+					}
+					number        = parseFloat( e.textContent );
+					e.textContent = new Intl.NumberFormat( 'en-US', { style: 'currency', currency: 'USD' } ).format( number );
 				}
 			)
 			/**
@@ -194,14 +243,14 @@
 			 */
 			.on(
 				'change',
-				'input.wpacc-image',
+				'input.wpacc-type-image',
 				function() {
 					let file   = $( this ).get( 0 ).files[0],
 						reader = new FileReader(),
 						ident  = this.id + 'img';
 					if ( file ) {
 						reader.onload = function() {
-							$( ident ).attr( 'src', reader.result );
+							$( ident ).attr( 'src', String( reader.result ) );
 						}
 						reader.readAsDataURL( file );
 					}
@@ -215,10 +264,10 @@
 						name = this.name;
 					$( "[name='" + name + "']" ).each(
 						function() {
-							sum += parseFloat( $( this ).val() );
+							sum += parseFloat( currencies[ this.id ].getRawValue() );
 						}
 					);
-					$( '.wpacc-sum-' + name.replace( '[]', '' ) ).html( sum );
+					currencies[ $( '.wpacc-sum-' + name.replace( '[]', '' ) ).attr( 'id' ) ].setRawValue( sum );
 				}
 			);
 		}
